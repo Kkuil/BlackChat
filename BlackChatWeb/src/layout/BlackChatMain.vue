@@ -9,8 +9,8 @@ import OnlineList from "@/layout/components/OnlineList/OnlineList.vue"
     <div
         class="w-[75%] h-[600px] bg-primary rounded-[15px] flex overflow-hidden p-[15px]"
     >
-        <ToolSide class="flex-[10%]" />
-        <ChatList class="flex-[25%]" />
+        <ToolSide class="flex-[6%]" />
+        <ChatList class="flex-[29%]" />
         <ChatContent class="flex-[50%]" />
         <OnlineList class="flex-[15%]" />
     </div>
