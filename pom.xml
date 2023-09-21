@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.2</version>
+        <relativePath/>
+    </parent>
+    <groupId>com.kkuil</groupId>
+    <artifactId>blackchat</artifactId>
+    <version>1.0.0</version>
+    <name>blackchat</name>
+    <description>BlackChat即时聊天</description>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>blackchat-common</module>
+        <module>blackchat-server</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+        <hutool-all.version>5.8.11</hutool-all.version>
+        <jackson.version>2.13.3</jackson.version>
+        <jasypt.version>3.0.5</jasypt.version>
+        <jwt.version>0.9.1</jwt.version>
+        <javax-xml.version>2.4.0-b180830.0359</javax-xml.version>
+        <caffeine.version>2.9.3</caffeine.version>
+        <redisson.version>3.17.1</redisson.version>
+        <netty-all.version>4.1.76.Final</netty-all.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.4.3</version>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

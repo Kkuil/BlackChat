@@ -1,0 +1,6 @@
+@import url("./base.css");
+@import url("./iconfont.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
