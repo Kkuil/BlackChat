@@ -2,15 +2,15 @@
 
 <template>
     <div
-        class="chat-content-input flex px-[10px] items-center bg-third rounded-[10px] text-[#fff] text-[12px]"
+        class="h-full flex px-[10px] items-center bg-third rounded-[10px] text-[#fff] text-[12px]"
     >
         <SvgIcon
-            class="flex-[5%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color]"
+            class="flex-[5%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
             icon-class="voice"
             title="点击切换语音"
         />
         <input
-            class="flex-[65%] h-[75%] outline-0 pl-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:hover:border-[1px] focus:border-[#0094ff] hover:border-[#0094ff]"
+            class="flex-[65%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:hover:border-[1px] focus:border-[#0094ff] hover:border-[#0094ff]"
             placeholder="我们期待您的发言，说点什么吧"
         />
         <SvgIcon class="flex-[5%] cursor-pointer" icon-class="expression" />

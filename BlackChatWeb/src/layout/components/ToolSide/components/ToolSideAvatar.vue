@@ -11,7 +11,9 @@ defineProps<ToolSide.AvatarTypeProps>()
                 <Avatar />
             </el-icon>
         </el-avatar>
-        <span class="mt-[7px] text-[#fff] text-[14px]">{{ name }}</span>
+        <span class="mt-[7px] text-[#fff] text-[14px] hidden sm:inline-block">
+            {{ name }}
+        </span>
     </div>
 </template>
 

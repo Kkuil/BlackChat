@@ -19,7 +19,7 @@ defineProps<ChatItem.ChatItemPropsType>()
 </template>
 
 <style scoped lang="scss">
-.active {
+.selected {
     background-color: #263343 !important;
 }
 </style>
