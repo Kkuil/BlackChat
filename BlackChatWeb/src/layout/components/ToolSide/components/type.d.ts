@@ -1,6 +1,1 @@
-export declare namespace ToolSide {
-    type AvatarTypeProps = Partial<{
-        avatar: string
-        name: string
-    }>
-}
+export declare namespace ToolSide {}

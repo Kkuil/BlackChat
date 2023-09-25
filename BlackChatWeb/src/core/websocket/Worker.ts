@@ -1,6 +1,6 @@
 import { WebsocketTypes } from "@/core/websocket/types/type";
-import Listeners from "./listeners";
-import { WorkerTypeEnum } from "@/core/websocket/domain/WorkerTypeEnum";
+import WebsocketListeners from "@/core/websocket/WebsocketListeners.ts";
+import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum";
 import { WS_URL } from "@/core/websocket/constant/websocketConst";
 
 // 发消息给主进程
@@ -17,31 +17,31 @@ let connection: WebSocket
 // 初始化 ws 连接
 const initConnection = () => {
     // 移除之前的监听器
-    connection?.removeEventListener("message", Listeners.onMessage)
-    connection?.removeEventListener("open", Listeners.onOpen)
-    connection?.removeEventListener("close", Listeners.onClose)
-    connection?.removeEventListener("error", Listeners.onError)
+    connection?.removeEventListener("message", WebsocketListeners.onMessage)
+    connection?.removeEventListener("open", WebsocketListeners.onOpen)
+    connection?.removeEventListener("close", WebsocketListeners.onClose)
+    connection?.removeEventListener("error", WebsocketListeners.onError)
     // 建立链接
     console.log(WS_URL)
     connection = new WebSocket(WS_URL)
     // 收到消息
-    connection.addEventListener("message", Listeners.onMessage)
+    connection.addEventListener("message", WebsocketListeners.onMessage)
     // 建立链接
-    connection.addEventListener("open", Listeners.onOpen)
+    connection.addEventListener("open", WebsocketListeners.onOpen)
     // 关闭连接
-    connection.addEventListener("close", Listeners.onClose)
+    connection.addEventListener("close", WebsocketListeners.onClose)
     // 连接错误
-    connection.addEventListener("error", Listeners.onError)
+    connection.addEventListener("error", WebsocketListeners.onError)
 }
 
 // 往 ws 发消息
-const pushMessageToWs = (value: object) => {
-    connection?.send(JSON.stringify(value))
+const pushMessageToWs = (data: object) => {
+    connection?.send(data)
 }
 
-// 主线程监听消息
+// 线程监听消息
 self.onmessage = (e: MessageEvent<string>) => {
-    const { type, value } = JSON.parse(e.data)
+    const { type, data } = JSON.parse(e.data)
     switch (type) {
         case WorkerTypeEnum.INIT: {
             console.log("init")
@@ -51,7 +51,7 @@ self.onmessage = (e: MessageEvent<string>) => {
         case WorkerTypeEnum.MESSAGE: {
             // 判断是否已经连接
             if (connection?.readyState !== 1) return
-            pushMessageToWs(value)
+            pushMessageToWs(data)
             break
         }
         default: {

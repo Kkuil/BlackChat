@@ -1,6 +1,7 @@
 import { createApp } from "vue"
 import { createPinia } from "pinia"
 import "@/assets/styles/main.css"
+import "element-plus/dist/index.css"
 import "@/assets/styles/iconfont.js"
 
 import "@/core/websocket/Websocket"

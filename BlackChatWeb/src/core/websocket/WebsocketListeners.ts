@@ -1,5 +1,5 @@
 import { pushMessageToMainThread } from "./Worker"
-import { WorkerTypeEnum } from "@/core/websocket/domain/WorkerTypeEnum"
+import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
 
 export default {
     onError: () => {
@@ -12,8 +12,7 @@ export default {
         console.log(13)
         pushMessageToMainThread({ type: WorkerTypeEnum.OPEN })
     },
-    onMessage: (e: never) => {
-        console.log(e.value)
+    onMessage: (e: MessageEvent<string>) => {
         pushMessageToMainThread({ type: WorkerTypeEnum.MESSAGE, value: e.data })
     }
 }

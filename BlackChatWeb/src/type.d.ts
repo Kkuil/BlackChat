@@ -1,4 +1,4 @@
-export declare namespace GlobalTypes {
+declare namespace GlobalTypes {
     type ApiResult<T> = {
         code: number
         message: string
