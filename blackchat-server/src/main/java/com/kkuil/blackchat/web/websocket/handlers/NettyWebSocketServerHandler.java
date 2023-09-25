@@ -96,7 +96,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
      * 消息读取事件
      *
      * @param context 上线文对象
-     * @param msg     客户端发送的消息
+     * @param message 客户端发送的消息
      */
     @Override
     protected void channelRead0(ChannelHandlerContext context, TextWebSocketFrame message) {

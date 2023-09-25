@@ -18,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 public class NettyHttpParamsCollectorHandler extends ChannelInboundHandlerAdapter {
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object message) throws Exception {
+    public void channelRead(ChannelHandlerContext ctx, Object message) {
         Long uid = NettyUtil.getAttrFromChannel(ctx.channel(), AuthorizationConst.UID_KEY_IN_CHANNEL);
         String token = NettyUtil.getAttrFromChannel(ctx.channel(), AuthorizationConst.TOKEN_KEY_IN_CHANNEL);
         String ip = NettyUtil.getAttrFromChannel(ctx.channel(), AuthorizationConst.IP_KEY_IN_CHANNEL);

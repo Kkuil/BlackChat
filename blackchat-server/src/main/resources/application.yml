@@ -61,3 +61,11 @@ cors:
     allowed-methods: ${self.cors.allowed-methods}
     allow-credentials: ${self.cors.allow-credentials}
     max-age: ${self.cors.max-age}
+wechat:
+    mp:
+        callback: ${self.wechat.callback}
+        configs:
+            -   appId: ${self.wechat.appId}
+                secret: ${self.wechat.secret}
+                token: ${self.wechat.token}
+                aesKey: ${self.wechat.aesKey}
