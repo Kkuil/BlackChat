@@ -13,6 +13,7 @@ export const pushMessageToMainThread = ({
 
 // ws instance
 let connection: WebSocket
+
 // 初始化 ws 连接
 const initConnection = () => {
     // 移除之前的监听器
@@ -21,7 +22,6 @@ const initConnection = () => {
     connection?.removeEventListener("close", Listeners.onClose)
     connection?.removeEventListener("error", Listeners.onError)
     // 建立链接
-    // 本地配置到 .env 里面修改。
     console.log(WS_URL)
     connection = new WebSocket(WS_URL)
     // 收到消息
