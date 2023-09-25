@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.model.bo;
+package com.kkuil.blackchat.domain.bo;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.model.dto.user;
+package com.kkuil.blackchat.domain.dto.user;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

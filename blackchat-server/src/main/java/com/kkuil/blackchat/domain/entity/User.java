@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.model.entity;
+package com.kkuil.blackchat.domain.entity;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;

@@ -1,7 +1,7 @@
 package com.kkuil.blackchat.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.kkuil.blackchat.model.entity.User;
+import com.kkuil.blackchat.domain.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

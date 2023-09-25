@@ -1,6 +1,6 @@
 package com.kkuil.blackchat.event;
 
-import com.kkuil.blackchat.model.entity.User;
+import com.kkuil.blackchat.domain.entity.User;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 

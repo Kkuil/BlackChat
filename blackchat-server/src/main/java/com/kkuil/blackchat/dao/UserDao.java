@@ -2,7 +2,7 @@ package com.kkuil.blackchat.dao;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.mapper.UserMapper;
-import com.kkuil.blackchat.model.entity.User;
+import com.kkuil.blackchat.domain.entity.User;
 import org.springframework.stereotype.Service;
 
 /**

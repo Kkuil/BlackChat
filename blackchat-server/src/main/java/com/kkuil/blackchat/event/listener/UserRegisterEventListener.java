@@ -1,7 +1,7 @@
 package com.kkuil.blackchat.event.listener;
 
 import com.kkuil.blackchat.event.UserRegisterEvent;
-import com.kkuil.blackchat.model.entity.User;
+import com.kkuil.blackchat.domain.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

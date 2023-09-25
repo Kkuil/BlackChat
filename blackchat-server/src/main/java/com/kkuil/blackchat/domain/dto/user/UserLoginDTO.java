@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.model.dto.user;
+package com.kkuil.blackchat.domain.dto.user;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
