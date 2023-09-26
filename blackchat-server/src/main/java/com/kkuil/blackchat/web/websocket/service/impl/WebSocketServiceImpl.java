@@ -4,12 +4,13 @@ import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.utils.RedisUtil;
 import com.kkuil.blackchat.web.websocket.adapter.WsAdapter;
 import com.kkuil.blackchat.web.websocket.constant.AuthorizationConst;
 import com.kkuil.blackchat.web.websocket.domain.dto.WsConnInfoDTO;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
-import com.kkuil.blackchat.web.websocket.service.IWebSocketService;
+import com.kkuil.blackchat.web.websocket.service.WebSocketService;
 import com.kkuil.blackchat.web.websocket.utils.NettyUtil;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
@@ -21,6 +22,8 @@ import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Date;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -35,7 +38,7 @@ import static com.kkuil.blackchat.web.websocket.domain.enums.WsResponseTypeEnum.
  */
 @Service
 @Slf4j
-public class WebSocketServiceImpl implements IWebSocketService {
+public class WebSocketServiceImpl implements WebSocketService {
 
     /**
      * 所有已连接的websocket连接和相关信息的映射
@@ -73,7 +76,7 @@ public class WebSocketServiceImpl implements IWebSocketService {
     public void connect(Channel channel) {
         CHANNEL_CONN_MAP.put(channel, new WsConnInfoDTO());
         WsBaseResp<String> wsBaseResp = new WsBaseResp<>();
-        wsBaseResp.setType(CONN_SUCCESS.getType()).setData("连接成功");
+        wsBaseResp.setType(CONN_SUCCESS.getType()).setData("connected successfully!");
         sendMsgToOne(channel, wsBaseResp);
         log.info("CHANNEL_CONN_MAP: {}", CHANNEL_CONN_MAP);
     }
@@ -113,7 +116,7 @@ public class WebSocketServiceImpl implements IWebSocketService {
     }
 
     /**
-     * 处理登录请求
+     * 扫码登录
      *
      * @param channel 连接通道
      */
@@ -129,15 +132,49 @@ public class WebSocketServiceImpl implements IWebSocketService {
     }
 
     /**
-     * 扫码登录
+     * 当用户扫码成功时，返回前端提示用户扫码成功
      *
-     * @param code 登录码
-     * @param uid  用户ID
+     * @param loginCode 登录码
+     * @return 是否成功
      */
     @Override
-    public void handleScanLogin(Integer code, Long uid) {
-
+    public Boolean scanSuccess(Integer loginCode) {
+        Channel channel = WAIT_LOGIN_MAP.getIfPresent(loginCode);
+        if (Objects.isNull(channel)) {
+            // 超时或已移除 code -> channel ×
+            // TODO 通知前端二维码已过期，刷新二维码（不知道能不能实现）
+            return Boolean.FALSE;
+        }
+        sendMsgToOne(channel, WsAdapter.buildScanSuccessResp());
+        return true;
     }
+
+    /**
+     * 扫码登录成功
+     *
+     * @param loginCode 登录码
+     * @param user      用户信息
+     * @param token     token
+     * @return 是否登录成功
+     */
+    @Override
+    public Boolean scanLoginSuccess(Integer loginCode, User user, String token) {
+        // 发送消息
+        Channel channel = WAIT_LOGIN_MAP.getIfPresent(loginCode);
+        // 判断等待列表中是否存在该通道
+        if (Objects.isNull(channel)) {
+            return Boolean.FALSE;
+        }
+        // 移除code
+        log.info("移除前 WAIT_LOGIN_MAP: {}", WAIT_LOGIN_MAP);
+        WAIT_LOGIN_MAP.invalidate(loginCode);
+        log.info("移除后 WAIT_LOGIN_MAP: {}", WAIT_LOGIN_MAP);
+
+        // 用户登录
+        loginSuccess(channel, user, token);
+        return true;
+    }
+
 
     /**
      * 等待授权事件
@@ -187,13 +224,27 @@ public class WebSocketServiceImpl implements IWebSocketService {
      * @return 随机码
      */
     private Integer generateLoginCode(Channel channel) {
-        int inc;
+        int code;
         do {
-            //本地cache时间必须比redis key过期时间短，否则会出现并发问题
-            inc = RedisUtil.integerInc(RedisKeyConst.getKey(LOGIN_CODE), (int) LOGIN_EXPIRE_TIME.toMinutes(), TimeUnit.MINUTES);
-        } while (WAIT_LOGIN_MAP.asMap().containsKey(inc));
-        //储存一份在本地
-        WAIT_LOGIN_MAP.put(inc, channel);
-        return inc;
+            // 本地cache时间必须比redis key过期时间短，否则会出现并发问题
+            code = RedisUtil.integerInc(RedisKeyConst.getKey(LOGIN_CODE), (int) LOGIN_EXPIRE_TIME.toMinutes(), TimeUnit.MINUTES);
+        } while (WAIT_LOGIN_MAP.asMap().containsKey(code));
+        // 储存一份在本地
+        WAIT_LOGIN_MAP.put(code, channel);
+        return code;
+    }
+
+    /**
+     * 登录成功，并更新状态
+     */
+    private void loginSuccess(Channel channel, User user, String token) {
+        // TODO 更新上线列表
+        online(channel, user.getId());
+        // 返回给用户登录成功即信息
+        // TODO 权限信息
+        // ......
+        sendMsgToOne(channel, WsAdapter.buildLoginSuccessResp(user, token));
+        // TODO 发送用户上线事件
+        // ......
     }
 }

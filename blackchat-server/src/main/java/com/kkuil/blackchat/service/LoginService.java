@@ -15,4 +15,11 @@ public interface LoginService {
      */
     Long getValidUid(String token);
 
+    /**
+     * 登录
+     *
+     * @param uid 用户ID
+     * @return token
+     */
+    String login(Long uid);
 }

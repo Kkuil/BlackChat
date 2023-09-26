@@ -5,6 +5,7 @@ import com.kkuil.blackchat.enums.BusinessErrorEnum;
 import com.kkuil.blackchat.exception.BusinessException;
 import com.kkuil.blackchat.enums.CommonErrorEnum;
 import com.kkuil.blackchat.enums.ErrorEnum;
+import org.hibernate.validator.HibernateValidator;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -22,7 +23,7 @@ public class AssertUtil {
     /**
      * 校验到失败就结束
      */
-    private static final Validator FAIL_FAST_VALIDATOR = Validation.byDefaultProvider()
+    private static final Validator FAIL_FAST_VALIDATOR = Validation.byProvider(HibernateValidator.class)
             .configure()
             .buildValidatorFactory()
             .getValidator();

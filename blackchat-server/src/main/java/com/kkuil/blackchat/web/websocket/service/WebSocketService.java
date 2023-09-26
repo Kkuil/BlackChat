@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.web.websocket.service;
 
+import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
 import io.netty.channel.Channel;
 
@@ -8,7 +9,7 @@ import io.netty.channel.Channel;
  * @Date 2023/08/05 12:30
  * @Description
  */
-public interface IWebSocketService {
+public interface WebSocketService {
 
     /**
      * 连接
@@ -40,19 +41,29 @@ public interface IWebSocketService {
     void offline(Channel channel);
 
     /**
-     * 处理登录请求
+     * 扫码登录
      *
      * @param channel 连接通道
      */
     void login(Channel channel);
 
     /**
-     * 扫码登录
+     * 扫码成功
      *
-     * @param code 登录码
-     * @param uid  用户ID
+     * @param loginCode 登录码
+     * @return 是否扫码
      */
-    void handleScanLogin(Integer code, Long uid);
+    Boolean scanSuccess(Integer loginCode);
+
+    /**
+     * 扫码登录成功
+     *
+     * @param loginCode 登录吗
+     * @param user      用户信息
+     * @param token     token
+     * @return 是否扫码登录成功
+     */
+    Boolean scanLoginSuccess(Integer loginCode, User user, String token);
 
     /**
      * 等待授权事件

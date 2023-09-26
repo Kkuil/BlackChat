@@ -1,7 +1,8 @@
 package com.kkuil.blackchat.web.websocket.handlers;
 
+import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
+import com.kkuil.blackchat.domain.dto.RequestInfo;
 import com.kkuil.blackchat.web.websocket.constant.AuthorizationConst;
-import com.kkuil.blackchat.web.websocket.domain.dto.HttpRequestInfoBeforeUpgradeWebsocket;
 import com.kkuil.blackchat.web.websocket.utils.NettyUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -17,12 +18,11 @@ public class NettyHttpParamsCollectorHandler extends ChannelInboundHandlerAdapte
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object message) {
         Long uid = NettyUtil.getAttrFromChannel(ctx.channel(), AuthorizationConst.UID_KEY_IN_CHANNEL);
-        String token = NettyUtil.getAttrFromChannel(ctx.channel(), AuthorizationConst.TOKEN_KEY_IN_CHANNEL);
         String ip = NettyUtil.getAttrFromChannel(ctx.channel(), AuthorizationConst.IP_KEY_IN_CHANNEL);
-        HttpRequestInfoBeforeUpgradeWebsocket.builder()
-                .uid(uid)
-                .token(token)
-                .ip(ip);
+        RequestInfo info = new RequestInfo();
+        info.setUid(uid);
+        info.setIp(ip);
+        RequestHolderDTO.set(info);
         // 继续向下传递消息
         ctx.fireChannelRead(message);
     }

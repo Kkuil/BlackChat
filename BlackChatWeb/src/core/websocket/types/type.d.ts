@@ -14,7 +14,7 @@ export declare namespace WebsocketTypes {
     /**
      * Websocket的参数类型
      */
-    type WebsocketParamsType = {
+    type WebsocketReqType = {
         type: WsRequestTypeEnum
         data?: string
     }
@@ -22,7 +22,7 @@ export declare namespace WebsocketTypes {
     /**
      * Websocket的返回类型
      */
-    type WebsocketParamsType = {
+    type WebsocketRespType = {
         type: WsResponseTypeEnum
         data?: string
     }

@@ -1,7 +1,7 @@
 package com.kkuil.blackchat.service.frequencycontrol;
 
-import com.abin.mallchat.common.common.domain.dto.FrequencyControlDTO;
-import com.abin.mallchat.common.common.utils.RedisUtils;
+import com.kkuil.blackchat.domain.dto.frequency.FrequencyControlDTO;
+import com.kkuil.blackchat.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,18 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.abin.mallchat.common.common.service.frequencycontrol.FrequencyControlStrategyFactory.TOTAL_COUNT_WITH_IN_FIX_TIME_FREQUENCY_CONTROLLER;
+import static com.kkuil.blackchat.service.frequencycontrol.FrequencyControlStrategyFactory.TOTAL_COUNT_WITH_IN_FIX_TIME_FREQUENCY_CONTROLLER;
+
 
 /**
- * 抽象类频控服务 -使用redis实现 固定时间内不超过固定次数的限流类
- *
- * @author linzhihan
- * @date 2023/07/03
+ * @Author Kkuil
+ * @Date 2023/9/26
+ * @Description 抽象类频控服务 -使用redis实现 固定时间内不超过固定次数的限流类
  */
 @Slf4j
 @Service
 public class TotalCountWithInFixTimeFrequencyController extends AbstractFrequencyControlService<FrequencyControlDTO> {
-
 
     /**
      * 是否达到限流阈值 子类实现 每个子类都可以自定义自己的限流逻辑判断
@@ -31,15 +30,15 @@ public class TotalCountWithInFixTimeFrequencyController extends AbstractFrequenc
      */
     @Override
     protected boolean reachRateLimit(Map<String, FrequencyControlDTO> frequencyControlMap) {
-        //批量获取redis统计的值
+        // 批量获取redis统计的值
         List<String> frequencyKeys = new ArrayList<>(frequencyControlMap.keySet());
-        List<Integer> countList = RedisUtils.mget(frequencyKeys, Integer.class);
+        List<Integer> countList = RedisUtil.mget(frequencyKeys, Integer.class);
         for (int i = 0; i < frequencyKeys.size(); i++) {
             String key = frequencyKeys.get(i);
             Integer count = countList.get(i);
             int frequencyControlCount = frequencyControlMap.get(key).getCount();
             if (Objects.nonNull(count) && count >= frequencyControlCount) {
-                //频率超过了
+                // 频率超过了
                 log.warn("frequencyControl limit key:{},count:{}", key, count);
                 return true;
             }
@@ -54,7 +53,7 @@ public class TotalCountWithInFixTimeFrequencyController extends AbstractFrequenc
      */
     @Override
     protected void addFrequencyControlStatisticsCount(Map<String, FrequencyControlDTO> frequencyControlMap) {
-        frequencyControlMap.forEach((k, v) -> RedisUtils.inc(k, v.getTime(), v.getUnit()));
+        frequencyControlMap.forEach((k, v) -> RedisUtil.inc(k, v.getTime(), v.getUnit()));
     }
 
     @Override

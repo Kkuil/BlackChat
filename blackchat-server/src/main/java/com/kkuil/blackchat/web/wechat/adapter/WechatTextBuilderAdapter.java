@@ -22,8 +22,8 @@ public class WechatTextBuilderAdapter {
         return WxMpXmlOutMessage
                 .TEXT()
                 .content(content)
-                .fromUser(wxMessage.getFromUser())
-                .toUser(wxMessage.getToUser())
+                .fromUser(wxMessage.getToUser())
+                .toUser(wxMessage.getFromUser())
                 .build();
     }
 }

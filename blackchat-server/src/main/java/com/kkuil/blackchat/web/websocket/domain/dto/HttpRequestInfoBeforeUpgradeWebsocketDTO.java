@@ -1,6 +1,5 @@
 package com.kkuil.blackchat.web.websocket.domain.dto;
 
-import io.netty.util.AttributeKey;
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class HttpRequestInfoBeforeUpgradeWebsocket {
+public class HttpRequestInfoBeforeUpgradeWebsocketDTO {
     /**
      * 存于上下文对象中的token key
      */

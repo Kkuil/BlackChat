@@ -26,12 +26,12 @@ public class GlobalInterceptorConfig implements WebMvcConfigurer {
         interceptorRegistry
                 .addInterceptor(new LogInterceptor())
                 .addPathPatterns("/**");
-        interceptorRegistry
-                .addInterceptor(new TokenInterceptor())
-                .excludePathPatterns("/public/**");
-        interceptorRegistry
-                .addInterceptor(new CollectorInterceptor())
-                .addPathPatterns("/**");
+//        interceptorRegistry
+//                .addInterceptor(new TokenInterceptor())
+//                .addPathPatterns("/auth/**");
+//        interceptorRegistry
+//                .addInterceptor(new CollectorInterceptor())
+//                .addPathPatterns("/**");
     }
 
     /**

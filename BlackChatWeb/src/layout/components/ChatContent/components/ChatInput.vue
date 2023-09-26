@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue"
+
+const message = ref<string>("")
+</script>
 
 <template>
     <div
@@ -12,6 +16,7 @@
         <input
             class="flex-[65%] md:flex-[85%] lg:flex-[65%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:hover:border-[1px] focus:border-[#0094ff] hover:border-[#0094ff]"
             placeholder="我们期待您的发言，说点什么吧"
+            v-model="message"
         />
         <div class="flex flex-[25%] md:hidden lg:flex">
             <SvgIcon class="flex-[1] cursor-pointer" icon-class="expression" />

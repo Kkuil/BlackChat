@@ -2,17 +2,27 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.kkuil.springboottemplate.mapper.UserMapper">
+<mapper namespace="com.kkuil.blackchat.mapper.UserMapper">
+
     <resultMap id="BaseResultMap" type="com.kkuil.blackchat.domain.entity.User">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="username" column="username" jdbcType="VARCHAR"/>
-            <result property="password" column="password" jdbcType="VARCHAR"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="isDeleted" column="is_deleted" jdbcType="TINYINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="INTEGER"/>
+        <result property="open_id" column="open_id" jdbcType="CHAR"/>
+        <result property="active_status" column="active_status" jdbcType="INTEGER"/>
+        <result property="last_opt_time" column="last_opt_time" jdbcType="TIMESTAMP"/>
+        <result property="ip_info" column="ip_info" jdbcType="OTHER"/>
+        <result property="item_id" column="item_id" jdbcType="BIGINT"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
+
     <sql id="Base_Column_List">
-        id,username,password,
-        create_time,update_time,is_deleted
+        id,name,avatar,
+        sex,open_id,active_status,
+        last_opt_time,ip_info,item_id,
+        status,create_time,update_time
     </sql>
 </mapper>

@@ -22,8 +22,8 @@ const checkUserInfo = async () => {
                 <Avatar />
             </el-icon>
         </el-avatar>
-        <span class="mt-[7px] text-[#fff] text-[14px] hidden sm:inline-block">
-            {{ userStore.userInfo.name ?? "Kkuil" }}
+        <span class="mt-[7px] text-[#fff] text-[13px] hidden sm:inline-block">
+            {{ userStore.userInfo.name ?? "未登录" }}
         </span>
     </div>
 </template>

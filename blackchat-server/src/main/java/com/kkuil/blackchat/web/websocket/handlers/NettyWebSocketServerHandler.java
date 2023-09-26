@@ -6,7 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.kkuil.blackchat.web.websocket.constant.AuthorizationConst;
 import com.kkuil.blackchat.web.websocket.domain.enums.WsRequestTypeEnum;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.WsBaseReq;
-import com.kkuil.blackchat.web.websocket.service.IWebSocketService;
+import com.kkuil.blackchat.web.websocket.service.WebSocketService;
 import com.kkuil.blackchat.web.websocket.utils.NettyUtil;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,7 +27,7 @@ import java.util.Map;
 @Slf4j
 public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-    private IWebSocketService webSocketService;
+    private WebSocketService webSocketService;
 
     /**
      * 用户连接时，初始化Websocket服务
@@ -36,7 +36,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
      */
     @Override
     public void handlerAdded(ChannelHandlerContext context) {
-        this.webSocketService = SpringUtil.getBean(IWebSocketService.class);
+        this.webSocketService = SpringUtil.getBean(WebSocketService.class);
     }
 
     /**

@@ -7,9 +7,16 @@ import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
 import { LOGIN_MESSAGE } from "@/core/websocket/domain/preset/WsMessagePreset"
 import Websocket from "@/core/websocket/Websocket"
-import { ElMessage } from "element-plus"
 import type { WebsocketTypes } from "@/core/websocket/types/type"
+import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
+import { SuccessFilled } from "@element-plus/icons-vue"
+import { useUserStore } from "@/stores/user"
 
+const userStore = useUserStore()
+
+/**
+ * 弹框可见性
+ */
 const visible = ref<boolean>(true)
 
 /**
@@ -17,27 +24,52 @@ const visible = ref<boolean>(true)
  */
 const qrCodeWithLogin = ref<string>("")
 
+/**
+ * 是否已经扫描二维码
+ */
+const isScanned = ref<boolean>(false)
+
 onMounted(() => {
-    initListener()
+    init()
 })
 
 /**
- * 初始化监听器
+ * 初始化
  */
-const initListener = () => {
+const init = () => {
+    initListeners()
     // 获取二维码链接
     const workerMessage: WebsocketTypes.WorkerParamsType = {
         type: WorkerTypeEnum.MESSAGE,
         data: JSON.stringify(LOGIN_MESSAGE)
     }
-
     // 向后端发起获取二维码的请求
     Websocket.send(workerMessage)
+}
 
+/**
+ * 初始化监听器
+ */
+const initListeners = () => {
     // 监听获取到二维码的事件
     eventBus.on(WsEventEnum.GET_QR_CODE, (data: { url: string }) => {
         qrCodeWithLogin.value = data.url
     })
+
+    // 监听扫码成功事件
+    eventBus.on(WsEventEnum.SCAN_SUCCESS, () => {
+        onClose()
+    })
+
+    // 监听登录成功事件
+    eventBus.on(
+        WsEventEnum.LOGIN_SUCCESS,
+        ({ message }: { message: MessageResponseTypes.TLoginSuccess }) => {
+            onClose()
+            // 保存用户信息
+            userStore.loginSuccess(message)
+        }
+    )
 }
 
 /**
@@ -54,7 +86,6 @@ const onClose = () => {
 const refreshQrCode = () => {
     // 发送刷新二维码事件
     eventBus.emit(WsEventEnum.REFRESH_QR_CODE)
-    ElMessage.success("刷新成功")
 }
 
 onUnmounted(() => {
@@ -88,7 +119,13 @@ onUnmounted(() => {
             </div>
         </template>
         <template #footer>
-            <div class="flex-center">
+            <div v-show="isScanned" class="scanned flex-center text-[#2aae67]">
+                <el-icon>
+                    <SuccessFilled />
+                </el-icon>
+                <span class="ml-[5px]">扫码成功</span>
+            </div>
+            <div class="refresh flex-center">
                 失效？<span
                     class="text-[#2aae67] cursor-pointer"
                     @click="refreshQrCode"
@@ -96,7 +133,7 @@ onUnmounted(() => {
                     点击此处刷新吧~
                 </span>
             </div>
-            <div class="flex-center">
+            <div class="scan flex-center">
                 使用「
                 <span class="text-[#2aae67]">微信</span>
                 」扫描二维码登录~~

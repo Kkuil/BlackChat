@@ -3,6 +3,7 @@ package com.kkuil.blackchat.aspect;
 import cn.hutool.core.util.StrUtil;
 import com.kkuil.blackchat.anotations.FrequencyControl;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
+import com.kkuil.blackchat.domain.dto.RequestInfo;
 import com.kkuil.blackchat.domain.dto.frequency.FrequencyControlDTO;
 import com.kkuil.blackchat.service.frequencycontrol.FrequencyControlUtil;
 import com.kkuil.blackchat.utils.SpElUtil;
@@ -35,7 +36,7 @@ public class FrequencyControlAspect {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         FrequencyControl[] annotationsByType = method.getAnnotationsByType(FrequencyControl.class);
-        Map<String, FrequencyControl> keyMap = new HashMap<>();
+        Map<String, FrequencyControl> keyMap = new HashMap<>(8);
         for (int i = 0; i < annotationsByType.length; i++) {
             FrequencyControl frequencyControl = annotationsByType[i];
             //默认方法限定名+注解排名（可能多个）
@@ -46,7 +47,8 @@ public class FrequencyControlAspect {
                     key = SpElUtil.parseSpEl(method, joinPoint.getArgs(), frequencyControl.spEl());
                     break;
                 case IP:
-                    key = RequestHolderDTO.get().getIp();
+                    RequestInfo requestInfo = RequestHolderDTO.get();
+                    key = requestInfo.getIp();
                     break;
                 case UID:
                     key = RequestHolderDTO.get().getUid().toString();
