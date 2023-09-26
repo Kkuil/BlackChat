@@ -1,11 +1,44 @@
 <script setup lang="ts">
-import { LoginDialogCompTypes } from "@/components/LoginDialog/type"
 import QrCode from "qrcode.vue"
-import { ref } from "vue"
+import { onMounted, onUnmounted, ref } from "vue"
 import { popDownLoginDialog } from "@/utils/popLoginDialog"
+import eventBus from "@/utils/eventBus"
+import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
+import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
+import { LOGIN_MESSAGE } from "@/core/websocket/domain/preset/WsMessagePreset"
+import Websocket from "@/core/websocket/Websocket"
+import { ElMessage } from "element-plus"
+import type { WebsocketTypes } from "@/core/websocket/types/type"
 
-defineProps<LoginDialogCompTypes.LoginDialogCompProps>()
 const visible = ref<boolean>(true)
+
+/**
+ * 登录二维码
+ */
+const qrCodeWithLogin = ref<string>("")
+
+onMounted(() => {
+    initListener()
+})
+
+/**
+ * 初始化监听器
+ */
+const initListener = () => {
+    // 获取二维码链接
+    const workerMessage: WebsocketTypes.WorkerParamsType = {
+        type: WorkerTypeEnum.MESSAGE,
+        data: JSON.stringify(LOGIN_MESSAGE)
+    }
+
+    // 向后端发起获取二维码的请求
+    Websocket.send(workerMessage)
+
+    // 监听获取到二维码的事件
+    eventBus.on(WsEventEnum.GET_QR_CODE, (data: { url: string }) => {
+        qrCodeWithLogin.value = data.url
+    })
+}
 
 /**
  * 关闭弹窗
@@ -14,6 +47,20 @@ const onClose = () => {
     visible.value = false
     setTimeout(popDownLoginDialog, 500)
 }
+
+/**
+ * 刷新二维码
+ */
+const refreshQrCode = () => {
+    // 发送刷新二维码事件
+    eventBus.emit(WsEventEnum.REFRESH_QR_CODE)
+    ElMessage.success("刷新成功")
+}
+
+onUnmounted(() => {
+    // 取消监听获取二维码事件
+    eventBus.off(WsEventEnum.GET_QR_CODE)
+})
 </script>
 
 <template>
@@ -32,8 +79,8 @@ const onClose = () => {
                 <div class="w-[350px] h-[350px] bg-[#f5f5f5] flex-center">
                     <QrCode
                         class="login-qrcode"
-                        v-if="qrCodeUrl"
-                        :value="qrCodeUrl"
+                        v-if="qrCodeWithLogin"
+                        :value="qrCodeWithLogin"
                         :size="328"
                         :margin="5"
                     />
@@ -41,6 +88,14 @@ const onClose = () => {
             </div>
         </template>
         <template #footer>
+            <div class="flex-center">
+                失效？<span
+                    class="text-[#2aae67] cursor-pointer"
+                    @click="refreshQrCode"
+                >
+                    点击此处刷新吧~
+                </span>
+            </div>
             <div class="flex-center">
                 使用「
                 <span class="text-[#2aae67]">微信</span>

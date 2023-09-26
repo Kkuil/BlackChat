@@ -1,7 +1,5 @@
 package com.kkuil.blackchat.utils;
 
-import cn.hutool.crypto.digest.DigestUtil;
-
 import java.util.Arrays;
 
 /**
@@ -9,7 +7,7 @@ import java.util.Arrays;
  * @Date 2023/08/05 12:30
  * @Description 加密工具类
  */
-public class DigestUtils {
+public class DigestUtil {
 
     /**
      * @param str 待加密字符串
@@ -17,7 +15,7 @@ public class DigestUtils {
      * @description 使用MD5加密字符串
      */
     public static String str2Md5(String str) {
-        byte[] bytes = DigestUtil.md5(str);
+        byte[] bytes = cn.hutool.crypto.digest.DigestUtil.md5(str);
         return Arrays.toString(bytes);
     }
 }

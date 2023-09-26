@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.exception;
+package com.kkuil.blackchat.enums;
 
 /**
  * @Author Kkuil

@@ -4,6 +4,7 @@ import com.kkuil.blackchat.web.websocket.domain.enums.WsResponseTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * @Author Kkuil
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class WsBaseResp<T> {
     /**
      * 返回类型

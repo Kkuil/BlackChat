@@ -18,10 +18,8 @@ const createLoginComp = (props: LoginDialogCompTypes.LoginDialogCompProps) => {
  * 弹出登录组件
  * @param props
  */
-export const popUpLoginDialog = function (
-    props: LoginDialogCompTypes.LoginDialogCompProps
-) {
-    createLoginComp(props)
+export const popUpLoginDialog = function () {
+    createLoginComp()
     // 创建元素
     loginCompContainer = document.createElement("div")
     document.body.appendChild(loginCompContainer)

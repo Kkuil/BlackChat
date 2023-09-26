@@ -1,13 +1,9 @@
 import type { Emitter } from "mitt"
 import mitt from "mitt"
-import type { MsgReadUnReadCountType } from "@/services/types"
 
 type Events = {
-    focusMsgInput?: void
-    onSelectPerson: { uid: number; ignoreCheck?: boolean }
-    onAddReadCountTask: { msgId: number }
-    onRemoveReadCountTask: { msgId: number }
-    onGetReadCount: Map<number, MsgReadUnReadCountType>
+    refresh_qr_code: void
+    get_qr_code: { url: string }
 }
 
 const eventHub: Emitter<Events> = mitt<Events>()

@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.config;
 
+import com.kkuil.blackchat.interceptors.CollectorInterceptor;
 import com.kkuil.blackchat.interceptors.LogInterceptor;
 import com.kkuil.blackchat.interceptors.TokenInterceptor;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +28,9 @@ public class GlobalInterceptorConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**");
         interceptorRegistry
                 .addInterceptor(new TokenInterceptor())
-                .addPathPatterns("/**");
+                .excludePathPatterns("/public/**");
         interceptorRegistry
-                .addInterceptor(new TokenInterceptor())
+                .addInterceptor(new CollectorInterceptor())
                 .addPathPatterns("/**");
     }
 

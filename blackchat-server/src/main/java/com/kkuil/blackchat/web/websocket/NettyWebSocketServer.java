@@ -40,7 +40,7 @@ public class NettyWebSocketServer {
      * websocket端口
      */
     @Value("${netty.websocket.port}")
-    public int WEBSOCKET_PORT = 8090;
+    public int WEBSOCKET_PORT;
 
     /**
      * 读空闲时间

@@ -9,10 +9,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
-* @Author Kkuil
-* @Date 2023/9/18
-* @Description websocket请求类型枚举类
-*/
+ * @Author Kkuil
+ * @Date 2023/9/18
+ * @Description websocket请求类型枚举类
+ */
 @AllArgsConstructor
 @Getter
 public enum WsRequestTypeEnum {
@@ -38,7 +38,14 @@ public enum WsRequestTypeEnum {
     public static final Map<Integer, WsRequestTypeEnum> WS_REQUEST_TYPE_CACHE;
 
     static {
-        WS_REQUEST_TYPE_CACHE = Arrays.stream(WsRequestTypeEnum.values()).collect(Collectors.toMap(WsRequestTypeEnum::getType, Function.identity()));
+        WS_REQUEST_TYPE_CACHE = Arrays
+                .stream(WsRequestTypeEnum.values())
+                .collect(
+                        Collectors.toMap(
+                                WsRequestTypeEnum::getType,
+                                Function.identity()
+                        )
+                );
     }
 
     public static WsRequestTypeEnum of(Integer type) {

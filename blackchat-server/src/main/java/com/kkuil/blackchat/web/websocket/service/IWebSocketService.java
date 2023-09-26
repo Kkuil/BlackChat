@@ -11,18 +11,26 @@ import io.netty.channel.Channel;
 public interface IWebSocketService {
 
     /**
-     * 用户连接
+     * 连接
      *
      * @param channel 连接通道
      */
-    void online(Channel channel);
+    void connect(Channel channel);
 
     /**
-     * 处理登录请求
+     * 断开连接
      *
      * @param channel 连接通道
      */
-    void login(Channel channel);
+    void disconnect(Channel channel);
+
+    /**
+     * 用户在线
+     *
+     * @param channel 连接通道
+     * @param uid     用户ID
+     */
+    void online(Channel channel, Long uid);
 
     /**
      * 下线
@@ -30,6 +38,13 @@ public interface IWebSocketService {
      * @param channel 断开连接
      */
     void offline(Channel channel);
+
+    /**
+     * 处理登录请求
+     *
+     * @param channel 连接通道
+     */
+    void login(Channel channel);
 
     /**
      * 扫码登录
@@ -53,6 +68,14 @@ public interface IWebSocketService {
      * @param token   用户token
      */
     void authorize(Channel channel, String token);
+
+    /**
+     * 向某个人发送消息
+     *
+     * @param channel    通道
+     * @param wsBaseResp 消息体
+     */
+    void sendMsgToOne(Channel channel, WsBaseResp<?> wsBaseResp);
 
     /**
      * 向全部人推送消息

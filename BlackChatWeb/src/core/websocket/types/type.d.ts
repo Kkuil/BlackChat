@@ -1,6 +1,6 @@
 import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
 import { WsRequestTypeEnum } from "@/core/websocket/domain/enum/WsRequestTypeEnum"
-import type { WsResponseTypeEnum } from "@/core/websocket/domain/enum/WsResponseTypeEnum"
+import { WsResponseTypeEnum } from "@/core/websocket/domain/enum/WsResponseTypeEnum"
 
 export declare namespace WebsocketTypes {
     /**

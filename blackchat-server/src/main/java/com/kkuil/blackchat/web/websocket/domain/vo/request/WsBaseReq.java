@@ -9,7 +9,7 @@ import lombok.Data;
  * @Description 
  */
 @Data
-public class WSBaseReq {
+public class WsBaseReq {
     /**
      * @see WsRequestTypeEnum
      */

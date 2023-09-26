@@ -1,8 +1,6 @@
 package com.kkuil.blackchat.utils;
 
 import cn.hutool.extra.spring.SpringUtil;
-import cn.hutool.json.JSONUtil;
-import com.abin.mallchat.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,12 +17,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class RedisUtils {
+public class RedisUtil {
 
     private static StringRedisTemplate stringRedisTemplate;
 
     static {
-        RedisUtils.stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+        RedisUtil.stringRedisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
     }
 
     private static final String LUA_INCR_EXPIRE =
@@ -54,7 +52,7 @@ public class RedisUtils {
         try {
             return Integer.parseInt(result.toString());
         } catch (Exception e) {
-            RedisUtils.del(key);
+            RedisUtil.del(key);
             throw e;
         }
     }
@@ -272,12 +270,11 @@ public class RedisUtils {
     }
 
     static <T> T toBeanOrNull(String json, Class<T> clazz) {
-        return json == null ? null : JsonUtils.toObj(json, tClass);
-        JSONUtil.toBean(json, clazz)
+        return json == null ? null : JsonUtil.toObj(json, clazz);
     }
 
     public static String objToStr(Object o) {
-        return JsonUtils.toStr(o);
+        return JsonUtil.toStr(o);
     }
 
     public static <T> void mset(Map<String, T> map, long time) {

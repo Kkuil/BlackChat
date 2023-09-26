@@ -5,10 +5,7 @@ import com.kkuil.blackchat.web.websocket.domain.dto.HttpRequestInfoBeforeUpgrade
 import com.kkuil.blackchat.web.websocket.utils.NettyUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
 
 /**
  * @Author Kkuil

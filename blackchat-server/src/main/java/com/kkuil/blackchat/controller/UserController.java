@@ -13,7 +13,7 @@ import com.kkuil.blackchat.domain.dto.user.UpdateUserDTO;
 import com.kkuil.blackchat.domain.dto.user.UserLoginDTO;
 import com.kkuil.blackchat.domain.dto.user.UserRegistryDTO;
 import com.kkuil.blackchat.domain.entity.User;
-import com.kkuil.blackchat.utils.JwtUtils;
+import com.kkuil.blackchat.utils.JwtUtil;
 import com.kkuil.blackchat.utils.ResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -187,7 +187,7 @@ public class UserController {
         }
         Map<String, Object> tokenMap = new HashMap<>(8);
         tokenMap = BeanUtil.beanToMap(mapDataInToken, tokenMap, false, true);
-        String token = JwtUtils.create(tokenMap, USER_TOKEN_SECRET, USER_TOKEN_TTL);
+        String token = JwtUtil.create(tokenMap, USER_TOKEN_SECRET, USER_TOKEN_TTL);
         return ResultUtil.success("登录成功", token);
     }
 

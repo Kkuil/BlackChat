@@ -6,8 +6,8 @@ import {
 import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
 import { TOKEN_KEY_IN_LOC } from "@/constant/auth"
 import { WsResponseTypeEnum } from "@/core/websocket/domain/enum/WsResponseTypeEnum"
-import { ElMessage } from "element-plus"
 import eventBus from "@/utils/eventBus"
+import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 
 class Websocket {
     constructor() {
@@ -68,10 +68,6 @@ class Websocket {
         const params: WebsocketParamsType = JSON.parse(data)
         switch (params.type) {
             case WsResponseTypeEnum.CONN_SUCCESS: {
-                ElMessage.success({
-                    message: "连接成功",
-                    type: "success"
-                })
                 break
             }
             case WsResponseTypeEnum.MESSAGE: {
@@ -80,7 +76,7 @@ class Websocket {
             }
             case WsResponseTypeEnum.LOGIN_URL: {
                 const url = params.data.url
-                eventBus.emit(WsResponseTypeEnum.LOGIN_URL, { url })
+                eventBus.emit(WsEventEnum.GET_QR_CODE, { url })
             }
         }
     }

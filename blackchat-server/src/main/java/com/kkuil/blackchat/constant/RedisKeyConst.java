@@ -1,10 +1,21 @@
-package com.abin.mallchat.common.common.constant;
+package com.kkuil.blackchat.constant;
 
 /**
- * @author zhongzb create on 2021/06/10
+ * @Author Kkuil
+ * @Date 2023/9/25
+ * @Description redis键常量
  */
-public class RedisKey {
-    private static final String BASE_KEY = "mallchat:";
+public class RedisKeyConst {
+
+    /**
+     * 根前缀
+     */
+    private static final String BASE_KEY = "blackchat:";
+
+    /**
+     * 登录码
+     */
+    public static final String LOGIN_CODE = "login:code";
 
     /**
      * 在线用户列表

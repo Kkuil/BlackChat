@@ -10,7 +10,7 @@ import java.util.Map;
  * @Date 2023/08/05 12:30
  * @Description Jwt工具类
  */
-public class JwtUtils {
+public class JwtUtil {
     /**
      * @param data Map<String, Object>
      * @return String

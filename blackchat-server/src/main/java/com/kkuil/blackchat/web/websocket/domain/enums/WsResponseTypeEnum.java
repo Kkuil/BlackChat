@@ -17,6 +17,11 @@ import java.util.stream.Collectors;
 @Getter
 public enum WsResponseTypeEnum {
     /**
+     * 连接成功
+     */
+    CONN_SUCCESS(0, "连接成功", String.class),
+
+    /**
      * 登录二维码返回
      */
     LOGIN_URL(1, "登录二维码返回", String.class),

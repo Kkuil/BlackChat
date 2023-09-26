@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public class WsConnUserInfoDTO {
+public class WsConnInfoDTO {
 
     /**
      * 用户ID（如果用户登录了，就进行存储）

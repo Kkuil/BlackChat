@@ -2,7 +2,7 @@ package com.kkuil.blackchat.aspect;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.exception.UnAuthorizationException;
-import com.kkuil.blackchat.utils.JwtUtils;
+import com.kkuil.blackchat.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -41,7 +41,7 @@ public class AuthLoginAspect {
         }
         try {
             // 验签
-            Claims parseToken = JwtUtils.parse(token, USER_TOKEN_SECRET);
+            Claims parseToken = JwtUtil.parse(token, USER_TOKEN_SECRET);
             String username = parseToken.get("username").toString();
             if (EMPTY_STR.equals(username)) {
                 throw new UnAuthorizationException();

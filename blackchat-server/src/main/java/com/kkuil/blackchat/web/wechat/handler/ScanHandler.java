@@ -19,15 +19,22 @@ import java.util.Map;
 @Component
 public class ScanHandler extends AbstractHandler {
 
-
     @Resource
     private WxMessageService wxMessageService;
 
     @Override
-    public WxMpXmlOutMessage handle(WxMpXmlMessage wxMpXmlMessage, Map<String, Object> map,
-                                    WxMpService wxMpService, WxSessionManager wxSessionManager) throws WxErrorException {
-        // 扫码事件处理
-        return wxMessageService.scan(wxMpService, wxMpXmlMessage);
+    public WxMpXmlOutMessage handle(
+            WxMpXmlMessage wxMpXmlMessage,
+            Map<String, Object> map,
+            WxMpService wxMpService,
+            WxSessionManager wxSessionManager
+    ) {
+        try {
+            // 扫码事件处理
+            return wxMessageService.scan(wxMpService, wxMpXmlMessage);
+        } catch (Exception e) {
+            this.logger.error(e.getMessage());
+        }
+        return null;
     }
-
 }

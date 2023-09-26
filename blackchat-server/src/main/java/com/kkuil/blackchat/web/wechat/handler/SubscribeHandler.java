@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.web.wechat.handler;
 
 import com.kkuil.blackchat.web.wechat.adapter.WechatTextBuilderAdapter;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -15,6 +16,7 @@ import java.util.Map;
  * @Description 订阅处理器
  */
 @Component
+@Slf4j
 public class SubscribeHandler extends AbstractHandler {
 
     @Override
@@ -26,6 +28,7 @@ public class SubscribeHandler extends AbstractHandler {
     ) {
 
         this.logger.info("新关注用户 OPENID: " + wxMessage.getFromUser());
+        log.info("user: {}", wxMessage.getFromUser());
 
         try {
             return new WechatTextBuilderAdapter().build("感谢关注", wxMessage);
