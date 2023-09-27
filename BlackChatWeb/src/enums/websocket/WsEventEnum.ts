@@ -6,7 +6,7 @@ export enum WsEventEnum {
     GET_QR_CODE = "get_qr_code",
 
     // 获取到二维码
-    SCAN_SUCCESS = "scan_success",
+    SUBSCRIBE_SUCCESS = "subscribe_success",
 
     // 登录成功
     LOGIN_SUCCESS = "login_success"

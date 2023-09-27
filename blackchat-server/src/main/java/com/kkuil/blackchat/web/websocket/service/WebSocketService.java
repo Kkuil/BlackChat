@@ -36,24 +36,25 @@ public interface WebSocketService {
     /**
      * 下线
      *
-     * @param channel 断开连接
+     * @param channel 通道
+     * @param uid     用户ID
      */
-    void offline(Channel channel);
+    void offline(Channel channel, Long uid);
 
     /**
      * 扫码登录
      *
      * @param channel 连接通道
      */
-    void login(Channel channel);
+    void scan(Channel channel);
 
     /**
-     * 扫码成功
+     * 订阅成功
      *
-     * @param loginCode 登录码
+     * @param code 登录码
      * @return 是否扫码
      */
-    Boolean scanSuccess(Integer loginCode);
+    Boolean subscribeSuccess(Integer code);
 
     /**
      * 扫码登录成功
@@ -91,7 +92,15 @@ public interface WebSocketService {
     /**
      * 向全部人推送消息
      *
-     * @param msg 需要推送的消息
+     * @param wsBaseResp 需要推送的消息
      */
-    void sendMsgToAll(WsBaseResp<?> msg);
+    void sendMsgToAll(WsBaseResp<?> wsBaseResp);
+
+    /**
+     * 向全部人推送消息
+     *
+     * @param wsBaseResp 发送消息体
+     * @param skipUid    跳过的用户ID
+     */
+    void sendMsgToAll(WsBaseResp<?> wsBaseResp, Long skipUid);
 }

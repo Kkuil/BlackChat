@@ -1,12 +1,12 @@
 import request from "@/utils/request";
 
 /**
- * 获取登录二维码
+ * 获取徽章列表
  * @returns
  */
-export const getLoginQrCode = (): Promise<GlobalTypes.ApiResult<string>> => {
+export const listBadges = (): Promise<GlobalTypes.ApiResult<string[]>> => {
     return request({
-        url: "/login",
+        url: "/badge/list",
         method: "GET"
     })
 }

@@ -12,7 +12,7 @@ export enum WsResponseTypeEnum {
     /**
      * 用户扫描成功等待授权
      */
-    LOGIN_SCAN_SUCCESS = 2,
+    LOGIN_SUBSCRIBE_SUCCESS = 2,
 
     /**
      * 用户登录成功返回用户信息

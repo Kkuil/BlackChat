@@ -28,6 +28,10 @@ declare module 'vue' {
     ScrollContainer: typeof import("./src/components/ScrollContainer.vue")["default"]
     SvgIcon: typeof import('./src/components/SvgIcon/SvgIcon.vue')['default']
     TheWelcome: typeof import("./src/components/TheWelcome.vue")["default"]
+    UserInfoDialog: typeof import('./src/components/UserInfoDialog/UserInfoDialog.vue')['default']
     WelcomeItem: typeof import("./src/components/WelcomeItem.vue")["default"]
+  }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

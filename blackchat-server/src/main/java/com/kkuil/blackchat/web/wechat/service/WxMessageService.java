@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author Kkuil
@@ -70,7 +71,7 @@ public class WxMessageService {
     private IUserService userService;
 
     /**
-     * 扫码
+     * 扫码 (能触发这个事件的前提都是建立在已经关注公众号的基础上，千万别踩坑)
      *
      * @param wxMpXmlMessage 微信xml消息
      * @return 返回消息
@@ -78,22 +79,17 @@ public class WxMessageService {
     public WxMpXmlOutMessage scan(WxMpService wxMpService, WxMpXmlMessage wxMpXmlMessage) {
         // 获取扫码用户的openid
         String openId = wxMpXmlMessage.getFromUser();
-        Integer eventKey = Integer.parseInt(replacePrefixIfPresent(wxMpXmlMessage));
+        Integer code = Integer.parseInt(replacePrefixIfPresent(wxMpXmlMessage));
         // 判断是否已经注册，且授权成功了（名字头像等信息已经获取到了）
         // 判断用户是否注册过
         User user = userDao.getByOpenId(openId);
+        // TODO 1. 已注册，也授权了，直接登录
         if (!ObjectUtil.isNull(user) && !StrUtil.isBlank(user.getAvatar())) {
-            // 直接登录
-            login(user.getId(), eventKey);
+            login(user.getId(), code);
             return new WechatTextBuilderAdapter().build("登录成功，已上线", wxMpXmlMessage);
         }
-        // 保存openid和场景code的关系，后续才能通知到前端
-        OPENID_EVENT_CODE_MAP.put(openId, eventKey);
-        // 授权流程,给用户发送授权消息，并且异步通知前端扫码成功
-        threadPoolTaskExecutor.execute(() -> {
-            // 判断如果等待登录队列中无该码，则表示已经超时或者已经被移除了
-            Boolean isSuccess = webSocketService.scanSuccess(eventKey);
-        });
+        // TODO 2. 已注册，但是未授权，让用户授权
+        // 授权链接
         String url = String.format(URL, wxMpService.getWxMpConfigStorage().getAppId(), URLEncoder.encode(callback + prefix + "/wx/portal/public/callBack"));
         String format = String.format(SKIP_URL_SCHEMA, url);
         return new WechatTextBuilderAdapter().build(format, wxMpXmlMessage);
@@ -109,17 +105,34 @@ public class WxMessageService {
     public WxMpXmlOutMessage subscribe(WxMpService wxMpService, WxMpXmlMessage wxMpXmlMessage) {
         // 获取到当前用户的openid
         String openId = wxMpXmlMessage.getFromUser();
-        Integer eventKey = Integer.parseInt(replacePrefixIfPresent(wxMpXmlMessage));
+        Integer code = Integer.parseInt(replacePrefixIfPresent(wxMpXmlMessage));
         // 判断用户是否注册过
         User user = userDao.getByOpenId(openId);
         if (!ObjectUtil.isNull(user) && !StrUtil.isBlank(user.getAvatar())) {
             // 登录
-            login(user.getId(), eventKey);
-        } else {
-            // 注册，这时候只保存用户的openid，名字和头像信息都不进行保存
-            userService.register(openId);
+            login(user.getId(), code);
         }
-        String url = String.format(URL, wxMpService.getWxMpConfigStorage().getAppId(), URLEncoder.encode(callback + prefix + "/wx/portal/public/callBack"));
+        if (ObjectUtil.isNull(user)) {
+            // 注册，这时候只保存用户的openid，名字和头像信息都没办法进行保存（因为没权限）
+            userService.register(openId);
+            // TODO 这个地方是新加的，因为如果用户没有关注过该公众号，扫码不会触发微信的扫码事件，
+            //  我们也就无法存储code -> channel的映射关系，后续的扫码成功事件也就没办法通过code拿到channel，
+            //  然后推送给前端进行提示
+            // 保存openid和场景code的关系，后续才能通知到前端
+            OPENID_EVENT_CODE_MAP.put(openId, code);
+            // 授权流程,给用户发送授权消息，并且异步通知前端订阅成功
+            threadPoolTaskExecutor.execute(() -> {
+                // 判断如果等待登录队列中无该码，则表示已经超时或者已经被移除了
+                webSocketService.subscribeSuccess(code);
+            });
+        }
+        String url = String.format(
+                URL,
+                wxMpService
+                        .getWxMpConfigStorage()
+                        .getAppId(),
+                URLEncoder.encode(callback + prefix + "/wx/portal/public/callBack")
+        );
         String format = String.format(SKIP_URL_SCHEMA, url);
         return new WechatTextBuilderAdapter().build("感谢关注，" + format, wxMpXmlMessage);
     }
@@ -136,22 +149,22 @@ public class WxMessageService {
             fillUserInfo(user.getId(), userInfo);
         }
         // 触发用户登录成功操作
-        Integer eventKey = OPENID_EVENT_CODE_MAP.get(userInfo.getOpenid());
-        login(user.getId(), eventKey);
+        Integer code = OPENID_EVENT_CODE_MAP.get(userInfo.getOpenid());
+        login(user.getId(), code);
     }
 
     /**
      * 登录
      *
      * @param uid      用户ID
-     * @param eventKey 事件key
+     * @param code code
      */
-    private void login(Long uid, Integer eventKey) {
+    private void login(Long uid, Integer code) {
         User user = userDao.getById(uid);
         // 调用用户登录模块
         String token = loginService.login(uid);
         // 推送前端登录成功
-        webSocketService.scanLoginSuccess(eventKey, user, token);
+        webSocketService.scanLoginSuccess(code, user, token);
     }
 
     /**

@@ -4,7 +4,7 @@ import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.web.websocket.domain.enums.WsResponseTypeEnum;
 import com.kkuil.blackchat.web.websocket.domain.vo.WsLoginVO;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.WsLoginSuccess;
+import com.kkuil.blackchat.web.websocket.domain.vo.response.WsLoginSuccessMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import org.springframework.stereotype.Component;
 
@@ -30,33 +30,35 @@ public class WsAdapter {
     }
 
     /**
-     * 构建扫码成功返回体
+     * 构建订阅成功返回体
      *
-     * @return 扫码成功返回体
+     * @return 订阅成功返回体
      */
-    public static WsBaseResp<?> buildScanSuccessResp() {
+    public static WsBaseResp<?> buildSubscribeSuccessResp() {
         WsBaseResp<?> wsBaseResp = new WsBaseResp<>();
-        wsBaseResp.setType(WsResponseTypeEnum.LOGIN_SCAN_SUCCESS.getType());
+        wsBaseResp.setType(WsResponseTypeEnum.LOGIN_SUBSCRIBE_SUCCESS.getType());
         return wsBaseResp;
     }
 
     /**
      * 构建登录成功
+     *
      * @param user  用户信息
      * @param token token
-     *
+     * @param power 用户权限
      * @return 消息体
      */
-    public static WsBaseResp<?> buildLoginSuccessResp(User user, String token) {
-        WsBaseResp<WsLoginSuccess> wsBaseResp = new WsBaseResp<>();
+    public static WsBaseResp<WsLoginSuccessMessage> buildLoginSuccessResp(User user, String token, Long power) {
+        WsBaseResp<WsLoginSuccessMessage> wsBaseResp = new WsBaseResp<>();
         wsBaseResp.setType(WsResponseTypeEnum.LOGIN_SUCCESS.getType());
-        WsLoginSuccess wsLoginSuccess = WsLoginSuccess.builder()
+        WsLoginSuccessMessage wsLoginSuccessMessage = WsLoginSuccessMessage.builder()
                 .avatar(user.getAvatar())
                 .name(user.getName())
+                .power(power)
                 .token(token)
                 .uid(user.getId())
                 .build();
-        wsBaseResp.setData(wsLoginSuccess);
+        wsBaseResp.setData(wsLoginSuccessMessage);
         return wsBaseResp;
     }
 }

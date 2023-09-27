@@ -9,7 +9,6 @@ export default {
         pushMessageToMainThread({ type: WorkerTypeEnum.CLOSE })
     },
     onOpen: () => {
-        console.log(13)
         pushMessageToMainThread({ type: WorkerTypeEnum.OPEN })
     },
     onMessage: (e: MessageEvent<string>) => {

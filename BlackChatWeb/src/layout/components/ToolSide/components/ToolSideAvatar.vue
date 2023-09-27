@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Avatar } from "@element-plus/icons-vue"
 import { useUserStore } from "@/stores/user"
-import { popUpLoginDialog } from "@/utils/popLoginDialog"
+import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
+import { popUpUserInfoDialog } from "@/utils/popDialog/popUserInfoDialog"
 
 const userStore = useUserStore()
 
@@ -10,8 +11,10 @@ const userStore = useUserStore()
  */
 const checkUserInfo = async () => {
     // 判断用户是否登录
-    if (!userStore.userInfo.uid) {
+    if (!userStore.isLogin()) {
         popUpLoginDialog()
+    } else {
+        popUpUserInfoDialog()
     }
 }
 </script>

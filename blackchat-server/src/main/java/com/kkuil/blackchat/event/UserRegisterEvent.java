@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.event;
 
 import com.kkuil.blackchat.domain.entity.User;
+import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.context.ApplicationEvent;
  * @Date 2023/9/26 16:32
  * @Description 用户注册事件
  */
+@Getter
 public class UserRegisterEvent extends ApplicationEvent {
     private final User user;
 

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class WsLoginSuccess {
+public class WsLoginSuccessMessage {
     /**
      * 用户ID
      */
@@ -34,5 +34,9 @@ public class WsLoginSuccess {
      * 用户名
      */
     private String name;
-    // TODO 用户权限 0普通用户 1超管
+
+    /**
+     * 用户权限 9001普通用户 9002超管
+     */
+    private Long power;
 }

@@ -118,7 +118,7 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
                     log.info("type: {}", type);
             case LOGIN ->
                 // 登录请求
-                    webSocketService.login(channel);
+                    webSocketService.scan(channel);
             default -> {
                 // 未知请求
                 Map<Integer, WsRequestTypeEnum> wsRequestTypeCache = WsRequestTypeEnum.WS_REQUEST_TYPE_CACHE;

@@ -1,10 +1,10 @@
 import { ref } from "vue"
 import { defineStore } from "pinia"
-import type { UserInfoType } from "@/stores/store"
+import type { Store } from "@/stores/store"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
 
 export const useUserStore = defineStore("user", () => {
-    const userInfo = ref<UserInfoType>({})
+    const userInfo = ref<Store.UserInfoType>({})
 
     /**
      * 登录成功保存信息
@@ -17,5 +17,12 @@ export const useUserStore = defineStore("user", () => {
         }
     }
 
-    return { userInfo, loginSuccess }
+    /**
+     * 是否已经登录
+     */
+    const isLogin = () => {
+        return !!userInfo.value.name
+    }
+
+    return { userInfo, loginSuccess, isLogin }
 })

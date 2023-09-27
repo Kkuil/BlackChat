@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import QrCode from "qrcode.vue"
 import { onMounted, onUnmounted, ref } from "vue"
-import { popDownLoginDialog } from "@/utils/popLoginDialog"
+import { popDownLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import eventBus from "@/utils/eventBus"
 import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
@@ -11,6 +11,7 @@ import type { WebsocketTypes } from "@/core/websocket/types/type"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
 import { SuccessFilled } from "@element-plus/icons-vue"
 import { useUserStore } from "@/stores/user"
+import { ElMessage } from "element-plus"
 
 const userStore = useUserStore()
 
@@ -56,9 +57,9 @@ const initListeners = () => {
         qrCodeWithLogin.value = data.url
     })
 
-    // 监听扫码成功事件
-    eventBus.on(WsEventEnum.SCAN_SUCCESS, () => {
-        onClose()
+    // 监听订阅成功事件
+    eventBus.on(WsEventEnum.SUBSCRIBE_SUCCESS, () => {
+        ElMessage.success("订阅成功")
     })
 
     // 监听登录成功事件
@@ -107,7 +108,10 @@ onUnmounted(() => {
         </template>
         <template #default>
             <div class="w-full flex-center">
-                <div class="w-[350px] h-[350px] bg-[#f5f5f5] flex-center">
+                <div
+                    class="w-[350px] h-[350px] bg-[#f5f5f5] flex-center"
+                    v-loading="!qrCodeWithLogin"
+                >
                     <QrCode
                         class="login-qrcode"
                         v-if="qrCodeWithLogin"

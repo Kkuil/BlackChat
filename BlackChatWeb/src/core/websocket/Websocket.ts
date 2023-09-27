@@ -90,14 +90,17 @@ class Websocket {
                 eventBus.emit(WsEventEnum.GET_QR_CODE, { url })
                 break
             }
-            case WsResponseTypeEnum.LOGIN_SCAN_SUCCESS: {
-                ElMessage.success("扫码成功")
-                eventBus.emit("scan_success", { message: params.data })
+            case WsResponseTypeEnum.LOGIN_SUBSCRIBE_SUCCESS: {
+                eventBus.emit(WsEventEnum.SUBSCRIBE_SUCCESS, {
+                    message: params.data
+                })
                 break
             }
             case WsResponseTypeEnum.LOGIN_SUCCESS: {
                 ElMessage.success("登录成功")
-                eventBus.emit("login_success", { message: params.data })
+                eventBus.emit(WsEventEnum.LOGIN_SUCCESS, {
+                    message: params.data
+                })
                 break
             }
         }
