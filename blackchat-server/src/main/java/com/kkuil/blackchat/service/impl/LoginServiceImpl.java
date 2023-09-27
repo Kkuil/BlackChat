@@ -24,6 +24,7 @@ import static com.kkuil.blackchat.constant.UserConst.USER_TOKEN_TTL;
 @Service
 @Slf4j
 public class LoginServiceImpl implements LoginService {
+
     /**
      * 获取用户ID
      *
@@ -33,11 +34,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Long getValidUid(String token) {
         Claims userInfo = JwtUtil.parse(token, USER_TOKEN_SECRET);
-        try {
-            return (Long) userInfo.get("uid");
-        } catch (Exception e) {
-            throw new UnAuthorizationException("令牌无效或失效");
-        }
+        return Long.parseLong(userInfo.get("uid").toString());
     }
 
     /**
@@ -58,5 +55,21 @@ public class LoginServiceImpl implements LoginService {
         map.put("uid", uid);
         token = JwtUtil.create(map, USER_TOKEN_SECRET, USER_TOKEN_TTL);
         return token;
+    }
+
+    /**
+     * 验证token的有效性
+     *
+     * @param token token
+     * @return 是否有效
+     */
+    @Override
+    public boolean verify(String token) {
+        try {
+            JwtUtil.parse(token, USER_TOKEN_SECRET);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

@@ -14,7 +14,7 @@ public class UserConst {
     /**
      * 用户token过期时间
      */
-    public static final int USER_TOKEN_TTL = 30 * 60 * 1000;
+    public static final int USER_TOKEN_TTL = 60 * 30 * 60 * 1000;
 
     /**
      * 用户token刷新时间

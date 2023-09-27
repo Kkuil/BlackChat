@@ -25,7 +25,7 @@ class Websocket {
     initConnect() {
         const message: WebsocketTypes.WorkerParamsType = {
             type: WorkerTypeEnum.INIT,
-            data: localStorage.getItem(TOKEN_KEY_IN_LOC) ?? ""
+            data: localStorage.getItem(TOKEN_KEY_IN_LOC)
         }
         worker.postMessage(JSON.stringify(message))
         this.#connectReady = true

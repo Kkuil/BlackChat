@@ -29,19 +29,16 @@ public class JwtUtil {
     }
 
     /**
-     * @param token String
-     * @return String
-     * @description 解析token
+     * 解析token
+     *
+     * @param token  token
+     * @param secret 密钥
+     * @return 解析结果
      */
     public static Claims parse(String token, String secret) {
-        try {
-            return Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
-                 IllegalArgumentException e) {
-            throw new RuntimeException(e);
-        }
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
     }
 }

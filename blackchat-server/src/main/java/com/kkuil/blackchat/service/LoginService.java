@@ -22,4 +22,12 @@ public interface LoginService {
      * @return token
      */
     String login(Long uid);
+
+    /**
+     * 验证token的有效性
+     *
+     * @param token token
+     * @return 是否有效
+     */
+    boolean verify(String token);
 }

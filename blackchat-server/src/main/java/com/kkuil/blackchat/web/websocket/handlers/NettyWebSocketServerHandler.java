@@ -65,8 +65,8 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
             webSocketService.connect(context.channel());
             // 获取在升级成Websocket协议之前请求头中携带的token值（在这个类（NettyHttpHeadersHandler）中收集的）
             String token = NettyUtil.getAttrFromChannel(context.channel(), AuthorizationConst.TOKEN_KEY_IN_CHANNEL);
-            // 非空则进行权限验证
             if (StrUtil.isNotBlank(token)) {
+                // 非空则进行权限验证
                 webSocketService.authorize(context.channel(), token);
             }
         }

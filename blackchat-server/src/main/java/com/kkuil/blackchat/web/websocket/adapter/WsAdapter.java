@@ -61,4 +61,15 @@ public class WsAdapter {
         wsBaseResp.setData(wsLoginSuccessMessage);
         return wsBaseResp;
     }
+
+    /**
+     * 构建无效token
+     *
+     * @return WsBaseResp<WsLoginSuccessMessage> 消息体
+     */
+    public static WsBaseResp<WsLoginSuccessMessage> buildInvalidateTokenResp() {
+        WsBaseResp<WsLoginSuccessMessage> wsBaseResp = new WsBaseResp<>();
+        wsBaseResp.setType(WsResponseTypeEnum.INVALIDATE_TOKEN.getType());
+        return wsBaseResp;
+    }
 }

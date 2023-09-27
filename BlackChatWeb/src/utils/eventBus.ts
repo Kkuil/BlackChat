@@ -10,7 +10,7 @@ type Events = {
     // 登录成功事件
     login_success: { message: MessageResponseTypes.TLoginSuccess }
     // 扫码成功事件
-    scan_success: void
+    subscribe_success: void
 }
 
 const eventHub: Emitter<Events> = mitt<Events>()

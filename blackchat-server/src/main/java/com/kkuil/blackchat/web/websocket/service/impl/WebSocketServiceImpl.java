@@ -5,11 +5,13 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.dao.UserRoleDAO;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.event.UserOnlineEvent;
 import com.kkuil.blackchat.event.adapter.EventParamAdapter;
 import com.kkuil.blackchat.event.domain.dto.UserOnlineEventParamsDTO;
+import com.kkuil.blackchat.service.LoginService;
 import com.kkuil.blackchat.utils.RedisUtil;
 import com.kkuil.blackchat.web.websocket.adapter.WsAdapter;
 import com.kkuil.blackchat.web.websocket.constant.AuthorizationConst;
@@ -81,6 +83,10 @@ public class WebSocketServiceImpl implements WebSocketService {
     private UserRoleDAO userRoleDao;
     @Resource
     private UserCache userCache;
+    @Resource
+    private LoginService loginService;
+    @Resource
+    private UserDAO userDao;
 
     /**
      * 用户连接
@@ -213,6 +219,16 @@ public class WebSocketServiceImpl implements WebSocketService {
      */
     @Override
     public void authorize(Channel channel, String token) {
+        // 校验token
+        boolean verifySuccess = loginService.verify(token);
+        if (verifySuccess) {
+            // 用户校验成功给用户登录
+            User user = userDao.getById(loginService.getValidUid(token));
+            loginSuccess(channel, user, token);
+        } else {
+            // 让前端的token失效
+            sendMsgToOne(channel, WsAdapter.buildInvalidateTokenResp());
+        }
     }
 
     /**

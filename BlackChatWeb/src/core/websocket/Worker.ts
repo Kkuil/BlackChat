@@ -13,6 +13,8 @@ export const pushMessageToMainThread = ({
 
 // ws instance
 let connection: WebSocket
+// token
+let token: string
 
 // 初始化 ws 连接
 const initConnection = () => {
@@ -22,8 +24,7 @@ const initConnection = () => {
     connection?.removeEventListener("close", WebsocketListeners.onClose)
     connection?.removeEventListener("error", WebsocketListeners.onError)
     // 建立链接
-    console.log(WS_URL)
-    connection = new WebSocket(WS_URL)
+    connection = new WebSocket(`${WS_URL}${token ? `?token=${token}` : ""}`)
     // 收到消息
     connection.addEventListener("message", WebsocketListeners.onMessage)
     // 建立链接
@@ -45,6 +46,7 @@ self.onmessage = (e: MessageEvent<string>) => {
     switch (type) {
         case WorkerTypeEnum.INIT: {
             console.log("init")
+            token = data
             initConnection()
             break
         }

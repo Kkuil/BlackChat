@@ -2,6 +2,7 @@ import { ref } from "vue"
 import { defineStore } from "pinia"
 import type { Store } from "@/stores/store"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
+import { TOKEN_KEY_IN_LOC } from "@/constant/auth"
 
 export const useUserStore = defineStore("user", () => {
     const userInfo = ref<Store.UserInfoType>({})
@@ -13,8 +14,12 @@ export const useUserStore = defineStore("user", () => {
     const loginSuccess = (info: MessageResponseTypes.TLoginSuccess) => {
         userInfo.value = {
             ...userInfo.value,
-            ...info
+            uid: info.uid,
+            avatar: info.avatar,
+            name: info.name
         }
+        // 保存token
+        localStorage.setItem(TOKEN_KEY_IN_LOC, info.token)
     }
 
     /**

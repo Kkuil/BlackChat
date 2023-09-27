@@ -8,12 +8,7 @@ import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
 import { LOGIN_MESSAGE } from "@/core/websocket/domain/preset/WsMessagePreset"
 import Websocket from "@/core/websocket/Websocket"
 import type { WebsocketTypes } from "@/core/websocket/types/type"
-import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
 import { SuccessFilled } from "@element-plus/icons-vue"
-import { useUserStore } from "@/stores/user"
-import { ElMessage } from "element-plus"
-
-const userStore = useUserStore()
 
 /**
  * 弹框可见性
@@ -57,20 +52,10 @@ const initListeners = () => {
         qrCodeWithLogin.value = data.url
     })
 
-    // 监听订阅成功事件
-    eventBus.on(WsEventEnum.SUBSCRIBE_SUCCESS, () => {
-        ElMessage.success("订阅成功")
-    })
-
     // 监听登录成功事件
-    eventBus.on(
-        WsEventEnum.LOGIN_SUCCESS,
-        ({ message }: { message: MessageResponseTypes.TLoginSuccess }) => {
-            onClose()
-            // 保存用户信息
-            userStore.loginSuccess(message)
-        }
-    )
+    eventBus.on(WsEventEnum.LOGIN_SUCCESS, () => {
+        onClose()
+    })
 }
 
 /**
