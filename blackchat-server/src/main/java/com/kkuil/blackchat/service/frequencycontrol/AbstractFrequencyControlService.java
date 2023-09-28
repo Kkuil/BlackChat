@@ -1,7 +1,7 @@
 package com.kkuil.blackchat.service.frequencycontrol;
 
 import com.kkuil.blackchat.domain.dto.frequency.FrequencyControlDTO;
-import com.kkuil.blackchat.enums.CommonErrorEnum;
+import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.exception.FrequencyControlException;
 import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.PostConstruct;

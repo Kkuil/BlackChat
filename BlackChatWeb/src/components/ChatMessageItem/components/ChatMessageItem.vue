@@ -24,21 +24,42 @@ const computedDirection = computed(() => {
     <div
         :class="`message-item py-[10px] flex items-center flex-${computedDirection}`"
     >
-        <el-avatar :src="avatar" :title="username" :size="35">
+        <el-avatar
+            :src="avatar"
+            :title="username"
+            :size="35"
+            class="cursor-pointer"
+        >
             <el-icon :size="20">
                 <Avatar />
             </el-icon>
         </el-avatar>
         <div
-            class="flex flex-col justify-between right"
+            class="flex flex-col justify-between items-start"
             :class="direction == 'left' ? 'ml-[7px]' : 'mr-[7px]'"
         >
-            <span class="text-[12px] text-[#777]">{{ username }}</span>
-            <div class="message p-[5px] rounded-[5px] bg-[#f5f5f5] text-[15px]">
+            <div class="top text-[#777]">
+                <span class="username text-[13px]">{{ username }}</span>
+                <span
+                    class="send-time text-[12px] ml-[5px] opacity-0 transition-[opacity]"
+                    >{{ sendTime }}</span
+                >
+            </div>
+            <div
+                class="message p-[5px] rounded-[5px] bg-[#f5f5f5] text-[14px] flex-shrink-0"
+            >
                 {{ message }}
             </div>
         </div>
     </div>
 </template>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.top {
+    &:hover {
+        .send-time {
+            opacity: 1 !important;
+        }
+    }
+}
+</style>

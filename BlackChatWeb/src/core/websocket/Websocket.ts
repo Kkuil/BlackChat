@@ -78,30 +78,37 @@ class Websocket {
     onMessage = (data: string) => {
         const params: WebsocketRespType = JSON.parse(data)
         switch (params.type) {
+            // 连接成功
             case WsResponseTypeEnum.CONN_SUCCESS: {
                 break
             }
+            // 收到消息
             case WsResponseTypeEnum.MESSAGE: {
                 console.log("收到消息", params.data)
                 break
             }
+            // 获取登录二维码
             case WsResponseTypeEnum.LOGIN_URL: {
                 const url = params.data.url
                 eventBus.emit(WsEventEnum.GET_QR_CODE, { url })
                 break
             }
+            // 订阅成功
             case WsResponseTypeEnum.LOGIN_SUBSCRIBE_SUCCESS: {
                 eventBus.emit(WsEventEnum.SUBSCRIBE_SUCCESS, {
                     message: params.data
                 })
                 break
             }
+            // 登录成功
             case WsResponseTypeEnum.LOGIN_SUCCESS: {
-                ElMessage.success("登录成功")
                 eventBus.emit(WsEventEnum.LOGIN_SUCCESS, {
                     message: params.data
                 })
                 break
+            }
+            case WsResponseTypeEnum.INVALIDATE_TOKEN: {
+                ElMessage.error("登录失效，请重新登录")
             }
         }
     }

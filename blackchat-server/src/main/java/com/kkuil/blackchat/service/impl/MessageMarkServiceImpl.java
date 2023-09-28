@@ -2,7 +2,7 @@ package com.kkuil.blackchat.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.MessageMark;
-import com.kkuil.blackchat.service.IMessageMarkService;
+import com.kkuil.blackchat.service.MessageMarkService;
 import com.kkuil.blackchat.mapper.MessageMarkMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class MessageMarkServiceImpl extends ServiceImpl<MessageMarkMapper, MessageMark>
-    implements IMessageMarkService {
+    implements MessageMarkService {
 
 }

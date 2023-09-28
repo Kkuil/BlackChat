@@ -1,6 +1,6 @@
 package com.kkuil.blackchat.exception;
 
-import com.kkuil.blackchat.enums.ErrorEnum;
+import com.kkuil.blackchat.domain.enums.error.ErrorEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

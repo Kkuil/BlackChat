@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kkuil.blackchat.mapper.RoomFriendMapper">
+
+    <resultMap id="BaseResultMap" type="com.kkuil.blackchat.domain.entity.RoomFriend">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="room_id" column="room_id" jdbcType="BIGINT"/>
+            <result property="uid1" column="uid1" jdbcType="BIGINT"/>
+            <result property="uid2" column="uid2" jdbcType="BIGINT"/>
+            <result property="room_key" column="room_key" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,room_id,uid1,
+        uid2,room_key,status,
+        create_time,update_time
+    </sql>
+</mapper>

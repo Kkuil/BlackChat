@@ -1,14 +1,29 @@
+import {
+    ChatMessage,
+    FileMessageBody,
+    ImageMessageBody,
+    SoundMessageBody,
+    TextMessageBody,
+    VideoMessageBody
+} from "@/layout/components/ChatContent/ChatMessageTypes"
+
 export declare namespace ChatTypes {
-    // 消息发送的基础请求体
+    type MessageBody =
+        | TextMessageBody
+        | ImageMessageBody
+        | FileMessageBody
+        | SoundMessageBody
+        | VideoMessageBody
+
+    /**
+     * 消息发送的基础请求体
+     */
     type ChatMessageBaseReq = {
         // 房间号
         roomId: number
         // 消息类型
-        messageType: number
+        messageType: ChatMessage.MessageType
         // 消息体
-        body: object
+        body: MessageBody
     }
-
-    // 消息类型
-    type MessageType = "text" | "image" | "video" | "audio" | "file" | "link"
 }

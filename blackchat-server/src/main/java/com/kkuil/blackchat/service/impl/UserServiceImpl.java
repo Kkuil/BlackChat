@@ -3,7 +3,7 @@ package com.kkuil.blackchat.service.impl;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.event.UserRegisterEvent;
-import com.kkuil.blackchat.service.IUserService;
+import com.kkuil.blackchat.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @Description 针对表【user(用户表)】的数据库操作Service实现
  */
 @Service
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements UserService {
 
     @Resource
     private UserDAO userDao;

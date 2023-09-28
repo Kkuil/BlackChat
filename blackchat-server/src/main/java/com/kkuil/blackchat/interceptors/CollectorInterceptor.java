@@ -25,10 +25,13 @@ import static com.kkuil.blackchat.constant.UserConst.ATTRIBUTE_UID_IN_HEADER;
 public class CollectorInterceptor implements HandlerInterceptor {
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         RequestInfo info = new RequestInfo();
-        info.setUid(Optional.ofNullable(request.getAttribute(ATTRIBUTE_UID_IN_HEADER)).map(Object::toString).map(Long::parseLong).orElse(null));
-        info.setIp(ServletUtil.getClientIP((javax.servlet.http.HttpServletRequest) request));
+        Object uidOptional = request.getAttribute(ATTRIBUTE_UID_IN_HEADER);
+        Long uid = Optional.ofNullable(uidOptional).map(Object::toString).map(Long::parseLong).orElse(null);
+        String ip = ServletUtil.getClientIP((javax.servlet.http.HttpServletRequest) request);
+        info.setUid(uid);
+        info.setIp(ip);
         RequestHolderDTO.set(info);
         return true;
     }

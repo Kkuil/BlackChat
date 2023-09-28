@@ -2,7 +2,7 @@ package com.kkuil.blackchat.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.WxMsg;
-import com.kkuil.blackchat.service.IWxMsgService;
+import com.kkuil.blackchat.service.WxMsgService;
 import com.kkuil.blackchat.mapper.WxMsgMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class WxMsgServiceImpl extends ServiceImpl<WxMsgMapper, WxMsg>
-    implements IWxMsgService {
+    implements WxMsgService {
 
 }

@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.service.LoginService;
-import com.kkuil.blackchat.service.IUserService;
+import com.kkuil.blackchat.service.UserService;
 import com.kkuil.blackchat.web.websocket.service.WebSocketService;
 import com.kkuil.blackchat.web.wechat.adapter.UserAdapter;
 import com.kkuil.blackchat.web.wechat.adapter.WechatTextBuilderAdapter;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @Author Kkuil
@@ -68,7 +67,7 @@ public class WxMessageService {
     @Lazy
     private WebSocketService webSocketService;
     @Resource
-    private IUserService userService;
+    private UserService userService;
 
     /**
      * 扫码 (能触发这个事件的前提都是建立在已经关注公众号的基础上，千万别踩坑)

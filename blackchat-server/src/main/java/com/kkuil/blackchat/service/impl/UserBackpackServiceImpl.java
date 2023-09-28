@@ -5,10 +5,10 @@ import com.kkuil.blackchat.cache.ItemCache;
 import com.kkuil.blackchat.dao.UserBackpackDAO;
 import com.kkuil.blackchat.domain.entity.ItemConfig;
 import com.kkuil.blackchat.domain.entity.UserBackpack;
-import com.kkuil.blackchat.enums.IdempotentEnum;
-import com.kkuil.blackchat.enums.YesOrNoEnum;
-import com.kkuil.blackchat.enums.user.ItemTypeEnum;
-import com.kkuil.blackchat.service.IUserBackpackService;
+import com.kkuil.blackchat.domain.enums.IdempotentEnum;
+import com.kkuil.blackchat.domain.enums.YesOrNoEnum;
+import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
+import com.kkuil.blackchat.service.UserBackpackService;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @Description 针对表【user_backpack(用户背包表)】的数据库操作Service实现
  */
 @Service
-public class UserBackpackServiceImpl implements IUserBackpackService {
+public class UserBackpackServiceImpl implements UserBackpackService {
 
     @Resource
     private UserBackpackDAO userBackpackDao;

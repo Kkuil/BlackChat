@@ -1,15 +1,23 @@
 package com.kkuil.blackchat.dao;
 
+import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.Role;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.entity.UserRole;
+import com.kkuil.blackchat.domain.enums.RoleEnum;
+import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.mapper.RoleMapper;
 import com.kkuil.blackchat.mapper.UserRoleMapper;
 import com.kkuil.blackchat.utils.AssertUtil;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @Author Kkuil
@@ -26,14 +34,28 @@ public class UserRoleDAO extends ServiceImpl<UserRoleMapper, UserRole> {
      * @return 权限ID
      */
     public Long getPower(User user) {
-        QueryWrapper<UserRole> wrapper = new QueryWrapper<>();
-        wrapper.eq("uid", user.getId());
+        LambdaQueryWrapper<UserRole> wrapper = new QueryWrapper<UserRole>().lambda().eq(UserRole::getUid, user.getId());
         UserRole userRole = this.getOne(wrapper);
         if (userRole == null) {
-            return null;
+            return 0L;
         }
         Long roleId = userRole.getRoleId();
-        AssertUtil.isNotEmpty(roleId, "当前用户存在问题，请稍后再试吧~");
+        AssertUtil.isNotEmpty(roleId, CommonErrorEnum.SYSTEM_ERROR.getMsg());
         return userRole.getRoleId();
+    }
+
+    /**
+     * 判断用户是否有某些权限
+     *
+     * @param uid         用户ID
+     * @return 是否有
+     */
+    public Boolean hasAuthorities(Long uid) {
+        LambdaQueryChainWrapper<UserRole> wrapper = lambdaQuery().eq(UserRole::getUid, uid);
+        UserRole userRole = this.getOne(wrapper);
+        Long roleId = userRole.getRoleId();
+        Map<Long, RoleEnum> authorities = RoleEnum.CACHE;
+        Set<Long> roleIds = authorities.keySet();
+        return roleIds.contains(roleId);
     }
 }

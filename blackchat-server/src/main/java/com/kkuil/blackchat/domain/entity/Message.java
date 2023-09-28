@@ -4,16 +4,22 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
- * 消息表
- * @TableName message
+ * @Author Kkuil
+ * @Date 2023/9/28 10:17
+ * @Description 消息表
  */
-@TableName(value ="message")
 @Data
+@Builder
+@TableName(value = "message")
 public class Message implements Serializable {
     /**
      * id
@@ -25,13 +31,13 @@ public class Message implements Serializable {
      * 会话表id
      */
     @TableField(value = "room_id")
-    private Long room_id;
+    private Long roomId;
 
     /**
      * 消息发送者uid
      */
     @TableField(value = "from_uid")
-    private Long from_uid;
+    private Long fromUid;
 
     /**
      * 消息内容
@@ -42,8 +48,8 @@ public class Message implements Serializable {
     /**
      * 回复的消息内容
      */
-    @TableField(value = "reply_msg_id")
-    private Long reply_msg_id;
+    @TableField(value = "reply_message_id")
+    private Long replyMessageId;
 
     /**
      * 消息状态 0正常 1删除
@@ -55,7 +61,7 @@ public class Message implements Serializable {
      * 与回复的消息间隔多少条
      */
     @TableField(value = "gap_count")
-    private Integer gap_count;
+    private Integer gapCount;
 
     /**
      * 消息类型 1正常文本 2.撤回消息
@@ -73,14 +79,15 @@ public class Message implements Serializable {
      * 创建时间
      */
     @TableField(value = "create_time")
-    private Date create_time;
+    private Date createTime;
 
     /**
      * 修改时间
      */
     @TableField(value = "update_time")
-    private Date update_time;
+    private Date updateTime;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

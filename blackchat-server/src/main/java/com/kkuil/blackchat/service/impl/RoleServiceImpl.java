@@ -1,6 +1,6 @@
 package com.kkuil.blackchat.service.impl;
 
-import com.kkuil.blackchat.service.IRoleService;
+import com.kkuil.blackchat.service.RoleService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,6 +9,6 @@ import org.springframework.stereotype.Service;
  * @Description 针对表【role(角色表)】的数据库操作Service实现
  */
 @Service
-public class RoleServiceImpl implements IRoleService {
+public class RoleServiceImpl implements RoleService {
 
 }

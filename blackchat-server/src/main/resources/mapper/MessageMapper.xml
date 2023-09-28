@@ -9,7 +9,7 @@
             <result property="room_id" column="room_id" jdbcType="BIGINT"/>
             <result property="from_uid" column="from_uid" jdbcType="BIGINT"/>
             <result property="content" column="content" jdbcType="VARCHAR"/>
-            <result property="reply_msg_id" column="reply_msg_id" jdbcType="BIGINT"/>
+            <result property="reply_msg_id" column="reply_message_id" jdbcType="BIGINT"/>
             <result property="status" column="status" jdbcType="INTEGER"/>
             <result property="gap_count" column="gap_count" jdbcType="INTEGER"/>
             <result property="type" column="type" jdbcType="INTEGER"/>

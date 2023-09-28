@@ -2,7 +2,7 @@ package com.kkuil.blackchat.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.Black;
-import com.kkuil.blackchat.service.IBlackService;
+import com.kkuil.blackchat.service.BlackService;
 import com.kkuil.blackchat.mapper.BlackMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class BlackServiceImpl extends ServiceImpl<BlackMapper, Black>
-    implements IBlackService {
+    implements BlackService {
 
 }

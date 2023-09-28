@@ -2,7 +2,7 @@ package com.kkuil.blackchat.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.UserEmoji;
-import com.kkuil.blackchat.service.IUserEmojiService;
+import com.kkuil.blackchat.service.UserEmojiService;
 import com.kkuil.blackchat.mapper.UserEmojiMapper;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,6 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class UserEmojiServiceImpl extends ServiceImpl<UserEmojiMapper, UserEmoji>
-    implements IUserEmojiService {
+    implements UserEmojiService {
 
 }

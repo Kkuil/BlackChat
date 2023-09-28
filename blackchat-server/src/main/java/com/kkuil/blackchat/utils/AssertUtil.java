@@ -1,10 +1,10 @@
 package com.kkuil.blackchat.utils;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.kkuil.blackchat.enums.BusinessErrorEnum;
+import com.kkuil.blackchat.domain.enums.error.BusinessErrorEnum;
 import com.kkuil.blackchat.exception.BusinessException;
-import com.kkuil.blackchat.enums.CommonErrorEnum;
-import com.kkuil.blackchat.enums.ErrorEnum;
+import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
+import com.kkuil.blackchat.domain.enums.error.ErrorEnum;
 import org.hibernate.validator.HibernateValidator;
 
 import javax.validation.ConstraintViolation;

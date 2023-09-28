@@ -17,7 +17,10 @@ const onlineList = ref([])
                 v-for="index in 30"
                 :key="index"
             >
-                <el-avatar :size="'small'" />
+                <el-avatar
+                    :size="'small'"
+                    src="https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
+                />
                 <span class="text-[14px] ml-[5px]">Kkuil</span>
             </li>
         </ul>

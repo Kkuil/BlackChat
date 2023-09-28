@@ -109,7 +109,15 @@ public class WebSocketServiceImpl implements WebSocketService {
      */
     @Override
     public void disconnect(Channel channel) {
+        // 删除全部连接（包括未登录的）
         CHANNEL_CONN_MAP.remove(channel);
+        // 删除用户连接（设置为离线）
+        // 判断当前连接是否是以登录态
+        Long uid = NettyUtil.getAttrFromChannel(channel, AuthorizationConst.UID_KEY_IN_CHANNEL);
+        if (uid == null) {
+            return;
+        }
+        offline(channel, uid);
     }
 
     /**
@@ -136,7 +144,9 @@ public class WebSocketServiceImpl implements WebSocketService {
      */
     @Override
     public void offline(Channel channel, Long uid) {
+        // 在redis缓存中删除那个uid
         userCache.offline(uid, new Date());
+        // 删除本地缓存UID列表
         UID_CHANNEL_MAP.remove(uid);
     }
 

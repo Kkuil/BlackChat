@@ -43,18 +43,13 @@ public class FrequencyControlAspect {
             String prefix = StrUtil.isBlank(frequencyControl.prefixKey()) ? SpElUtil.getMethodKey(method) + ":index:" + i : frequencyControl.prefixKey();
             String key = "";
             switch (frequencyControl.target()) {
-                case EL:
-                    key = SpElUtil.parseSpEl(method, joinPoint.getArgs(), frequencyControl.spEl());
-                    break;
-                case IP:
+                case EL -> key = SpElUtil.parseSpEl(method, joinPoint.getArgs(), frequencyControl.spEl());
+                case IP -> {
                     RequestInfo requestInfo = RequestHolderDTO.get();
                     key = requestInfo.getIp();
-                    break;
-                case UID:
-                    key = RequestHolderDTO.get().getUid().toString();
-                default:
-                    key = RequestHolderDTO.get().getIp();
-                    break;
+                }
+                case UID -> key = RequestHolderDTO.get().getUid().toString();
+                default -> key = RequestHolderDTO.get().getIp();
             }
             keyMap.put(prefix + ":" + key, frequencyControl);
         }

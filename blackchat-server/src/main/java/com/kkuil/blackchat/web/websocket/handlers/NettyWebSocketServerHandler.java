@@ -40,6 +40,17 @@ public class NettyWebSocketServerHandler extends SimpleChannelInboundHandler<Tex
     }
 
     /**
+     * 客户端离线
+     *
+     * @param context 上下文对象
+     */
+    @Override
+    public void handlerRemoved(ChannelHandlerContext context) {
+        Channel channel = context.channel();
+        disconnect(channel);
+    }
+
+    /**
      * 用户下线时，断开连接
      *
      * @param context 上下文对象
