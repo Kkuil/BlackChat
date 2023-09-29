@@ -31,6 +31,11 @@ public class ChatMessageReq<DT extends AbstractChatMessageBaseReq> {
     private Integer messageType;
 
     /**
+     * 回复的消息id,如果没有别传就好
+     */
+    private Long replyMessageId;
+
+    /**
      * 消息体
      */
     @NotNull

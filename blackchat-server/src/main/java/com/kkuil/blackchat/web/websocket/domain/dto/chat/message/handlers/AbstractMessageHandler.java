@@ -5,6 +5,7 @@ import com.kkuil.blackchat.web.chat.domain.enums.MessageTypeEnum;
 import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers.factory.MessageHandlerFactory;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
+import com.kkuil.blackchat.web.websocket.domain.vo.response.ChatMessageResp;
 import jakarta.annotation.PostConstruct;
 
 /**
@@ -46,12 +47,12 @@ public abstract class AbstractMessageHandler {
     public abstract void saveMessage(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq);
 
     /**
-     * 展示消息
+     * 构建响应消息体
      *
-     * @param message 消息
-     * @return 前端展示消息的文本
+     * @param message 消息对象
+     * @return 响应消息体
      */
-    public abstract Object showMessage(Message message);
+    public abstract ChatMessageResp buildChatMessageResp(Message message);
 
     /**
      * 被回复时——展示的消息

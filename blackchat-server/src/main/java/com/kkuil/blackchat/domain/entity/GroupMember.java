@@ -27,8 +27,8 @@ public class GroupMember implements Serializable {
     /**
      * 群主id
      */
-    @TableField(value = "group_id")
-    private Long groupId;
+    @TableField(value = "room_id")
+    private Long roomId;
 
     /**
      * 成员uid

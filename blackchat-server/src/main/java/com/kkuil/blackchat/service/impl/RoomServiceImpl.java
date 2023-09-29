@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.kkuil.blackchat.dao.GroupMemberDAO;
 import com.kkuil.blackchat.dao.RoomDAO;
 import com.kkuil.blackchat.dao.RoomFriendDAO;
 import com.kkuil.blackchat.dao.RoomGroupDAO;
@@ -31,6 +32,9 @@ public class RoomServiceImpl implements RoomService {
     @Resource
     private RoomGroupDAO roomGroupDao;
 
+    @Resource
+    private GroupMemberDAO groupMemberDao;
+
     /**
      * 检查用户是否存在该房间，该房间是否把他拉黑或者房间是否存在
      *
@@ -60,7 +64,7 @@ public class RoomServiceImpl implements RoomService {
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
         } else {
             // 2.2 群聊检查
-            Boolean hasUser = roomGroupDao.hasUser(roomId, uid);
+            Boolean hasUser = groupMemberDao.hasUser(roomId, uid);
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_IN_GROUP.getMsg());
         }
     }
@@ -73,11 +77,6 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     public Boolean checkRoomMembership(Long roomId, Long... uids) {
-        // -1. 判断是否包含全体用户
-        boolean isContainAll = CollectionUtil.toList(uids).contains(ChatGroupSpecialMemberEnum.ALL.getId());
-        if (isContainAll) {
-            return true;
-        }
         Room room = roomDao.getById(roomId);
         // 0. 如果是大群聊跳过校验
         Integer hotFlag = room.getHotFlag();
@@ -96,7 +95,7 @@ public class RoomServiceImpl implements RoomService {
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
         } else {
             // 2.2 群聊检查
-            Boolean hasUser = roomGroupDao.isGroupShip(roomId, uids);
+            Boolean hasUser = groupMemberDao.isGroupShip(roomId, uids);
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_IN_GROUP.getMsg());
         }
         return true;

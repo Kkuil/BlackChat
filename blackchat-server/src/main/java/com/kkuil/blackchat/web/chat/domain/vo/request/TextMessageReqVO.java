@@ -24,11 +24,6 @@ public class TextMessageReqVO {
     private String content;
 
     /**
-     * 回复的消息id,如果没有别传就好
-     */
-    private Long replyMsgId;
-
-    /**
      * 艾特的uid
      */
     @Size(max = 10, message = "一次别艾特这么多人")

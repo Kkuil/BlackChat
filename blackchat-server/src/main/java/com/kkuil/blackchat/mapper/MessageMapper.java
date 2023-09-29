@@ -5,11 +5,10 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
-* @author 小K
-* @description 针对表【message(消息表)】的数据库操作Mapper
-* @createDate 2023-09-27 11:55:43
-* @Entity com.kkuil.blackchat.domain.entity.Message
-*/
+ * @Author Kkuil
+ * @Date 2023/9/29 13:09
+ * @Description 针对表【message(消息表)】的数据库操作Mapper
+ */
 @Mapper
 public interface MessageMapper extends BaseMapper<Message> {
 

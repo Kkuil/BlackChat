@@ -29,16 +29,16 @@ public class ChatController {
     @Resource
     private ChatService chatService;
 
-    /**
+     /**
      * 发送消息接口
      *
      * @param chatMessageReq 消息体
      * @return 消息返回体
      */
     @PostMapping("/send")
-    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
-    @FrequencyControl(time = 30, count = 5, target = FrequencyControl.Target.UID)
-    @FrequencyControl(time = 60, count = 10, target = FrequencyControl.Target.UID)
+//    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
+//    @FrequencyControl(time = 30, count = 5, target = FrequencyControl.Target.UID)
+//    @FrequencyControl(time = 60, count = 10, target = FrequencyControl.Target.UID)
     public ResultUtil<ChatMessageResp> send(@Valid @RequestBody ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
         Long uid = RequestHolderDTO.get().getUid();
         return chatService.send(uid, chatMessageReq);

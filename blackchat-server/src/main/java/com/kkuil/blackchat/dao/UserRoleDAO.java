@@ -1,22 +1,17 @@
 package com.kkuil.blackchat.dao;
 
-import cn.hutool.core.util.NumberUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkuil.blackchat.domain.entity.Role;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.entity.UserRole;
 import com.kkuil.blackchat.domain.enums.RoleEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
-import com.kkuil.blackchat.mapper.RoleMapper;
 import com.kkuil.blackchat.mapper.UserRoleMapper;
 import com.kkuil.blackchat.utils.AssertUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -54,8 +49,7 @@ public class UserRoleDAO extends ServiceImpl<UserRoleMapper, UserRole> {
         LambdaQueryChainWrapper<UserRole> wrapper = lambdaQuery().eq(UserRole::getUid, uid);
         UserRole userRole = this.getOne(wrapper);
         Long roleId = userRole.getRoleId();
-        Map<Long, RoleEnum> authorities = RoleEnum.CACHE;
-        Set<Long> roleIds = authorities.keySet();
+        Set<Long> roleIds = RoleEnum.CACHE.keySet();
         return roleIds.contains(roleId);
     }
 }
