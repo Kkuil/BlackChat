@@ -1,14 +1,31 @@
-// 发送消息类型枚举
-export declare namespace ChatMessage {
+declare namespace ChatMessage {
+    type MessageBody =
+        | TextMessageBody
+        | ImageMessageBody
+        | FileMessageBody
+        | SoundMessageBody
+        | VideoMessageBody
+
     /**
-     * 发送消息枚举
+     * 消息发送的基础请求体
      */
-    enum MessageType {
-        TEXT = 1,
-        IMAGE = 3,
-        FILE = 4,
-        AUDIO = 5,
-        VIDEO = 6
+    type ChatMessageBaseReq<T extends MessageBody> = {
+        /**
+         * 房间号
+         */
+        roomId: number
+        /**
+         * 消息类型
+         */
+        messageType: ChatMessage.MessageType
+        /**
+         * 回复的消息id,如果没有别传就好
+         */
+        replyMessageId: number
+        /**
+         * 消息体
+         */
+        body: T
     }
 
     /**
@@ -19,10 +36,6 @@ export declare namespace ChatMessage {
          * 文本消息内容
          */
         content: string
-        /**
-         * 回复的消息id,如果没有别传就好
-         */
-        replyMessageId: number
         /**
          * 艾特的uid集合
          */

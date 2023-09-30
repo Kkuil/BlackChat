@@ -29,7 +29,7 @@ public class MessageHandlerFactory {
         STRATEGY_MAP.put(code, strategy);
     }
 
-    /**
+     /**
      * 通过策略码获取相应消息策略
      *
      * @param code 策略码

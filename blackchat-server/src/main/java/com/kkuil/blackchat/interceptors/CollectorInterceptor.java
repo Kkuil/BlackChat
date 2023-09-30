@@ -1,6 +1,5 @@
 package com.kkuil.blackchat.interceptors;
 
-import cn.hutool.extra.servlet.ServletUtil;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.domain.dto.RequestInfo;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +28,7 @@ public class CollectorInterceptor implements HandlerInterceptor {
         RequestInfo info = new RequestInfo();
         Object uidOptional = request.getAttribute(ATTRIBUTE_UID_IN_HEADER);
         Long uid = Optional.ofNullable(uidOptional).map(Object::toString).map(Long::parseLong).orElse(null);
-        String ip = ServletUtil.getClientIP((javax.servlet.http.HttpServletRequest) request);
+        String ip = getIp(request);
         info.setUid(uid);
         info.setIp(ip);
         RequestHolderDTO.set(info);
@@ -41,4 +40,7 @@ public class CollectorInterceptor implements HandlerInterceptor {
         RequestHolderDTO.remove();
     }
 
+    private String getIp(HttpServletRequest request) {
+        return (String) request.getAttribute("X-Real-IP");
+    }
 }

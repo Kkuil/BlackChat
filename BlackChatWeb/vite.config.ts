@@ -20,7 +20,13 @@ export default defineConfig({
         Icons()
     ],
     server: {
-        port: 3170
+        port: 3170,
+        proxy: {
+            "/bapi": {
+                target: "http://127.0.0.1:3071",
+                changeOrigin: true
+            }
+        }
     },
     resolve: {
         alias: {

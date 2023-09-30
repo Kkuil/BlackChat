@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ChatItem } from "@/layout/components/ChatList/components/type"
+import { ChatItem } from "@/layout/components/chat/ChatList/components/type"
 
 defineProps<ChatItem.ChatItemPropsType>()
 </script>

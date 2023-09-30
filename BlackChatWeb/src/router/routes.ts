@@ -2,7 +2,25 @@ export const routes = [
     {
         path: "/",
         name: "blackchat-home",
-        component: () => import("@/views/BlackChatHome/BlackChatHome.vue")
+        component: () => import("@/views/BlackChatHome/BlackChatHome.vue"),
+        children: [
+            {
+                path: "/",
+                redirect: "/chat"
+            },
+            {
+                name: "chat",
+                path: "/chat",
+                component: () =>
+                    import("@/views/BlackChatHome/ChatView/ChatView.vue")
+            },
+            {
+                name: "contact",
+                path: "/contact",
+                component: () =>
+                    import("@/views/BlackChatHome/ContactView/ContactView.vue")
+            }
+        ]
     },
     {
         path: "/:pathMatch(.*)*",

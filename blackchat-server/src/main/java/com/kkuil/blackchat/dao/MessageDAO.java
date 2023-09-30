@@ -26,13 +26,15 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
      * @return 消息
      */
     public Message saveByUidAndChatMessageReq(Long uid, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
-        return Message.builder()
+        Message message = Message.builder()
                 .fromUid(uid)
                 .roomId(chatMessageReq.getRoomId())
                 .type(chatMessageReq.getMessageType())
                 .replyMessageId(chatMessageReq.getReplyMessageId())
                 .status(MessageStatusEnum.NORMAL.getStatus())
                 .build();
+        this.save(message);
+        return message;
     }
 
     /**
@@ -52,5 +54,6 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
         wrapper
                 .eq(true, "id", fromId)
                 .set(true, "gap_count", gapCount);
+        this.update(wrapper);
     }
 }

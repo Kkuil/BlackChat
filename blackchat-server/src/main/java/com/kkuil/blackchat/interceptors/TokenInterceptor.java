@@ -1,7 +1,7 @@
 package com.kkuil.blackchat.interceptors;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.kkuil.blackchat.service.LoginService;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -19,16 +19,18 @@ import static com.kkuil.blackchat.constant.UserConst.*;
  * @Date 2023/9/26
  * @Description token拦截器
  */
-@Order(-2)
 @Slf4j
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
 
-    @Resource
-    private LoginService loginService;
+    private static final LoginService loginService;
+
+    static {
+        loginService = SpringUtil.getBean(LoginService.class);
+    }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         // 获取用户登录token
         String token = getToken(request);
         Long uid = loginService.getValidUid(token);
@@ -45,6 +47,6 @@ public class TokenInterceptor implements HandlerInterceptor {
         return Optional.ofNullable(header)
                 .filter(h -> h.startsWith(TOKEN_KEY_IN_HEADER_PREFIX))
                 .map(h -> h.substring(TOKEN_KEY_IN_HEADER_PREFIX.length()))
-                .orElse(null);
+                .orElse("");
     }
 }

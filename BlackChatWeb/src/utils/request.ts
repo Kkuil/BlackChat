@@ -7,7 +7,8 @@ const BASE_PREFIX: string = import.meta.env.VITE_REQUEST_BASE_PREFIX
 console.log(BASE_URL, BASE_TIMEOUT, BASE_PREFIX)
 
 const request = axios.create({
-    baseURL: BASE_URL + BASE_PREFIX,
+    baseURL: BASE_PREFIX,
+    // baseURL: BASE_URL + BASE_PREFIX,
     timeout: BASE_TIMEOUT
 })
 

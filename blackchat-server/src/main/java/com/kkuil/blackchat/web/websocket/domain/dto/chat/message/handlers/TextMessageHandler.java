@@ -21,6 +21,7 @@ import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBase
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.ChatMessageResp;
 import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -29,7 +30,7 @@ import java.util.*;
  * @Date 2023/9/28 10:18
  * @Description 文本消息处理器
  */
-@Resource
+@Service
 public class TextMessageHandler extends AbstractMessageHandler {
 
     @Resource
@@ -112,8 +113,10 @@ public class TextMessageHandler extends AbstractMessageHandler {
     @Override
     public void saveMessage(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
         // 保存消息内容
-        String content = message.getContent();
-        Message update = Message.builder().content(content).build();
+        TextMessageReqVO textMessageReq = BeanUtil.toBean(chatMessageReq, TextMessageReqVO.class);
+        String content = textMessageReq.getContent();
+        Long id = message.getId();
+        Message update = Message.builder().id(id).content(content).build();
         messageDao.updateById(update);
     }
 

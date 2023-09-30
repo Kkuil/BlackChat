@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue"
+import { useRoute } from "vue-router"
+
+const $route = useRoute()
 
 /**
  * 当前选中的tab
  */
-const selected = ref<string>("contact")
+const selected = ref<string>($route.name as string)
 
 /**
  * 切换tab
@@ -16,20 +19,22 @@ const switchTab = (tab: string) => {
 </script>
 
 <template>
-    <div
+    <RouterLink
         class="w-[50px] h-[50px] py-[5px] rounded-[8px] cursor-pointer hover:bg-secondary flex-center mt-[10px] transition-[background-color]"
-        :class="selected === 'message' ? 'selected' : ''"
-        @click="switchTab('message')"
+        :class="selected === 'chat' ? 'selected' : ''"
+        @click="switchTab('chat')"
+        to="/chat"
     >
         <i class="iconfont icon-message text-[28px]"></i>
-    </div>
-    <div
+    </RouterLink>
+    <RouterLink
         class="w-[50px] h-[50px] py-[5px] rounded-[8px] cursor-pointer hover:bg-secondary flex-center mt-[10px] transition-[background-color]"
         :class="selected === 'contact' ? 'selected' : ''"
         @click="switchTab('contact')"
+        to="/contact"
     >
         <i class="iconfont icon-contact text-[28px]"></i>
-    </div>
+    </RouterLink>
 </template>
 
 <style scoped lang="scss">

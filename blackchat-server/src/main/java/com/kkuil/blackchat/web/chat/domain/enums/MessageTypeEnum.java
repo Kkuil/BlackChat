@@ -9,9 +9,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Description: 消息状态
- * Author: <a href="https://github.com/zongzibinbin">abin</a>
- * Date: 2023-03-19
+ * @Author Kkuil
+ * @Date 2023/9/29 17:21
+ * @Description 消息类型枚举
  */
 @AllArgsConstructor
 @Getter
