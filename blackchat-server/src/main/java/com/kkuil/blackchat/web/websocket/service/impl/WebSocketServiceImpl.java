@@ -16,8 +16,11 @@ import com.kkuil.blackchat.utils.RedisUtil;
 import com.kkuil.blackchat.web.websocket.adapter.WsAdapter;
 import com.kkuil.blackchat.web.websocket.constant.AuthorizationConst;
 import com.kkuil.blackchat.web.websocket.domain.dto.WsConnInfoDTO;
+import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
+import com.kkuil.blackchat.web.websocket.domain.enums.WsResponseTypeEnum;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsLoginSuccessMessage;
+import com.kkuil.blackchat.web.websocket.domain.vo.response.WsUpdateOnlineListResp;
 import com.kkuil.blackchat.web.websocket.service.WebSocketService;
 import com.kkuil.blackchat.web.websocket.utils.NettyUtil;
 import io.netty.channel.Channel;
@@ -33,6 +36,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -135,6 +139,11 @@ public class WebSocketServiceImpl implements WebSocketService {
         UID_CHANNEL_MAP.get(uid).add(channel);
         // 将用户id记录在当前通道中
         NettyUtil.setAttrInChannel(channel, AuthorizationConst.UID_KEY_IN_CHANNEL, uid);
+        // 更新用户上线列表
+        WsUpdateOnlineListResp wsUpdateOnlineListResp = new WsUpdateOnlineListResp();
+        wsUpdateOnlineListResp.setUid(uid);
+        wsUpdateOnlineListResp.setStatus(ChatActiveStatusEnum.ONLINE.getStatus());
+        this.updateOnlineList(wsUpdateOnlineListResp);
     }
 
     /**
@@ -273,6 +282,17 @@ public class WebSocketServiceImpl implements WebSocketService {
             }
             threadPoolTaskExecutor.execute(() -> sendMsgToOne(channel, wsBaseResp));
         });
+    }
+
+    /**
+     * 更新上线列表
+     */
+    @Override
+    public void updateOnlineList(WsUpdateOnlineListResp updateOnlineListResp) {
+        WsBaseResp<WsUpdateOnlineListResp> baseResp = new WsBaseResp<>();
+        baseResp.setType(WsResponseTypeEnum.UPDATE_ONLINE_LIST.getType());
+        baseResp.setData(updateOnlineListResp);
+        sendMsgToAll(baseResp);
     }
 
     /**

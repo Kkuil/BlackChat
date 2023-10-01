@@ -1,6 +1,5 @@
 package com.kkuil.blackchat.web.websocket.domain.vo.request;
 
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessageReq<DT extends AbstractChatMessageBaseReq> {
+public class ChatMessageReq {
     /**
      * 房间号
      */
@@ -39,5 +38,5 @@ public class ChatMessageReq<DT extends AbstractChatMessageBaseReq> {
      * 消息体
      */
     @NotNull
-    private DT body;
+    private Object body;
 }

@@ -2,6 +2,7 @@ package com.kkuil.blackchat.web.websocket.service;
 
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
+import com.kkuil.blackchat.web.websocket.domain.vo.response.WsUpdateOnlineListResp;
 import io.netty.channel.Channel;
 
 /**
@@ -103,4 +104,10 @@ public interface WebSocketService {
      * @param skipUid    跳过的用户ID
      */
     void sendMsgToAll(WsBaseResp<?> wsBaseResp, Long skipUid);
+
+    /**
+     * 更新上线列表
+     * @param updateOnlineListResp 参数
+     */
+    void updateOnlineList(WsUpdateOnlineListResp updateOnlineListResp);
 }

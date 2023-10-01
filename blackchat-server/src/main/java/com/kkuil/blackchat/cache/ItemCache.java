@@ -25,9 +25,9 @@ public class ItemCache {
      * @param type 物品类型 1 2
      * @return 物品列表
      */
-    @Cacheable(cacheNames = "item", key = "'itemsByType:'+#type")
-    public List<ItemConfig> getByType(Integer type) {
-        return itemConfigDao.getByType(type);
+    @Cacheable(cacheNames = "item", key = "'itemsByType:' + #type + #current")
+    public List<ItemConfig> getByType(Long current, Integer type) {
+        return itemConfigDao.getByType(current, type);
     }
 
     /**
@@ -36,7 +36,7 @@ public class ItemCache {
      * @param itemId 物品ID
      * @return 物品信息
      */
-    @Cacheable(cacheNames = "item", key = "'item:'+#itemId")
+    @Cacheable(cacheNames = "item", key = "'item:' + #itemId")
     public ItemConfig getById(Long itemId) {
         return itemConfigDao.getById(itemId);
     }

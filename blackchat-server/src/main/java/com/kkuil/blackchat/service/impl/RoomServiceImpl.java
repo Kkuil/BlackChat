@@ -1,6 +1,5 @@
 package com.kkuil.blackchat.service.impl;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.kkuil.blackchat.dao.GroupMemberDAO;
 import com.kkuil.blackchat.dao.RoomDAO;
 import com.kkuil.blackchat.dao.RoomFriendDAO;
@@ -10,7 +9,6 @@ import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -42,7 +40,7 @@ public class RoomServiceImpl implements RoomService {
      * @param chatMessageReq 请求消息体
      */
     @Override
-    public void check(Long uid, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    public void check(Long uid, ChatMessageReq chatMessageReq) {
         // -1. 判断是否是全体成员，跳过
         if (uid.equals(ChatGroupSpecialMemberEnum.ALL.getId())) {
             return;
@@ -57,16 +55,7 @@ public class RoomServiceImpl implements RoomService {
         // 1. 检查房间是否存在
         AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
         // 2. 检查该房间内是否有该用户
-        Integer roomType = room.getType();
-        if (roomType.equals(RoomTypeEnum.FRIEND.getType())) {
-            // 2.1 单聊检查
-            Boolean hasUser = roomFriendDao.hasUser(roomId, uid);
-            AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
-        } else {
-            // 2.2 群聊检查
-            Boolean hasUser = groupMemberDao.hasUser(roomId, uid);
-            AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_IN_GROUP.getMsg());
-        }
+        this.checkRoomMembership(roomId, uid);
     }
 
     /**
@@ -77,20 +66,27 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     public Boolean checkRoomMembership(Long roomId, Long... uids) {
+        // -1. 判断传递的用户ID
+        int length = uids.length;
+        if (length == 0) {
+            return false;
+        }
         Room room = roomDao.getById(roomId);
+
         // 0. 如果是大群聊跳过校验
         Integer hotFlag = room.getHotFlag();
         if (hotFlag == 1) {
             return true;
         }
+
         // 1. 检查房间是否存在
         AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
+
         // 2. 检查该房间内是否有该用户
         Integer roomType = room.getType();
         if (roomType.equals(RoomTypeEnum.FRIEND.getType())) {
             // 2.1 单聊检查
-            int length = uids.length;
-            AssertUtil.isTrue(length == 2, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCHE.getMsg());
+            AssertUtil.isTrue(uids.length == 2, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCHE.getMsg());
             Boolean hasUser = roomFriendDao.isFriend(uids);
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
         } else {

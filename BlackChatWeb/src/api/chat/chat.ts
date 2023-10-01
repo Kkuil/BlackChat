@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import { ChatMessage } from "@/layout/components/chat/ChatContent/type";
+import { ChatMessageReq } from "@/layout/components/chat/ChatContent/ChatMessageReq";
 import { TOKEN_KEY_IN_HEADER, TOKEN_KEY_IN_LOC, TOKEN_PREFIX } from "@/constant/auth";
 
 /**

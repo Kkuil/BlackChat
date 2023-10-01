@@ -6,9 +6,13 @@ import { WsResponseTypeEnum } from "@/core/websocket/domain/enum/WsResponseTypeE
 import eventBus from "@/utils/eventBus"
 import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import { ElMessage } from "element-plus"
+import { WsRequestTypeEnum } from "@/core/websocket/domain/enum/WsRequestTypeEnum"
 
 class Websocket {
+    // 是否连接准备
     #connectReady = false
+    // 心跳包计时器
+    #heartBeatTimer: number = null
 
     constructor() {
         // 初始化连接
@@ -17,6 +21,8 @@ class Websocket {
         worker.addEventListener("message", this.onWorkerMessage)
         // 监听当前窗口的可见性
         window.addEventListener("visibilitychange", this.#onVisibilityChange)
+        // 发送心跳包，用来告诉服务器当前客户端还处于连接状态
+        this.#sendHeartBeat()
     }
 
     /**
@@ -69,6 +75,7 @@ class Websocket {
      */
     #onClose = () => {
         this.#connectReady = false
+        this.#heartBeatTimer && clearInterval(this.#heartBeatTimer)
     }
 
     /**
@@ -77,6 +84,7 @@ class Websocket {
      */
     onMessage = (data: string) => {
         const params: WebsocketRespType = JSON.parse(data)
+        console.log(params.type)
         switch (params.type) {
             // 连接成功
             case WsResponseTypeEnum.CONN_SUCCESS: {
@@ -107,6 +115,12 @@ class Websocket {
                 })
                 break
             }
+            // 更新上线列表
+            case WsResponseTypeEnum.UPDATE_ONLINE_LIST: {
+                eventBus.emit(WsEventEnum.UPDATE_ONLINE_LIST, params.data)
+                break
+            }
+            // 登录失效
             case WsResponseTypeEnum.INVALIDATE_TOKEN: {
                 ElMessage.error("登录失效，请重新登录")
             }
@@ -117,11 +131,32 @@ class Websocket {
      * 监听当前窗口的可见性
      */
     #onVisibilityChange = () => {
-        // 判断当前是否已连接
-        if (!document.hidden && !this.#connectReady) {
-            // 重新连接
-            this.initConnect()
+        if (document.hidden) {
+            this.#heartBeatTimer && clearInterval(this.#heartBeatTimer)
+        } else {
+            if (!this.#connectReady) {
+                // 重新连接
+                this.initConnect()
+            }
+            this.#sendHeartBeat()
         }
+    }
+
+    /**
+     * 发送心跳包
+     */
+    #sendHeartBeat() {
+        this.#heartBeatTimer && clearInterval(this.#heartBeatTimer)
+        const self = this
+        this.#heartBeatTimer = setInterval(() => {
+            const heartPack = {
+                type: WorkerTypeEnum.MESSAGE,
+                data: JSON.stringify({
+                    type: WsRequestTypeEnum.HEARTBEAT
+                })
+            }
+            self.send(heartPack)
+        }, 1000)
     }
 }
 

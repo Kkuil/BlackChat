@@ -1,4 +1,7 @@
+import { RoomTypeEnum } from "@/RoomTypeEnum"
+
 export declare namespace Store {
+    import UserInfo = GlobalTypes.UserInfo
     type UserInfoType = {
         /** 用户唯一标识 */
         uid: number
@@ -14,5 +17,12 @@ export declare namespace Store {
         badge?: string
         /** 权限 */
         power?: number
+    }
+    type SessionInfoType = {
+        id: number
+        type: RoomTypeEnum
+        name: string
+        avatar: string
+        memberList: UserInfo[]
     }
 }

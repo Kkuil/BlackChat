@@ -1,28 +1,26 @@
 import { ref } from "vue"
 import { defineStore } from "pinia"
-import { ChatMessage } from "@/layout/components/chat/ChatContent/type"
+import type { SessionInfoType } from "@/stores/store"
+import { RoomTypeEnum } from "@/RoomTypeEnum"
+
+type TSessionInfo = {
+    chattingId: number
+    sessions: SessionInfoType[]
+}
 
 export const useSessionStore = defineStore("session", () => {
-    const sessionInfo = ref<ChatMessage.ChatMessageBaseReq<any>>({
-        roomId: 1,
-        messageType: 1,
-        replyMessageId: 123,
-        body: {
-            content: "",
-            atUidList: []
-        }
+    const sessionInfo = ref<TSessionInfo>({
+        chattingId: 1,
+        sessions: [
+            {
+                id: 1,
+                type: RoomTypeEnum.GROUP,
+                name: "Blackchat全员大群聊",
+                avatar: "123",
+                memberList: []
+            }
+        ]
     })
 
-    const typing = ({ replyMessageId, content, atUidList }) => {
-        sessionInfo.value = {
-            ...sessionInfo.value,
-            replyMessageId,
-            body: {
-                content,
-                atUidList
-            }
-        }
-    }
-
-    return { sessionInfo, typing }
+    return { sessionInfo }
 })

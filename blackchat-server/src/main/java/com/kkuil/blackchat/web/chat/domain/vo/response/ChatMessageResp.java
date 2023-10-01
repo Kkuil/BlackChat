@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.web.websocket.domain.vo.response;
+package com.kkuil.blackchat.web.chat.domain.vo.response;
 
 import com.kkuil.blackchat.domain.entity.MessageMark;
 import lombok.AllArgsConstructor;

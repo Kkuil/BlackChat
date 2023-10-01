@@ -1,8 +1,8 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat;
+package com.kkuil.blackchat.web.chat.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.kkuil.blackchat.utils.discover.domain.UrlInfo;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.message.*;
+import com.kkuil.blackchat.web.chat.domain.dto.message.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,5 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat.message;
+package com.kkuil.blackchat.web.chat.domain.dto.message;
 
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -11,14 +10,13 @@ import java.io.Serializable;
 /**
  * @Author Kkuil
  * @Date 2023/9/28
- * @Description 语音消息入参
+ * @Description 图片消息入参
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class SoundMessageBodyDTO extends AbstractChatMessageBaseReq implements Serializable {
+public class ImageMessageBodyDTO  implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -29,10 +27,16 @@ public class SoundMessageBodyDTO extends AbstractChatMessageBaseReq implements S
     private Long size;
 
     /**
-     * 时长（秒）
+     * 宽度（像素）
      */
     @NotNull
-    private Integer second;
+    private Integer width;
+
+    /**
+     * 高度（像素）
+     */
+    @NotNull
+    private Integer height;
 
     /**
      * 下载地址

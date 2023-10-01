@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.web.websocket.domain.vo.response;
 
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

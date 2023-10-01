@@ -12,5 +12,10 @@ export enum WsRequestTypeEnum {
     /**
      * 登录认证
      */
-    AUTHORIZE = 1003
+    AUTHORIZE = 1003,
+
+    /**
+     * 更新上线列表
+     */
+    UPDATE_ONLINE_LIST = 1004
 }

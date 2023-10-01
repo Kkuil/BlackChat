@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat;
+package com.kkuil.blackchat.web.chat.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

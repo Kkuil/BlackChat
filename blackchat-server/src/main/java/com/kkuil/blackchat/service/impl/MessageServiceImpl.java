@@ -5,11 +5,10 @@ import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers.AbstractMessageHandler;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers.factory.MessageHandlerFactory;
+import com.kkuil.blackchat.web.chat.domain.dto.message.handlers.AbstractMessageHandler;
+import com.kkuil.blackchat.web.chat.domain.dto.message.handlers.factory.MessageHandlerFactory;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +30,7 @@ public class MessageServiceImpl implements MessageService {
      * @param chatMessageReq 消息体
      */
     @Override
-    public void check(Long uid, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    public void check(Long uid, ChatMessageReq chatMessageReq) {
         // 1. 检查回复消息
         this.checkReplyMessage(chatMessageReq);
         // 2. 根据消息类型获取相应的处理器，对不同消息进行处理
@@ -48,7 +47,7 @@ public class MessageServiceImpl implements MessageService {
      * @param chatMessageReq 消息体
      */
     @Override
-    public void save(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    public void save(Message message, ChatMessageReq chatMessageReq) {
         // 1. 根据消息类型获取相应的处理器，对不同消息进行处理
         Integer messageType = chatMessageReq.getMessageType();
         AbstractMessageHandler handler = MessageHandlerFactory.getStrategyNoNull(messageType);
@@ -59,16 +58,16 @@ public class MessageServiceImpl implements MessageService {
     /**
      * 构建消息返回体
      *
-     * @param message 消息对象
+     * @param messageId 消息ID
      * @return 消息返回体
      */
     @Override
-    public ChatMessageResp buildChatMessageResp(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    public ChatMessageResp buildChatMessageResp(Long messageId, ChatMessageReq chatMessageReq) {
         // 1. 根据消息类型获取相应的处理器，对不同消息进行处理
         Integer messageType = chatMessageReq.getMessageType();
         AbstractMessageHandler handler = MessageHandlerFactory.getStrategyNoNull(messageType);
         // 2. 返回构建消息
-        return handler.buildChatMessageResp(message);
+        return handler.buildChatMessageResp(messageId);
     }
 
     /**
@@ -77,7 +76,7 @@ public class MessageServiceImpl implements MessageService {
      * @param chatMessageReq 请求消息体
      */
     @Override
-    public void checkReplyMessage(ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    public void checkReplyMessage(ChatMessageReq chatMessageReq) {
         Long roomId = chatMessageReq.getRoomId();
         Long replyMsgId = chatMessageReq.getReplyMessageId();
         if (replyMsgId != null) {

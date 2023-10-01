@@ -11,6 +11,8 @@ type Events = {
     login_success: { message: MessageResponseTypes.TLoginSuccess }
     // 扫码成功事件
     subscribe_success: void
+    // 更新上线列表事件
+    update_online_list: { uid: number; status: number }
 }
 
 const eventHub: Emitter<Events> = mitt<Events>()

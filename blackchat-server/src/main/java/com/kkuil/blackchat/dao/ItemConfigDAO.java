@@ -16,13 +16,19 @@ import java.util.List;
 public class ItemConfigDAO extends ServiceImpl<ItemConfigMapper, ItemConfig> {
 
     /**
+     * 默认分页大小
+     */
+    public static final Integer DEFAULT_PAGE_SIZE = 10;
+
+    /**
      * 通过物品类型ID获取物品
      *
      * @param type 物品类型ID
      * @return 物品列表
      */
-    public List<ItemConfig> getByType(Integer type) {
-        return lambdaQuery().eq(ItemConfig::getType, type).list();
+    public List<ItemConfig> getByType(Long current, Integer type) {
+        long skip = (current - 1) * DEFAULT_PAGE_SIZE;
+        return lambdaQuery().eq(ItemConfig::getType, type).last("limit " + skip + " ," + DEFAULT_PAGE_SIZE).list();
     }
 
 }

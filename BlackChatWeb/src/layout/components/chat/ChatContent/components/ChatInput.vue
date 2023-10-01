@@ -3,12 +3,14 @@ import { ref } from "vue"
 import { sendMessage } from "@/api/chat/chat"
 import { useUserStore } from "@/stores/user"
 import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
-import { useSessionStore } from "@/stores/session"
+import { useMessageStore } from "@/stores/message"
 import { MessageTypeEnum } from "@/layout/components/chat/ChatContent/MessageTypeEnum"
 import ChatEmoji from "@/components/ChatEmoji/ChatEmoji.vue"
+import { ElMessage } from "element-plus"
+import _ from "lodash"
 
 const userStore = useUserStore()
-const sessionStore = useSessionStore()
+const sessionStore = useMessageStore()
 
 const activeMoreFunction = ref<boolean>(false)
 
@@ -30,10 +32,17 @@ const typing = (e: Event & { target: HTMLInputElement }) => {
 /**
  * 发送消息
  */
-const send = async () => {
+const send = _.throttle(async () => {
+    if (!sessionStore.sessionInfo.body.content) {
+        return ElMessage.error("消息不能为空")
+    }
     const result = await sendMessage(sessionStore.sessionInfo)
     console.log(result)
-}
+    if (!result.data) {
+        return
+    }
+    sessionStore.sendSuccess()
+}, 300)
 </script>
 
 <template>
@@ -62,6 +71,7 @@ const send = async () => {
         <input
             class="flex-[89%] md:flex-[87%] lg:flex-[65%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:hover:border-[1px] focus:border-[#0094ff] hover:border-[#0094ff]"
             placeholder="我们期待您的发言，请文明发言"
+            :value="sessionStore.sessionInfo.body.content"
             @input="typing"
             @keyup.enter="send"
         />
@@ -92,6 +102,7 @@ const send = async () => {
                         ? 'rotate-[45deg]'
                         : ''
                 "
+                @click="send"
             ></i>
         </div>
     </div>

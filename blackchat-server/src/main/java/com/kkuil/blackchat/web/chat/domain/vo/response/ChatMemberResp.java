@@ -1,5 +1,6 @@
-package com.kkuil.blackchat.web.websocket.domain.vo.response;
+package com.kkuil.blackchat.web.chat.domain.vo.response;
 
+import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +25,7 @@ public class ChatMemberResp {
     private Long uid;
 
     /**
-     * @see com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum
+     * @see ChatActiveStatusEnum
      * 当前状态
      */
     private Integer activeStatus;

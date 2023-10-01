@@ -1,11 +1,10 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers;
+package com.kkuil.blackchat.web.chat.domain.dto.message.handlers;
 
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.web.chat.domain.enums.MessageTypeEnum;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers.factory.MessageHandlerFactory;
+import com.kkuil.blackchat.web.chat.domain.dto.message.handlers.factory.MessageHandlerFactory;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
 import jakarta.annotation.PostConstruct;
 
 /**
@@ -36,7 +35,7 @@ public abstract class AbstractMessageHandler {
      * @param chatMessageReq 请求消息体
      * @param uid            发送消息的用户ID
      */
-    public abstract void checkMessage(ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq, Long uid);
+    public abstract void checkMessage(ChatMessageReq chatMessageReq, Long uid);
 
     /**
      * 保存消息
@@ -44,15 +43,15 @@ public abstract class AbstractMessageHandler {
      * @param message        消息
      * @param chatMessageReq 请求消息体
      */
-    public abstract void saveMessage(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq);
+    public abstract void saveMessage(Message message, ChatMessageReq chatMessageReq);
 
     /**
      * 构建响应消息体
      *
-     * @param message 消息对象
+     * @param messageId 消息ID
      * @return 响应消息体
      */
-    public abstract ChatMessageResp buildChatMessageResp(Message message);
+    public abstract ChatMessageResp buildChatMessageResp(Long messageId);
 
     /**
      * 被回复时——展示的消息

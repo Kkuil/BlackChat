@@ -1,8 +1,8 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers.factory;
+package com.kkuil.blackchat.web.chat.domain.dto.message.handlers.factory;
 
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers.AbstractMessageHandler;
+import com.kkuil.blackchat.web.chat.domain.dto.message.handlers.AbstractMessageHandler;
 
 import java.util.HashMap;
 import java.util.Map;

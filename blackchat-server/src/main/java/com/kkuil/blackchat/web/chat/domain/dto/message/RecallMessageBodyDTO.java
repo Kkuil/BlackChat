@@ -1,6 +1,5 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat.message;
+package com.kkuil.blackchat.web.chat.domain.dto.message;
 
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import lombok.*;
 
 import java.io.Serial;
@@ -16,8 +15,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class RecallMessageBodyDTO extends AbstractChatMessageBaseReq implements Serializable {
+public class RecallMessageBodyDTO  implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 

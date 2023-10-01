@@ -9,5 +9,8 @@ export enum WsEventEnum {
     SUBSCRIBE_SUCCESS = "subscribe_success",
 
     // 登录成功
-    LOGIN_SUCCESS = "login_success"
+    LOGIN_SUCCESS = "login_success",
+
+    // 更新上线列表
+    UPDATE_ONLINE_LIST = "update_online_list"
 }

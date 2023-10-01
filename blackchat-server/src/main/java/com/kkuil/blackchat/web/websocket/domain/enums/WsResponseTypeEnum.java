@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -75,6 +76,11 @@ public enum WsResponseTypeEnum {
      * 成员变动
      */
     MEMBER_CHANGE(11, "成员变动", String.class),
+
+    /**
+     * 更新上线列表
+     */
+    UPDATE_ONLINE_LIST(12, "更新上线列表", List.class),
     ;
 
     private final Integer type;

@@ -41,7 +41,7 @@ public class UserOnlineEventListeners {
     /**
      * 发送给所有用户更新上线列表
      *
-     * @param userOnlineEventParamsDTO 用户上线事件参数
+     * @param event 用户上线事件参数
      */
     @Async
     @EventListener(classes = UserOnlineEvent.class)

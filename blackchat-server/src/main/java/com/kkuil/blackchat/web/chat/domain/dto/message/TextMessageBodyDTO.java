@@ -1,7 +1,8 @@
-package com.kkuil.blackchat.web.chat.domain.vo.request;
+package com.kkuil.blackchat.web.chat.domain.dto.message;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -14,7 +15,8 @@ import java.util.List;
  */
 @Data
 @Builder
-public class TextMessageReqVO {
+@ToString
+public class TextMessageBodyDTO {
 
     /**
      * 消息内容

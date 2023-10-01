@@ -1,12 +1,10 @@
 package com.kkuil.blackchat.dao;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.mapper.MessageMapper;
 import com.kkuil.blackchat.web.chat.domain.enums.MessageStatusEnum;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,7 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
      * @param chatMessageReq 消息体
      * @return 消息
      */
-    public Message saveByUidAndChatMessageReq(Long uid, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    public Message saveByUidAndChatMessageReq(Long uid, ChatMessageReq chatMessageReq) {
         Message message = Message.builder()
                 .fromUid(uid)
                 .roomId(chatMessageReq.getRoomId())

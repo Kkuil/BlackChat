@@ -1,6 +1,5 @@
 package com.kkuil.blackchat.service;
 
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 
 /**
@@ -16,7 +15,7 @@ public interface RoomService {
      * @param uid            用户ID
      * @param chatMessageReq 请求消息体
      */
-    void check(Long uid, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq);
+    void check(Long uid, ChatMessageReq chatMessageReq);
 
     /**
      * 判断用户是否在存在于同一个房间

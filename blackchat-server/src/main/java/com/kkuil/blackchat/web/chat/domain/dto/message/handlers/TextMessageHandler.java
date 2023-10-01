@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat.message.handlers;
+package com.kkuil.blackchat.web.chat.domain.dto.message.handlers;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
@@ -15,11 +15,10 @@ import com.kkuil.blackchat.utils.sensitive.SensitiveWordBs;
 import com.kkuil.blackchat.web.chat.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.web.chat.domain.enums.MessageTypeEnum;
 import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
-import com.kkuil.blackchat.web.chat.domain.vo.request.TextMessageReqVO;
+import com.kkuil.blackchat.web.chat.domain.dto.message.TextMessageBodyDTO;
 import com.kkuil.blackchat.web.chat.domain.vo.response.TextMessageResp;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -68,11 +67,11 @@ public class TextMessageHandler extends AbstractMessageHandler {
      * @param uid            发送消息的用户ID
      */
     @Override
-    public void checkMessage(ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq, Long uid) {
+    public void checkMessage(ChatMessageReq chatMessageReq, Long uid) {
         // 1. 将消息体转换为文本消息体
-        AbstractChatMessageBaseReq body = chatMessageReq.getBody();
+        Object body = chatMessageReq.getBody();
         Long roomId = chatMessageReq.getRoomId();
-        TextMessageReqVO textMessage = BeanUtil.toBean(body, TextMessageReqVO.class);
+        TextMessageBodyDTO textMessage = BeanUtil.toBean(body, TextMessageBodyDTO.class);
         // 2. 检查艾特消息
         List<Long> atUidList = textMessage.getAtUidList();
         boolean isAtUidListNotEmpty = CollectionUtil.isNotEmpty(atUidList);
@@ -111,54 +110,56 @@ public class TextMessageHandler extends AbstractMessageHandler {
      * @param chatMessageReq 请求消息体
      */
     @Override
-    public void saveMessage(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    public void saveMessage(Message message, ChatMessageReq chatMessageReq) {
         // 保存消息内容
-        TextMessageReqVO textMessageReq = BeanUtil.toBean(chatMessageReq, TextMessageReqVO.class);
+        Object body = chatMessageReq.getBody();
+        TextMessageBodyDTO textMessageReq = BeanUtil.toBean(body, TextMessageBodyDTO.class);
         String content = textMessageReq.getContent();
         Long id = message.getId();
-        Message update = Message.builder().id(id).content(content).build();
+        Message update = Message.builder()
+                .id(id)
+                .content(content)
+                .build();
         messageDao.updateById(update);
     }
 
     /**
      * 构建响应消息体
      *
-     * @param message 消息对象
+     * @param messageId 消息ID
      * @return 响应消息体
      */
     @Override
-    public ChatMessageResp buildChatMessageResp(Message message) {
+    public ChatMessageResp buildChatMessageResp(Long messageId) {
         // 1. 获取消息
-        Long fromUid = message.getFromUid();
-        Long id = message.getId();
-        Date createTime = message.getCreateTime();
-        Integer type = message.getType();
-        String content = message.getContent();
-        // TextMessageResp.ReplyMsg reply = TextMessageResp.ReplyMsg
-        //         .builder()
-        //         .id()
-        //         .uid()
-        //         .username()
-        //         .type()
-        //         .body()
-        //         .canCallback()
-        //         .gapCount()
-        //         .build();
+        Message message = messageDao.getById(messageId);
+        Long replyMessageId = message.getReplyMessageId();
+        Message replyMessage = messageDao.getById(replyMessageId);
+        String username = userDao.getById(replyMessage.getFromUid()).getName();
         // 2. 构建消息
-        TextMessageResp.ReplyMsg replyMsg = new TextMessageResp.ReplyMsg();
+        TextMessageResp.ReplyMsg reply = TextMessageResp.ReplyMsg
+                .builder()
+                .id(replyMessage.getId())
+                .uid(replyMessage.getFromUid())
+                .username(username)
+                .type(replyMessage.getType())
+                .body(null)
+                .canCallback(0)
+                .gapCount(replyMessage.getGapCount())
+                .build();
         TextMessageResp textMessageResp = TextMessageResp.builder()
-                .content(content)
+                .content(message.getContent())
                 .urlContentMap(Collections.singletonMap("url", new UrlInfo()))
                 .atUidList(new ArrayList<>())
-                .reply(replyMsg)
+                .reply(reply)
                 .build();
         ChatMessageResp.UserInfo userInfo = ChatMessageResp.UserInfo.builder()
-                .uid(fromUid)
+                .uid(message.getFromUid())
                 .build();
         ChatMessageResp.Message msg = ChatMessageResp.Message.builder()
-                .id(id)
-                .sendTime(createTime)
-                .type(type)
+                .id(message.getId())
+                .sendTime(message.getCreateTime())
+                .type(message.getType())
                 .body(textMessageResp)
                 .build();
         return ChatMessageResp.builder()

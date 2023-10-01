@@ -1,6 +1,5 @@
-package com.kkuil.blackchat.web.websocket.domain.dto.chat.message;
+package com.kkuil.blackchat.web.chat.domain.dto.message;
 
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -17,8 +16,7 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class VideoMessageBodyDTO extends AbstractChatMessageBaseReq implements Serializable {
+public class VideoMessageBodyDTO  implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
     /**

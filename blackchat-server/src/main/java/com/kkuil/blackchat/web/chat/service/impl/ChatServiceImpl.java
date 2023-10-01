@@ -1,17 +1,21 @@
-package com.kkuil.blackchat.web.websocket.service.impl;
+package com.kkuil.blackchat.web.chat.service.impl;
 
 import com.kkuil.blackchat.dao.MessageDAO;
 import com.kkuil.blackchat.domain.entity.Message;
+import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
+import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.service.RoomService;
+import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.MemberReq;
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.ChatMessageResp;
-import com.kkuil.blackchat.web.websocket.service.ChatService;
-import com.kkuil.blackchat.web.websocket.service.adapter.MessageAdapter;
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.service.ChatService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author Kkuil
@@ -37,7 +41,8 @@ public class ChatServiceImpl implements ChatService {
      * @return 响应体
      */
     @Override
-    public ResultUtil<ChatMessageResp> send(Long uid, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq) {
+    @Transactional(rollbackFor = Exception.class)
+    public ResultUtil<ChatMessageResp> send(Long uid, ChatMessageReq chatMessageReq) {
         // 1. 检查用户与房间的关系
         roomService.check(uid, chatMessageReq);
 
@@ -57,7 +62,23 @@ public class ChatServiceImpl implements ChatService {
         messageService.save(message, chatMessageReq);
 
         // 6. 构建消息响应体
-        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(message, chatMessageReq);
+        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId, chatMessageReq);
         return ResultUtil.success(chatMessageResp);
+    }
+
+    /**
+     * 获取成员信息
+     *
+     * @param uid       用户ID
+     * @param memberReq 成员请求信息
+     * @return 成员信息
+     */
+    @Override
+    public CursorPageBaseResp<ChatMemberResp> listMember(Long uid, MemberReq memberReq) {
+        // 1. 检查用户是否在房间内
+        Long roomId = memberReq.getRoomId();
+        Boolean isMember = roomService.checkRoomMembership(roomId, uid);
+        AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
+        return null;
     }
 }

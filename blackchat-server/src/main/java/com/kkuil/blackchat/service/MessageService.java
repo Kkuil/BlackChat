@@ -1,10 +1,8 @@
 package com.kkuil.blackchat.service;
 
 import com.kkuil.blackchat.domain.entity.Message;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.kkuil.blackchat.web.websocket.domain.dto.chat.AbstractChatMessageBaseReq;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
 
 /**
  * @Author Kkuil
@@ -19,7 +17,7 @@ public interface MessageService {
      * @param uid            用户ID
      * @param chatMessageReq 消息体
      */
-    void check(Long uid, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq);
+    void check(Long uid, ChatMessageReq chatMessageReq);
 
     /**
      * 二次保存消息（保存一些不同消息类型该保存的消息，比如说文本消息保存艾特用户，图片消息保存链接等）
@@ -27,21 +25,21 @@ public interface MessageService {
      * @param message        消息体
      * @param chatMessageReq 消息体
      */
-    void save(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq);
+    void save(Message message, ChatMessageReq chatMessageReq);
 
     /**
      * 构建消息返回体
      *
-     * @param message 消息对象
+     * @param messageId 消息ID
      * @return 消息返回体
      */
-    ChatMessageResp buildChatMessageResp(Message message, ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq);
+    ChatMessageResp buildChatMessageResp(Long messageId, ChatMessageReq chatMessageReq);
 
     /**
      * 检查回复消息
      *
      * @param chatMessageReq 消息体
      */
-    void checkReplyMessage(ChatMessageReq<? extends AbstractChatMessageBaseReq> chatMessageReq);
+    void checkReplyMessage(ChatMessageReq chatMessageReq);
 
 }

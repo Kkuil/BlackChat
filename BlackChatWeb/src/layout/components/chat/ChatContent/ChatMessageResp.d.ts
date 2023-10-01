@@ -1,4 +1,4 @@
-declare namespace ChatMessage {
+declare namespace ChatMessageResp {
     type MessageBody =
         | TextMessageBody
         | ImageMessageBody
@@ -9,37 +9,49 @@ declare namespace ChatMessage {
     /**
      * 消息发送的基础请求体
      */
-    type ChatMessageBaseReq<T extends MessageBody> = {
-        /**
-         * 房间号
-         */
-        roomId: number
-        /**
-         * 消息类型
-         */
-        messageType: ChatMessage.MessageType
-        /**
-         * 回复的消息id,如果没有别传就好
-         */
-        replyMessageId: number
-        /**
-         * 消息体
-         */
-        body: T
+    type ChatMessageBaseResp<T extends MessageBody> = {
+        fromUser: UserInfo
+        message: Message
+    }
+    type UserInfo = {
+        uid: string
+    }
+    type Message = {
+        id: number
+        sendTime: string
+        type: number
+        body: MessageBody
+        messageMark: MessageMark
+    }
+    type MessageMark = {
+        likeCount: number
+        userLike: number
+        dislikeCount: number
+        userDislike: number
     }
 
     /**
      * 文本结构体
      */
     type TextMessageBody = {
-        /**
-         * 文本消息内容
-         */
         content: string
-        /**
-         * 艾特的uid集合
-         */
+        urlContentMap: Record<string, UrlInfo>
         atUidList: number[]
+        reply: ReplyMsg
+    }
+    type UrlInfo = {
+        title: string
+        description: string
+        image: string
+    }
+    type ReplyMsg = {
+        id: number
+        uid: number
+        username: string
+        type: number
+        body: object
+        canCallback: number
+        gapCount: number
     }
 
     /**
