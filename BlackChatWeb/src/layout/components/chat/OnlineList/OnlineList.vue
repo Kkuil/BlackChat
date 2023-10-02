@@ -1,78 +1,43 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue"
-import eventBus from "@/utils/eventBus"
-import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import SvgIcon from "@/components/SvgIcon/SvgIcon.vue"
 import { useSessionStore } from "@/stores/session"
-import { listMember } from "@/api/chat/list"
-import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
-import CursorPageReq = GlobalTypes.CursorPageReq
+import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
+import { useUserStore } from "@/stores/user"
 
 const sessionStore = useSessionStore()
 
-const listPage = ref<CursorPageReq & { roomId: number; activeStatus: number }>({
-    pageSize: 20,
-    cursor: null,
-    isLast: false,
-    roomId: sessionStore.sessionInfo.chattingId,
-    activeStatus: ChatActiveEnums.ONLINE
-})
-
-onMounted(() => {
-    getMemberList()
-    initListeners()
-})
-
-/**
- * 初始化监听器
- */
-const initListeners = () => {
-    eventBus.on(
-        WsEventEnum.UPDATE_ONLINE_LIST,
-        (data: { uid: number; status: number }) => {
-            console.log(data)
-        }
-    )
-}
-
-/**
- * 获取成员列表
- */
-const getMemberList = async () => {
-    if (listPage.value.isLast) {
-        return
-    }
-    const result = await listMember(listPage.value)
-    if (result.data) {
-        if (!listPage.value.cursor) {
-            sessionStore.initSessionMemberList(result.data.list)
-        } else {
-            sessionStore.updateAddSessionMemberList(result.data.list)
-        }
-        listPage.value.cursor = result.data.cursor
-        listPage.value.isLast = result.data.isLast
-        listPage.value.activeStatus = <number>(
-            result.data.list[result.data.list.length - 1].activeStatus
-        )
-    }
-}
+const userStore = useUserStore()
 </script>
 
 <template>
     <div
-        class="online-list flex flex-col ml-[10px] bg-secondary rounded-[10px] text-[#fff] p-[10px]"
+        class="online-list flex flex-col ml-[10px] bg-secondary rounded-[10px] text-[#fff] p-[10px] relative"
     >
+        <div
+            v-if="!userStore.userInfo.name"
+            :class="!userStore.userInfo.name ? 'backdrop-blur-md' : ''"
+            class="w-full h-full absolute top-0 left-0 flex-center text-[12px] font-serif rounded-[10px]"
+        >
+            点击
+            <a
+                class="text-[#0094ff] text-sm cursor-pointer"
+                @click="popUpLoginDialog"
+            >
+                登录
+            </a>
+            后再进行查看吧
+        </div>
         <h1 class="online-count flex items-center h-[30px] text-[14px]">
-            在线人数：{{ sessionStore.getSessionInfo().memberList.length }}
+            总人数：{{ sessionStore.getSessionInfo.totalCount }}
         </h1>
         <ul
             class="list flex-1 overflow-y-auto"
-            v-infinite-scroll="getMemberList"
-            v-if="sessionStore.getSessionInfo().memberList.length"
+            v-infinite-scroll="sessionStore.getMemberList"
+            v-if="sessionStore.getSessionInfo.totalCount"
         >
             <li
                 class="item flex items-center py-[7px] cursor-pointer mb-[5px] hover:bg-[#263242] rounded-[5px] px-[7px]"
-                v-for="member in sessionStore.getSessionInfo().memberList"
+                v-for="member in sessionStore.sessionInfo.memberList"
                 :key="member.uid"
             >
                 <el-badge
@@ -88,15 +53,15 @@ const getMemberList = async () => {
                 </div>
             </li>
             <li
-                v-if="listPage.isLast"
+                v-if="sessionStore.listPage.isLast"
                 class="w-full flex-center text-[#5b6061] text-[12px]"
             >
                 暂无更多成员
             </li>
             <li
                 class="w-full flex-center"
-                v-observe="getMemberList"
-                v-if="!listPage.isLast"
+                v-observe="sessionStore.getMemberList"
+                v-if="!sessionStore.listPage.isLast"
             >
                 <i class="iconfont icon-loading animate-spin"></i>
             </li>

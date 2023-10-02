@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.cache.GroupCache;
 import com.kkuil.blackchat.domain.entity.GroupMember;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.entity.RoomGroup;
@@ -43,6 +44,10 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
 
     @Resource
     private UserRoleDAO userRoleDao;
+
+    @Resource
+    @Lazy
+    private GroupCache groupCache;
 
     /**
      * 判断某名用户在某个房间内是否有指定权限
@@ -92,13 +97,10 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      */
     public Boolean isGroupShip(Long roomId, Long... uids) {
         // 1. 通过ID查询房间内的所有成员ID
-        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
-        wrapper.eq("room_id", roomId);
-        List<GroupMember> list = this.list(wrapper);
+        List uidList = groupCache.getGroupUidByRoomId(roomId);
         // 2. 判断每个成员是否在这个集合中
-        List<Long> uidListInRoom = list.stream().map(GroupMember::getUid).toList();
         for (Long uid : uids) {
-            boolean contains = uidListInRoom.contains(uid);
+            boolean contains = uidList.contains(Integer.parseInt(uid.toString()));
             AssertUtil.isTrue(contains, ChatErrorEnum.NOT_IN_GROUP.getMsg());
         }
         return true;

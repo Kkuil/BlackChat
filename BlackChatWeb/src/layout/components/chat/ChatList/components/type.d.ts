@@ -3,5 +3,10 @@ export declare namespace ChatItem {
         avatar: string
         name: string
         message: string
-    }>
+    }> & {
+        extraInfo: ExtraInfo
+    }
+    type ExtraInfo = {
+        sendTime: string
+    }
 }

@@ -17,6 +17,7 @@ declare namespace GlobalTypes {
         cursor: number | null
         isLast: boolean
         list: T
+        extraInfo: any
     }
     // 翻页格式
     type LimitPage<T> = {
@@ -31,4 +32,11 @@ declare namespace GlobalTypes {
         avatar: string
         activeStatus: number
     }>
+    // 基本消息格式
+    type Message = {
+        id: number
+        content: string
+        sendTime: number
+        sender: UserInfo
+    }
 }

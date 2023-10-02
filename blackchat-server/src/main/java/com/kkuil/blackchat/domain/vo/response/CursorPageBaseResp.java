@@ -34,8 +34,13 @@ public class CursorPageBaseResp<T> {
      */
     private List<T> list;
 
+    /**
+     * 额外字段
+     */
+    private Object extraInfo;
+
     public static <T> CursorPageBaseResp<T> init(CursorPageBaseResp<?> cursorPage, List<T> list) {
-        CursorPageBaseResp<T> cursorPageBaseResp = new CursorPageBaseResp<T>();
+        CursorPageBaseResp<T> cursorPageBaseResp = new CursorPageBaseResp<>();
         cursorPageBaseResp.setIsLast(cursorPage.getIsLast());
         cursorPageBaseResp.setList(list);
         cursorPageBaseResp.setCursor(cursorPage.getCursor());

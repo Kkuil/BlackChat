@@ -4,7 +4,7 @@ import com.kkuil.blackchat.anotations.FrequencyControl;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.MemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberCursorReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
@@ -47,11 +47,9 @@ public class ChatController {
      * 获取群成员信息
      */
     @GetMapping("member/list")
-    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.IP)
-    @FrequencyControl(time = 30, count = 10, target = FrequencyControl.Target.IP)
-    public ResultUtil<CursorPageBaseResp<ChatMemberResp>> listMember(@Valid MemberCursorReq memberCursorReq) {
+    public ResultUtil<CursorPageBaseResp<ChatMemberResp>> listMember(@Valid ChatMemberCursorReq chatMemberCursorReq) {
         Long uid = RequestHolderDTO.get().getUid();
-        CursorPageBaseResp<ChatMemberResp> chatMemberRespCursorPageBaseResp = chatService.listMember(uid, memberCursorReq);
+        CursorPageBaseResp<ChatMemberResp> chatMemberRespCursorPageBaseResp = chatService.listMember(uid, chatMemberCursorReq);
         return ResultUtil.success(chatMemberRespCursorPageBaseResp);
     }
 }

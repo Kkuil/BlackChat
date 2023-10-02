@@ -13,7 +13,7 @@ const sessionStore = useSessionStore()
         <div
             class="w-full flex-[8%] bg-third hidden sm:flex items-center px-[10px] text-[#f5f5f5] font-extrabold"
         >
-            {{ sessionStore.getSessionInfo().name }}
+            {{ sessionStore.getSessionInfo.name }}
         </div>
         <div class="p-[10px] flex-[92%] flex flex-col">
             <ChatBody class="flex-1 overflow-y-scroll mb-[10px]" />

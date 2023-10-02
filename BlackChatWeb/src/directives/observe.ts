@@ -11,7 +11,7 @@ const Observe = {
                     observer.unobserve(el)
                     setTimeout(() => {
                         observer.observe(el)
-                    }, 500)
+                    }, 1500)
                 }
             })
         })

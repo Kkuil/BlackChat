@@ -22,6 +22,7 @@ public interface RoomService {
      *
      * @param roomId 房间ID
      * @param uids   一群用户ID
+     * @return 是否是在群聊中
      */
     Boolean checkRoomMembership(Long roomId, Long... uids);
 

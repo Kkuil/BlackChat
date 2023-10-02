@@ -2,7 +2,7 @@ package com.kkuil.blackchat.web.chat.service;
 
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.MemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberCursorReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
@@ -27,8 +27,8 @@ public interface ChatService {
      * 获取成员信息
      *
      * @param uid       用户ID
-     * @param memberCursorReq 成员请求信息
+     * @param chatMemberCursorReq 成员请求信息
      * @return 成员信息
      */
-    CursorPageBaseResp<ChatMemberResp> listMember(Long uid, MemberCursorReq memberCursorReq);
+    CursorPageBaseResp<ChatMemberResp> listMember(Long uid, ChatMemberCursorReq chatMemberCursorReq);
 }

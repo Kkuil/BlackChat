@@ -15,8 +15,14 @@ import CursorPageResp = GlobalTypes.CursorPageResp;
  * @param params CursorPage
  */
 export const listMember = (
-    params: CursorPage
-): Promise<ApiResult<CursorPageResp<UserInfo[]>>> => {
+    params: GlobalTypes.CursorPageReq
+): Promise<
+    ApiResult<
+        CursorPageResp<UserInfo[]> & {
+            extraInfo: { activeStatus: number; totalCount: number }
+        }
+    >
+> => {
     return request({
         url: "/chat/member/list",
         method: "GET",

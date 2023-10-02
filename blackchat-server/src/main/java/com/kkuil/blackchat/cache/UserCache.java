@@ -91,4 +91,24 @@ public class UserCache {
         RedisUtil.set(userKey, userBaseInfo1);
         return userBaseInfo1;
     }
+
+
+    /**
+     * 获取总人数
+     *
+     * @return 总人数
+     */
+    public Long getTotalCount() {
+        String key = RedisKeyConst.getKey(RedisKeyConst.USER_TOTAL_COUNT_STRING, "");
+
+        Long totalCount = RedisUtil.get(key, Long.class);
+
+        if (ObjectUtil.isNull(totalCount)) {
+            List<User> list = userDao.list();
+            RedisUtil.set(key, list.size());
+            return (long) list.size();
+        }
+
+        return totalCount;
+    }
 }

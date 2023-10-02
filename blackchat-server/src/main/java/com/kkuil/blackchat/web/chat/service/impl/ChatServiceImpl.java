@@ -14,7 +14,8 @@ import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.utils.ResultUtil;
 import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
-import com.kkuil.blackchat.web.chat.domain.vo.request.MemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberExtraResp;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
@@ -91,13 +92,13 @@ public class ChatServiceImpl implements ChatService {
     /**
      * 获取成员信息
      *
-     * @param uid             用户ID
-     * @param memberCursorReq 成员请求信息
+     * @param uid                 用户ID
+     * @param chatMemberCursorReq 成员请求信息
      * @return 成员信息
      */
     @Override
-    public CursorPageBaseResp<ChatMemberResp> listMember(Long uid, MemberCursorReq memberCursorReq) {
-        Long roomId = memberCursorReq.getRoomId();
+    public CursorPageBaseResp<ChatMemberResp> listMember(Long uid, ChatMemberCursorReq chatMemberCursorReq) {
+        Long roomId = chatMemberCursorReq.getRoomId();
         // 0. 检查房间号是否存在
         Room room = roomDao.getById(roomId);
         AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
@@ -113,40 +114,57 @@ public class ChatServiceImpl implements ChatService {
 
         // 3. 获取数据
         CursorPageBaseResp<User> userCursorPageBaseResp;
-        Integer activeStatus = memberCursorReq.getActiveStatus();
-        Integer pageSize = memberCursorReq.getPageSize();
-        List<Long> uidList = groupCache.getGroupUidByRoomId(roomId);
+        Integer activeStatus = chatMemberCursorReq.getActiveStatus();
+        Integer pageSize = chatMemberCursorReq.getPageSize();
+        // 判断热点群聊
+        List<Long> uidList;
+        if (room.getHotFlag() == 1) {
+            uidList = null;
+        } else {
+            uidList = groupCache.getGroupUidByRoomId(roomId);
+        }
+        ChatMemberExtraResp chatMemberExtraResp = new ChatMemberExtraResp();
         if (ChatActiveStatusEnum.ONLINE.getStatus().equals(activeStatus)) {
             // 3.1 获取在线成员
-            userCursorPageBaseResp = userDao.getCursorPage(uidList, memberCursorReq);
+            userCursorPageBaseResp = userDao.getCursorPage(uidList, chatMemberCursorReq);
             // 3.1.1 判断当前获取到的数量是否小于pageSize
             int size = userCursorPageBaseResp.getList().size();
             if (size < pageSize) {
                 // 3.1.1.1 小于则从离线列表进行填补
-                int remainCount = memberCursorReq.getPageSize() - size;
-                memberCursorReq.setPageSize(remainCount);
-                memberCursorReq.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
-                CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(uidList, memberCursorReq);
+                int remainCount = chatMemberCursorReq.getPageSize() - size;
+                chatMemberCursorReq.setPageSize(remainCount);
+                chatMemberCursorReq.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
+                CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(uidList, chatMemberCursorReq);
                 userCursorPageBaseResp.getList().addAll(cursorPage.getList());
                 userCursorPageBaseResp.setCursor(cursorPage.getCursor());
+                chatMemberExtraResp.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
                 // 3.1.1.2 只要走了这里面的逻辑，就告诉前端这不是最后一页数据
                 userCursorPageBaseResp.setIsLast(false);
+            } else {
+                chatMemberExtraResp.setActiveStatus(ChatActiveStatusEnum.ONLINE.getStatus());
             }
         } else {
             // 3.2 获取离线成员
-            userCursorPageBaseResp = userDao.getCursorPage(uidList, memberCursorReq);
+            userCursorPageBaseResp = userDao.getCursorPage(uidList, chatMemberCursorReq);
+            chatMemberCursorReq.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
         }
+        if (uidList != null) {
+            chatMemberExtraResp.setTotalCount(uidList.size());
+        } else {
+            Long totalCount = userCache.getTotalCount();
+            chatMemberExtraResp.setTotalCount(Math.toIntExact(totalCount));
+        }
+        userCursorPageBaseResp.setExtraInfo(chatMemberExtraResp);
 
         // 4. 组装数据
         List<ChatMemberResp> list = userCursorPageBaseResp.getList().stream().map(user -> {
             UserBaseInfo baseUserInfo = userCache.getBaseUserInfo(user.getId());
-            ChatMemberResp chatMemberResp = ChatMemberResp.builder()
+            return ChatMemberResp.builder()
                     .uid(user.getId())
                     .name(baseUserInfo.getName())
                     .avatar(baseUserInfo.getAvatar())
                     .activeStatus(baseUserInfo.getActiveStatus())
                     .build();
-            return chatMemberResp;
         }).toList();
         return GroupMemberAdapter.buildChatMemberCursorPage(list, userCursorPageBaseResp);
     }

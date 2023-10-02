@@ -1,4 +1,6 @@
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
+import { ElMessage } from "element-plus"
+import ApiResult = GlobalTypes.ApiResult
 
 const BASE_URL: string = import.meta.env.VITE_REQUEST_BASE_URL
 const BASE_TIMEOUT: number = import.meta.env.VITE_REQUEST_TIMEOUT
@@ -24,8 +26,10 @@ request.interceptors.request.use(
 
 // 响应拦截器
 request.interceptors.response.use(
-    (response) => {
-        console.log(response.data)
+    (response: AxiosResponse & { data: ApiResult<any> }) => {
+        if (!response.data.data) {
+            ElMessage.error(response.data.message)
+        }
         return response.data
     },
     (error) => {

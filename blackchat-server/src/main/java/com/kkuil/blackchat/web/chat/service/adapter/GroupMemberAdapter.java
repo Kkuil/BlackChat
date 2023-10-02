@@ -1,8 +1,8 @@
 package com.kkuil.blackchat.web.chat.service.adapter;
 
-import com.kkuil.blackchat.domain.entity.GroupMember;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
+import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberExtraResp;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 
 import java.util.List;
@@ -26,6 +26,7 @@ public class GroupMemberAdapter {
         chatMemberRespCursorPageBaseResp.setCursor(groupMemberCursorPageBaseResp.getCursor());
         chatMemberRespCursorPageBaseResp.setIsLast(groupMemberCursorPageBaseResp.getIsLast());
         chatMemberRespCursorPageBaseResp.setList(list);
+        chatMemberRespCursorPageBaseResp.setExtraInfo(groupMemberCursorPageBaseResp.getExtraInfo());
         return chatMemberRespCursorPageBaseResp;
     }
 }

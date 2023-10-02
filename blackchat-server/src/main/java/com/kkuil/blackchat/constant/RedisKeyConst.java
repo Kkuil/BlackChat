@@ -38,6 +38,11 @@ public class RedisKeyConst {
     public static final String USER_INFO_STRING = "userInfo:uid_%d";
 
     /**
+     * 用户总数
+     */
+    public static final String USER_TOTAL_COUNT_STRING = "user:total_count:";
+
+    /**
      * 房间详情
      */
     public static final String ROOM_INFO_STRING = "roomInfo:roomId_%d";
