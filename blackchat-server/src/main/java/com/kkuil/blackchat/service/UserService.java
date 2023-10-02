@@ -1,5 +1,7 @@
 package com.kkuil.blackchat.service;
 
+import com.kkuil.blackchat.utils.ResultUtil;
+
 /**
  * @Author Kkuil
  * @Date 2023/9/26
@@ -14,4 +16,12 @@ public interface UserService {
      */
     void register(String openId);
 
+    /**
+     * 更新用户名
+     *
+     * @param uid 用户ID
+     * @param username 用户名
+     * @return 是否更改成功
+     */
+    Boolean updateUsername(Long uid, String username);
 }

@@ -92,7 +92,6 @@ public class UserCache {
         return userBaseInfo1;
     }
 
-
     /**
      * 获取总人数
      *

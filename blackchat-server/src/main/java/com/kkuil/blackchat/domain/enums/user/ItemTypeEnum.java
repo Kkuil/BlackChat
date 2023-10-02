@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 public enum ItemTypeEnum {
+    /**
+     *
+     */
     MODIFY_NAME_CARD(1, "改名卡"),
     BADGE(2, "徽章"),
     ;
@@ -23,13 +26,13 @@ public enum ItemTypeEnum {
     private final Integer type;
     private final String desc;
 
-    private static Map<Integer, ItemTypeEnum> cache;
+    private static final Map<Integer, ItemTypeEnum> CACHE;
 
     static {
-        cache = Arrays.stream(ItemTypeEnum.values()).collect(Collectors.toMap(ItemTypeEnum::getType, Function.identity()));
+        CACHE = Arrays.stream(ItemTypeEnum.values()).collect(Collectors.toMap(ItemTypeEnum::getType, Function.identity()));
     }
 
     public static ItemTypeEnum of(Integer type) {
-        return cache.get(type);
+        return CACHE.get(type);
     }
 }

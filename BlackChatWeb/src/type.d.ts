@@ -23,7 +23,7 @@ declare namespace GlobalTypes {
     type LimitPage<T> = {
         pageSize: number
         current: number | null
-        list: T
+        data: T
     }
     // 用户信息格式
     type UserInfo = Partial<{

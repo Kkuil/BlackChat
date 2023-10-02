@@ -1,4 +1,4 @@
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import { defineStore } from "pinia"
 import type { Store } from "@/stores/store"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
@@ -25,9 +25,17 @@ export const useUserStore = defineStore("user", () => {
     /**
      * 是否已经登录
      */
-    const isLogin = () => {
+    const isLogin = computed(() => {
         return !!userInfo.value.name
+    })
+
+    /**
+     * 更新用户名
+     * @param username 用户名
+     */
+    const updateName = (username: string) => {
+        userInfo.value.name = username
     }
 
-    return { userInfo, loginSuccess, isLogin }
+    return { userInfo, loginSuccess, updateName, isLogin }
 })

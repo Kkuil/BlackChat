@@ -57,7 +57,7 @@ public class UserBackpackServiceImpl implements UserBackpackService {
         boolean equals = ItemTypeEnum.BADGE.getType().equals(itemConfig.getType());
         if (equals) {
             // 判断是否
-            Integer count = userBackpackDao.getCountByValidItemId(uid, itemId);
+            Integer count = userBackpackDao.getCountByUidItemId(uid, itemId);
             if (count > 0) {
                 // 已经有徽章了不发
                 return;

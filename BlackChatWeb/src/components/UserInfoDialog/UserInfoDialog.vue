@@ -3,15 +3,33 @@ import { onMounted, ref } from "vue"
 import { popDownUserInfoDialog } from "@/utils/popDialog/popUserInfoDialog"
 import { useUserStore } from "@/stores/user"
 import { useBadgeStore } from "@/stores/badge"
+import { updateUsername } from "@/api/user"
+import { ElMessage } from "element-plus"
 
+const userStore = useUserStore()
+const badgeStore = useBadgeStore()
+
+type TType = {
+    isTypingName: boolean
+    name: string
+}
+
+/**
+ * 更改名字信息
+ */
+const type = ref<TType>({
+    isTypingName: false,
+    name: ""
+})
+
+/**
+ * 徽章列表信息
+ */
 const badgePageInfo = ref<GlobalTypes.LimitPage<any>>({
     pageSize: 10,
     current: 1,
     data: null
 })
-
-const userStore = useUserStore()
-const badgeStore = useBadgeStore()
 
 onMounted(() => {
     getBadgeList()
@@ -36,6 +54,18 @@ const onClose = () => {
 const getBadgeList = async () => {
     await badgeStore.updateBadges(badgePageInfo.value)
 }
+
+/**
+ * 更改名字
+ */
+const updateName = async () => {
+    const result = await updateUsername(type.value.name)
+    if (result.data) {
+        userStore.updateName(type.value.name)
+        type.value.isTypingName = false
+        ElMessage.success("更改成功")
+    }
+}
 </script>
 
 <template>
@@ -49,8 +79,29 @@ const getBadgeList = async () => {
         <template #default>
             <div class="w-full h-[200px] flex-center flex-col">
                 <el-avatar :src="userStore.userInfo.avatar" :size="120" />
-                <h1 class="mt-[10px] text-2xl">
-                    {{ userStore.userInfo.name }}
+                <h1 class="flex items-center mt-[10px] text-2xl">
+                    <span v-show="!type.isTypingName">
+                        {{ userStore.userInfo.name }}
+                    </span>
+                    <el-input
+                        v-show="type.isTypingName"
+                        v-model="type.name"
+                        :placeholder="userStore.userInfo.name"
+                    />
+                    <i
+                        class="flex-center iconfont icon-editor text-[25px] ml-[10px] cursor-pointer w-[30px] h-[30px] hover:bg-[#ccc] transition-[background-color] rounded-[5px]"
+                        title="点击更名"
+                        @click="type.isTypingName = true"
+                        v-if="!type.isTypingName"
+                    ></i>
+                    <el-button
+                        type="primary"
+                        v-show="type.isTypingName"
+                        class="ml-[10px]"
+                        @click="updateName"
+                    >
+                        保存
+                    </el-button>
                 </h1>
             </div>
             <ul class="badge-list">

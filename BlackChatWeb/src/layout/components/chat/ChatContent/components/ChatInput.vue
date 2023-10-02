@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import { sendMessage } from "@/api/chat/chat"
+import { sendMessage } from "@/api/chat"
 import { useUserStore } from "@/stores/user"
 import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useMessageStore } from "@/stores/message"

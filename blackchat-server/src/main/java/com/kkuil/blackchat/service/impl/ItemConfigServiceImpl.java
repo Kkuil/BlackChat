@@ -45,7 +45,7 @@ public class ItemConfigServiceImpl implements ItemConfigService {
         List<ItemConfig> badges = itemCache.getByType(pageReq.getCurrent(), ItemTypeEnum.BADGE.getType());
         // 2. 获取用户已拥有的徽章IDs
         List<Long> list = badges.stream().map(ItemConfig::getId).toList();
-        List<Long> userOwnedBadgeIds = userBackpackDAO.getByItemIds(uid, list).stream().map(UserBackpack::getItemId).toList();
+        List<Long> userOwnedBadgeIds = userBackpackDAO.getValidByItemIds(uid, list).stream().map(UserBackpack::getItemId).toList();
         // 3. 构建用户已拥有的徽章进行标记
         User user = userDao.getById(uid);
         return UserBackpackAdapter.buildBatchBadgesByUid(user, userOwnedBadgeIds, badges);

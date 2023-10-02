@@ -2,19 +2,15 @@ package com.kkuil.blackchat.dao;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.ItemCache;
-import com.kkuil.blackchat.domain.common.page.PageReq;
 import com.kkuil.blackchat.domain.entity.ItemConfig;
-import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.entity.UserBackpack;
-import com.kkuil.blackchat.domain.entity.UserRole;
 import com.kkuil.blackchat.domain.enums.YesOrNoEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.mapper.UserBackpackMapper;
-import com.kkuil.blackchat.mapper.UserRoleMapper;
-import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +45,7 @@ public class UserBackpackDAO extends ServiceImpl<UserBackpackMapper, UserBackpac
      * @param itemId 物品ID
      * @return 条数
      */
-    public Integer getCountByValidItemId(Long uid, Long itemId) {
+    public Integer getCountByUidItemId(Long uid, Long itemId) {
         LambdaQueryWrapper<UserBackpack> wrapper = new QueryWrapper<UserBackpack>().lambda()
                 .eq(UserBackpack::getUid, uid)
                 .eq(UserBackpack::getItemId, itemId);
@@ -81,7 +77,7 @@ public class UserBackpackDAO extends ServiceImpl<UserBackpackMapper, UserBackpac
      * @param itemIds 物品ID
      * @return 用户物品获取信息
      */
-    public List<UserBackpack> getByItemIds(Long uid, List<Long> itemIds) {
+    public List<UserBackpack> getValidByItemIds(Long uid, List<Long> itemIds) {
         return lambdaQuery()
                 .eq(UserBackpack::getUid, uid)
                 .in(UserBackpack::getItemId, itemIds)
@@ -89,4 +85,19 @@ public class UserBackpackDAO extends ServiceImpl<UserBackpackMapper, UserBackpac
                 .list();
     }
 
+    /**
+     * 更名
+     *
+     * @param uid    用户ID
+     * @param type   物品ID
+     * @param status 更改为的状态
+     */
+    public void updateStatus(Long uid, Integer itemId, Integer status) {
+        UpdateWrapper<UserBackpack> wrapper = new UpdateWrapper<>();
+        wrapper.lambda()
+                .eq(UserBackpack::getUid, uid)
+                .eq(UserBackpack::getItemId, itemId)
+                .set(UserBackpack::getStatus, status);
+        this.update(wrapper);
+    }
 }

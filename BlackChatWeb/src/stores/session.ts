@@ -2,7 +2,7 @@ import { computed, ref, watch } from "vue"
 import { defineStore } from "pinia"
 import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 import { Store } from "@/stores/store"
-import { listMember } from "@/api/chat/list"
+import { listMember } from "@/api/list"
 import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
 import UserInfo = GlobalTypes.UserInfo
 

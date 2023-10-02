@@ -11,7 +11,7 @@ const userStore = useUserStore()
  */
 const checkUserInfo = async () => {
     // 判断用户是否登录
-    if (!userStore.isLogin()) {
+    if (!userStore.isLogin) {
         popUpLoginDialog()
     } else {
         popUpUserInfoDialog()

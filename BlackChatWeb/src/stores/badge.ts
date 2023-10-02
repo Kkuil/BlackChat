@@ -1,6 +1,6 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import { listBadge } from "@/api/chat/list"
+import { listBadge } from "@/api/list"
 import { BADGE_INFO_LOC_PREFIX_KEY } from "@/constant/userKeys"
 
 export const useBadgeStore = defineStore(
