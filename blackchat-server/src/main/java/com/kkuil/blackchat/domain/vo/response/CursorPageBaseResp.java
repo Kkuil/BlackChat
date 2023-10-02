@@ -34,7 +34,7 @@ public class CursorPageBaseResp<T> {
      */
     private List<T> list;
 
-    public static <T> CursorPageBaseResp<T> init(CursorPageBaseResp cursorPage, List<T> list) {
+    public static <T> CursorPageBaseResp<T> init(CursorPageBaseResp<?> cursorPage, List<T> list) {
         CursorPageBaseResp<T> cursorPageBaseResp = new CursorPageBaseResp<T>();
         cursorPageBaseResp.setIsLast(cursorPage.getIsLast());
         cursorPageBaseResp.setList(list);

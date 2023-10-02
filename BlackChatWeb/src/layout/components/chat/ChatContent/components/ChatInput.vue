@@ -4,7 +4,7 @@ import { sendMessage } from "@/api/chat/chat"
 import { useUserStore } from "@/stores/user"
 import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useMessageStore } from "@/stores/message"
-import { MessageTypeEnum } from "@/layout/components/chat/ChatContent/MessageTypeEnum"
+import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import ChatEmoji from "@/components/ChatEmoji/ChatEmoji.vue"
 import { ElMessage } from "element-plus"
 import _ from "lodash"
@@ -53,7 +53,7 @@ const send = _.throttle(async () => {
         <div
             v-if="!userStore.userInfo.name"
             :class="!userStore.userInfo.name ? 'backdrop-blur-md' : ''"
-            class="w-full h-full absolute flex-center text-[12px] font-serif"
+            class="w-full h-full absolute top-0 left-0 flex-center text-[12px] font-serif rounded-[10px]"
         >
             点击
             <a

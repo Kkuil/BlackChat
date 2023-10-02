@@ -2,16 +2,23 @@ package com.kkuil.blackchat.dao;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.GroupMember;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.entity.RoomGroup;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
+import com.kkuil.blackchat.domain.vo.request.CursorPageBaseReq;
+import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.GroupMemberMapper;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
+import com.kkuil.blackchat.utils.CursorUtil;
 import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
+import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -85,8 +92,8 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      */
     public Boolean isGroupShip(Long roomId, Long... uids) {
         // 1. 通过ID查询房间内的所有成员ID
-        LambdaQueryChainWrapper<GroupMember> wrapper = lambdaQuery().eq(GroupMember::getRoomId, roomId);
-        wrapper.select(GroupMember::getUid);
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<>();
+        wrapper.eq("room_id", roomId);
         List<GroupMember> list = this.list(wrapper);
         // 2. 判断每个成员是否在这个集合中
         List<Long> uidListInRoom = list.stream().map(GroupMember::getUid).toList();
@@ -116,5 +123,17 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
         GroupMember groupMember = this.getOne(wrapper);
         Integer role = groupMember.getRole();
         return authorities.contains(role);
+    }
+
+    /**
+     * 通过房间ID获取群成员ID
+     *
+     * @param roomId 房间ID
+     * @return 群成员ID
+     */
+    public List<Long> listUidByRoomId(Long roomId) {
+        LambdaQueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>().lambda().eq(GroupMember::getRoomId, roomId);
+        List<GroupMember> list = this.list(wrapper);
+        return list.stream().map(GroupMember::getUid).toList();
     }
 }

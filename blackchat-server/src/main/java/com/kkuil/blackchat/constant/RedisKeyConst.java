@@ -48,6 +48,11 @@ public class RedisKeyConst {
     public static final String GROUP_INFO_STRING = "groupInfo:roomId_%d";
 
     /**
+     * 群组成員uid
+     */
+    public static final String GROUP_UID_STRING = "group:uid_%s";
+
+    /**
      * 用户token存放
      */
     public static final String USER_TOKEN_STRING = "userToken:uid_%d";

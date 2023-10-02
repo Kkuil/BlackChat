@@ -1,6 +1,6 @@
-import { RoomTypeEnum } from "@/RoomTypeEnum"
+import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 
-export declare namespace Store {
+declare namespace Store {
     import UserInfo = GlobalTypes.UserInfo
     type UserInfoType = {
         /** 用户唯一标识 */

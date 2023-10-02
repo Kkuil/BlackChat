@@ -86,7 +86,7 @@ public class RoomServiceImpl implements RoomService {
         Integer roomType = room.getType();
         if (roomType.equals(RoomTypeEnum.FRIEND.getType())) {
             // 2.1 单聊检查
-            AssertUtil.isTrue(uids.length == 2, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCHE.getMsg());
+            AssertUtil.isTrue(uids.length == 2, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCH.getMsg());
             Boolean hasUser = roomFriendDao.isFriend(uids);
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
         } else {

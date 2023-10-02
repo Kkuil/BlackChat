@@ -3,6 +3,8 @@ package com.kkuil.blackchat.web.chat.domain.vo.request;
 import com.kkuil.blackchat.domain.vo.request.CursorPageBaseReq;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @Author Kkuil
  * @Date 2023/10/1 13:11
@@ -13,10 +15,17 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class MemberReq extends CursorPageBaseReq {
+public class MemberCursorReq extends CursorPageBaseReq {
 
     /**
      * 房间号
      */
+    @NotNull
     private Long roomId = 1L;
+
+    /**
+     * 在线状态
+     */
+    @NotNull
+    private Integer activeStatus;
 }

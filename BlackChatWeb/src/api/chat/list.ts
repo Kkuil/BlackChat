@@ -4,10 +4,10 @@ import {
     TOKEN_KEY_IN_LOC,
     TOKEN_PREFIX
 } from "@/constant/auth"
-import CursorPage = GlobalTypes.CursorPage
-import ApiResult = GlobalTypes.ApiResult;
+import ApiResult = GlobalTypes.ApiResult
 import UserInfo = GlobalTypes.UserInfo;
 import LimitPage = GlobalTypes.LimitPage;
+import CursorPageResp = GlobalTypes.CursorPageResp;
 
 /**
  * 获取成员列表
@@ -16,14 +16,15 @@ import LimitPage = GlobalTypes.LimitPage;
  */
 export const listMember = (
     params: CursorPage
-): Promise<ApiResult<UserInfo>> => {
+): Promise<ApiResult<CursorPageResp<UserInfo[]>>> => {
     return request({
-        url: "/member/list",
+        url: "/chat/member/list",
         method: "GET",
         params: {
             pageSize: params.pageSize,
             cursor: params.cursor,
-            roomId: params.data
+            roomId: params.roomId,
+            activeStatus: params.activeStatus
         },
         headers: {
             [TOKEN_KEY_IN_HEADER]:

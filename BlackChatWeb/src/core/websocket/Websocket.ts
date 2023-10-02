@@ -115,11 +115,6 @@ class Websocket {
                 })
                 break
             }
-            // 更新上线列表
-            case WsResponseTypeEnum.UPDATE_ONLINE_LIST: {
-                eventBus.emit(WsEventEnum.UPDATE_ONLINE_LIST, params.data)
-                break
-            }
             // 登录失效
             case WsResponseTypeEnum.INVALIDATE_TOKEN: {
                 ElMessage.error("登录失效，请重新登录")

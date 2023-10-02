@@ -11,7 +11,6 @@ import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.service.impl.ChatGroupSpecialMemberEnum;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.utils.discover.domain.UrlInfo;
-import com.kkuil.blackchat.utils.sensitive.SensitiveWordBs;
 import com.kkuil.blackchat.web.chat.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.web.chat.domain.enums.MessageTypeEnum;
 import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
@@ -31,9 +30,6 @@ import java.util.*;
  */
 @Service
 public class TextMessageHandler extends AbstractMessageHandler {
-
-    @Resource
-    private SensitiveWordBs sensitiveWordBs;
 
     @Resource
     private MessageDAO messageDao;

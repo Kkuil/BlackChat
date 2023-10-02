@@ -6,22 +6,29 @@ declare namespace GlobalTypes {
         data: T
     }
     // 游标格式
-    type CursorPage<T> = {
+    type CursorPageReq = {
         pageSize: number
         cursor: number | null
-        data: T
+        isLast: boolean
+    }
+    // 游标格式
+    type CursorPageResp<T> = {
+        pageSize: number
+        cursor: number | null
+        isLast: boolean
+        list: T
     }
     // 翻页格式
     type LimitPage<T> = {
         pageSize: number
         current: number | null
-        data: T
+        list: T
     }
     // 用户信息格式
     type UserInfo = Partial<{
         uid: number
         name: string
         avatar: string
-        status: number
+        activeStatus: number
     }>
 }

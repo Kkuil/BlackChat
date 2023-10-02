@@ -1,21 +1,31 @@
 package com.kkuil.blackchat.web.chat.service.impl;
 
-import com.kkuil.blackchat.dao.MessageDAO;
+import com.kkuil.blackchat.cache.GroupCache;
+import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.dao.*;
+import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.Message;
+import com.kkuil.blackchat.domain.entity.Room;
+import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.MemberReq;
+import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
+import com.kkuil.blackchat.web.chat.domain.vo.request.MemberCursorReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
+import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
 import com.kkuil.blackchat.web.chat.service.ChatService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.kkuil.blackchat.web.chat.service.adapter.GroupMemberAdapter;
+
+import java.util.List;
 
 /**
  * @Author Kkuil
@@ -26,6 +36,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatServiceImpl implements ChatService {
 
     @Resource
+    private UserCache userCache;
+
+    @Resource
     private RoomService roomService;
 
     @Resource
@@ -33,6 +46,15 @@ public class ChatServiceImpl implements ChatService {
 
     @Resource
     private MessageDAO messageDao;
+
+    @Resource
+    private RoomDAO roomDao;
+
+    @Resource
+    private GroupCache groupCache;
+
+    @Resource
+    private UserDAO userDao;
 
     /**
      * 发送消息
@@ -69,16 +91,63 @@ public class ChatServiceImpl implements ChatService {
     /**
      * 获取成员信息
      *
-     * @param uid       用户ID
-     * @param memberReq 成员请求信息
+     * @param uid             用户ID
+     * @param memberCursorReq 成员请求信息
      * @return 成员信息
      */
     @Override
-    public CursorPageBaseResp<ChatMemberResp> listMember(Long uid, MemberReq memberReq) {
-        // 1. 检查用户是否在房间内
-        Long roomId = memberReq.getRoomId();
+    public CursorPageBaseResp<ChatMemberResp> listMember(Long uid, MemberCursorReq memberCursorReq) {
+        Long roomId = memberCursorReq.getRoomId();
+        // 0. 检查房间号是否存在
+        Room room = roomDao.getById(roomId);
+        AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
+
+        // 1. 检查用户是否在房间内(用户不在房间内，不让获取群列表)
         Boolean isMember = roomService.checkRoomMembership(roomId, uid);
         AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
-        return null;
+
+        Integer roomType = room.getType();
+        // 2. 判断当前房间的类型是否是群聊
+        boolean isGroup = RoomTypeEnum.GROUP.getType().equals(roomType);
+        AssertUtil.isTrue(isGroup, ChatErrorEnum.NOT_GROUP.getMsg());
+
+        // 3. 获取数据
+        CursorPageBaseResp<User> userCursorPageBaseResp;
+        Integer activeStatus = memberCursorReq.getActiveStatus();
+        Integer pageSize = memberCursorReq.getPageSize();
+        List<Long> uidList = groupCache.getGroupUidByRoomId(roomId);
+        if (ChatActiveStatusEnum.ONLINE.getStatus().equals(activeStatus)) {
+            // 3.1 获取在线成员
+            userCursorPageBaseResp = userDao.getCursorPage(uidList, memberCursorReq);
+            // 3.1.1 判断当前获取到的数量是否小于pageSize
+            int size = userCursorPageBaseResp.getList().size();
+            if (size < pageSize) {
+                // 3.1.1.1 小于则从离线列表进行填补
+                int remainCount = memberCursorReq.getPageSize() - size;
+                memberCursorReq.setPageSize(remainCount);
+                memberCursorReq.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
+                CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(uidList, memberCursorReq);
+                userCursorPageBaseResp.getList().addAll(cursorPage.getList());
+                userCursorPageBaseResp.setCursor(cursorPage.getCursor());
+                // 3.1.1.2 只要走了这里面的逻辑，就告诉前端这不是最后一页数据
+                userCursorPageBaseResp.setIsLast(false);
+            }
+        } else {
+            // 3.2 获取离线成员
+            userCursorPageBaseResp = userDao.getCursorPage(uidList, memberCursorReq);
+        }
+
+        // 4. 组装数据
+        List<ChatMemberResp> list = userCursorPageBaseResp.getList().stream().map(user -> {
+            UserBaseInfo baseUserInfo = userCache.getBaseUserInfo(user.getId());
+            ChatMemberResp chatMemberResp = ChatMemberResp.builder()
+                    .uid(user.getId())
+                    .name(baseUserInfo.getName())
+                    .avatar(baseUserInfo.getAvatar())
+                    .activeStatus(baseUserInfo.getActiveStatus())
+                    .build();
+            return chatMemberResp;
+        }).toList();
+        return GroupMemberAdapter.buildChatMemberCursorPage(list, userCursorPageBaseResp);
     }
 }

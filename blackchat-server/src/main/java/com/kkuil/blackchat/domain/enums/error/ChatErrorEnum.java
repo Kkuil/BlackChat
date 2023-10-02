@@ -22,8 +22,9 @@ public enum ChatErrorEnum implements ErrorEnum {
     REPLY_MESSAGE_NOT_MATCH(1006, "发送消息和回复的消息不在一个会话内"),
     AT_USER_REPEAT(1007, "重复艾特同一名用户"),
     AT_USER_NOT_EXIST(1008, "艾特用户不存在"),
-    PEOPLE_COUNT_NOT_MATCHE(1008, "单聊人数不匹配"),
+    PEOPLE_COUNT_NOT_MATCH(1008, "单聊人数不匹配"),
     NO_AUTH(1008, "暂无此权限"),
+    NOT_GROUP(1009, "该房间不是群聊"),
     ;
 
     private final Integer code;

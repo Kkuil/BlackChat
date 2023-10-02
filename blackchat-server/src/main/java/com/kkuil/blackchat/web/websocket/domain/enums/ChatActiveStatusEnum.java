@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 public enum ChatActiveStatusEnum {
+    /**
+     *
+     */
     ONLINE(1, "在线"),
     OFFLINE(2, "离线"),
     ;

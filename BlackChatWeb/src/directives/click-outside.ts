@@ -1,4 +1,4 @@
-// click-outside.js
+// click-outside.ts
 const ClickOutside = {
     // Vue 2
     bind(el: Element, binding, vnode) {

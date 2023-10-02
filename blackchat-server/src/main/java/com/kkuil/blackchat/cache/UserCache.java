@@ -1,7 +1,13 @@
 package com.kkuil.blackchat.cache;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.dao.UserDAO;
+import com.kkuil.blackchat.domain.dto.UserBaseInfo;
+import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.utils.RedisUtil;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -16,6 +22,9 @@ import java.util.stream.Collectors;
  */
 @Component
 public class UserCache {
+
+    @Resource
+    private UserDAO userDao;
 
     /**
      * 用户上线
@@ -58,4 +67,28 @@ public class UserCache {
         return strings.stream().map(Long::parseLong).collect(Collectors.toList());
     }
 
+    /**
+     * 获取基本用户信息
+     *
+     * @param uid 用户ID
+     * @return 用户基本信息
+     */
+    public UserBaseInfo getBaseUserInfo(Long uid) {
+        // 1. 先尝试从缓存中获取
+        String key = String.format(RedisKeyConst.USER_INFO_STRING, uid);
+        String userKey = RedisKeyConst.getKey(key);
+        UserBaseInfo userBaseInfo = RedisUtil.get(userKey, UserBaseInfo.class);
+
+        if (ObjectUtil.isNotNull(userBaseInfo)) {
+            return userBaseInfo;
+        }
+
+        // 2. 从数据库中获取数据
+        User user = userDao.getById(uid);
+        UserBaseInfo userBaseInfo1 = BeanUtil.toBean(user, UserBaseInfo.class);
+
+        // 3. 缓存数据
+        RedisUtil.set(userKey, userBaseInfo1);
+        return userBaseInfo1;
+    }
 }

@@ -57,10 +57,5 @@ export enum WsResponseTypeEnum {
     /**
      * 成员变动
      */
-    MEMBER_CHANGE = 11,
-
-    /**
-     * 更新上线列表
-     */
-    UPDATE_ONLINE_LIST = 12
+    MEMBER_CHANGE = 11
 }

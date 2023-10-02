@@ -139,11 +139,6 @@ public class WebSocketServiceImpl implements WebSocketService {
         UID_CHANNEL_MAP.get(uid).add(channel);
         // 将用户id记录在当前通道中
         NettyUtil.setAttrInChannel(channel, AuthorizationConst.UID_KEY_IN_CHANNEL, uid);
-        // 更新用户上线列表
-        WsUpdateOnlineListResp wsUpdateOnlineListResp = new WsUpdateOnlineListResp();
-        wsUpdateOnlineListResp.setUid(uid);
-        wsUpdateOnlineListResp.setStatus(ChatActiveStatusEnum.ONLINE.getStatus());
-        this.updateOnlineList(wsUpdateOnlineListResp);
     }
 
     /**
@@ -284,16 +279,6 @@ public class WebSocketServiceImpl implements WebSocketService {
         });
     }
 
-    /**
-     * 更新上线列表
-     */
-    @Override
-    public void updateOnlineList(WsUpdateOnlineListResp updateOnlineListResp) {
-        WsBaseResp<WsUpdateOnlineListResp> baseResp = new WsBaseResp<>();
-        baseResp.setType(WsResponseTypeEnum.UPDATE_ONLINE_LIST.getType());
-        baseResp.setData(updateOnlineListResp);
-        sendMsgToAll(baseResp);
-    }
 
     /**
      * 保存等待登录码

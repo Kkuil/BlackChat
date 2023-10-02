@@ -5,13 +5,11 @@ import OnlineList from "@/layout/components/chat/OnlineList/OnlineList.vue"
 </script>
 
 <template>
-    <ChatList class="hidden xl:block xl:flex-[28%]" />
+    <ChatList class="hidden xl:block xl:flex-[25%]" />
     <ChatContent
-        class="flex-[1/2] sm:flex sm:flex-[76%] md:flex-[71%] xl:flex-[50%]"
+        class="flex-[96%] sm:flex sm:flex-[85%] md:flex-[71%] xl:flex-[50%]"
     />
-    <OnlineList
-        class="hidden sm:flex sm:flex-[24%] md:flex-[19%] xl:flex-[15%]"
-    />
+    <OnlineList class="hidden md:flex md:flex-[19%] xl:flex-[18%]" />
 </template>
 
 <style scoped lang="scss"></style>

@@ -28,7 +28,7 @@ public class Message implements Serializable {
     private Long id;
 
     /**
-     * 会话表id
+     * 房间表id
      */
     @TableField(value = "room_id")
     private Long roomId;

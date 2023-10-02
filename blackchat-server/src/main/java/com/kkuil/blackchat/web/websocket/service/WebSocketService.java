@@ -104,10 +104,4 @@ public interface WebSocketService {
      * @param skipUid    跳过的用户ID
      */
     void sendMsgToAll(WsBaseResp<?> wsBaseResp, Long skipUid);
-
-    /**
-     * 更新上线列表
-     * @param updateOnlineListResp 参数
-     */
-    void updateOnlineList(WsUpdateOnlineListResp updateOnlineListResp);
 }

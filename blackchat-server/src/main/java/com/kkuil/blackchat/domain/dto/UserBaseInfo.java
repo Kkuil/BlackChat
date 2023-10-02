@@ -1,23 +1,20 @@
-package com.kkuil.blackchat.web.chat.domain.vo.response;
+package com.kkuil.blackchat.domain.dto;
 
-import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 /**
  * @Author Kkuil
- * @Date 2023/9/27
- * @Description 群成员列表的成员信息
+ * @Date 2023/10/1 19:23
+ * @Description 用户基础数据
  */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMemberResp {
+public class UserBaseInfo {
     /**
      * 用户ID
      */
@@ -34,13 +31,7 @@ public class ChatMemberResp {
     private String avatar;
 
     /**
-     * 角色
-     */
-    private Integer role;
-
-    /**
-     * @see ChatActiveStatusEnum
-     * 当前状态
+     * 用户状态
      */
     private Integer activeStatus;
 }

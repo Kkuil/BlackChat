@@ -1,10 +1,16 @@
 package com.kkuil.blackchat.dao;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.User;
+import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.UserMapper;
+import com.kkuil.blackchat.utils.CursorUtil;
+import com.kkuil.blackchat.web.chat.domain.vo.request.MemberCursorReq;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Author Kkuil
@@ -26,4 +32,17 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
         return getOne(wrapper);
     }
 
+    /**
+     * 游标获取数据
+     *
+     * @param uidList uidList
+     * @param request 游标请求
+     * @return 数据
+     */
+    public CursorPageBaseResp<User> getCursorPage(List<Long> uidList, MemberCursorReq request) {
+        return CursorUtil.getCursorPageByMysql(this, request, wrapper -> {
+            wrapper.eq(User::getActiveStatus, request.getActiveStatus());
+            wrapper.in(CollectionUtil.isNotEmpty(uidList), User::getId, uidList);
+        }, User::getLastOptTime);
+    }
 }

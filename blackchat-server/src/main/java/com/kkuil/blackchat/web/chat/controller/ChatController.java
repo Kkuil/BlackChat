@@ -4,17 +4,14 @@ import com.kkuil.blackchat.anotations.FrequencyControl;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.MemberReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.MemberCursorReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
 import com.kkuil.blackchat.web.chat.service.ChatService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -49,12 +46,12 @@ public class ChatController {
     /**
      * 获取群成员信息
      */
-    @PostMapping("member/list")
+    @GetMapping("member/list")
     @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.IP)
     @FrequencyControl(time = 30, count = 10, target = FrequencyControl.Target.IP)
-    public ResultUtil<CursorPageBaseResp<ChatMemberResp>> listMember(@Valid MemberReq memberReq) {
+    public ResultUtil<CursorPageBaseResp<ChatMemberResp>> listMember(@Valid MemberCursorReq memberCursorReq) {
         Long uid = RequestHolderDTO.get().getUid();
-        CursorPageBaseResp<ChatMemberResp> chatMemberRespCursorPageBaseResp = chatService.listMember(uid, memberReq);
+        CursorPageBaseResp<ChatMemberResp> chatMemberRespCursorPageBaseResp = chatService.listMember(uid, memberCursorReq);
         return ResultUtil.success(chatMemberRespCursorPageBaseResp);
     }
 }
