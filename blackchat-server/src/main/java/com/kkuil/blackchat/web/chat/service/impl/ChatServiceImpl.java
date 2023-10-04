@@ -14,13 +14,17 @@ import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.utils.ResultUtil;
 import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
-import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberCursorReq;
-import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberExtraResp;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
+import com.kkuil.blackchat.web.chat.domain.vo.message.handlers.AbstractMessageHandler;
+import com.kkuil.blackchat.web.chat.domain.vo.message.handlers.factory.MessageHandlerFactory;
+import com.kkuil.blackchat.web.chat.domain.vo.request.member.ChatMemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.member.ChatMemberExtraResp;
+import com.kkuil.blackchat.web.chat.domain.vo.request.message.ChatMessageCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.response.member.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.message.ChatMessageResp;
 import com.kkuil.blackchat.web.chat.service.ChatService;
+import com.kkuil.blackchat.web.websocket.service.adapter.MessageAdapter;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,7 +83,7 @@ public class ChatServiceImpl implements ChatService {
         Long roomId = chatMessageReq.getRoomId();
         Long messageId = message.getId();
         Long replyMessageId = chatMessageReq.getReplyMessageId();
-        messageDao.saveGapCount(roomId, messageId, replyMessageId);
+        messageDao.saveGapCount(roomId, replyMessageId, messageId);
 
         // 5. 让各自的消息处理器保存消息
         messageService.save(message, chatMessageReq);
@@ -90,7 +94,7 @@ public class ChatServiceImpl implements ChatService {
     }
 
     /**
-     * 获取成员信息
+     * 获取成员列表
      *
      * @param uid                 用户ID
      * @param chatMemberCursorReq 成员请求信息
@@ -116,6 +120,7 @@ public class ChatServiceImpl implements ChatService {
         CursorPageBaseResp<User> userCursorPageBaseResp;
         Integer activeStatus = chatMemberCursorReq.getActiveStatus();
         Integer pageSize = chatMemberCursorReq.getPageSize();
+
         // 判断热点群聊
         List<Long> uidList;
         if (room.getHotFlag() == 1) {
@@ -167,5 +172,66 @@ public class ChatServiceImpl implements ChatService {
                     .build();
         }).toList();
         return GroupMemberAdapter.buildChatMemberCursorPage(list, userCursorPageBaseResp);
+    }
+
+    /**
+     * 获取消息列表
+     *
+     * @param chatMessageCursorReq 消息请求参数
+     * @param uid                  用户ID
+     * @return 响应参数
+     */
+    @Override
+    public CursorPageBaseResp<ChatMessageResp> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq) {
+        Long roomId = chatMessageCursorReq.getRoomId();
+
+        // 0. 检查房间号是否存在
+        Room room = roomDao.getById(roomId);
+        AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
+
+        // 1. 检查用户是否在房间内(用户不在房间内，不让获取群消息)
+        Boolean isMember = roomService.checkRoomMembership(roomId, uid);
+        AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
+
+        // 2. 获取群消息
+        CursorPageBaseResp<Message> messageCursorPageBaseResp = messageDao.getCursorPage(chatMessageCursorReq);
+
+        // 3. 构建消息
+        List<ChatMessageResp> list = messageCursorPageBaseResp.getList().stream()
+                .map(message -> {
+                    Long fromUid = message.getFromUid();
+                    UserBaseInfo baseUserInfo = userCache.getBaseUserInfo(fromUid);
+
+                    // 3.1 构建用户信息
+                    ChatMessageResp.UserInfo fromUser = ChatMessageResp.UserInfo.builder()
+                            .uid(fromUid)
+                            .name(baseUserInfo.getName())
+                            .avatar(baseUserInfo.getAvatar())
+                            .build();
+
+                    // 3.2 构建消息信息
+                    // 3.2.1 根据消息类型生产相应的处理器
+                    AbstractMessageHandler<Object> handler = MessageHandlerFactory.getStrategyNoNull(message.getType());
+
+                    // 3.2.2 构建消息体
+                    Object body = handler.buildResponseBody(message);
+
+                    // 3.2.3 构建回复消息体
+                    ChatMessageResp.ReplyMsg replyMsg = messageService.buildReplyMsg(message.getId());
+                    ChatMessageResp.Message msg = ChatMessageResp.Message.builder()
+                            .id(message.getId())
+                            .sendTime(message.getCreateTime())
+                            .type(message.getType())
+                            .body(body)
+                            .reply(replyMsg)
+                            .build();
+
+                    return ChatMessageResp.builder()
+                            .fromUser(fromUser)
+                            .message(msg)
+                            .build();
+                }).toList();
+
+        return MessageAdapter.buildChatMessageRespList(messageCursorPageBaseResp, list);
     }
 }

@@ -9,12 +9,11 @@ import ChatEmoji from "@/components/ChatEmoji/ChatEmoji.vue"
 import { ElMessage } from "element-plus"
 import _ from "lodash"
 import { useSessionStore } from "@/stores/session"
+import MoreFunctions from "@/layout/components/chat/ChatContent/components/MoreFunctions.vue"
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
 const sessionStore = useSessionStore()
-
-const activeMoreFunction = ref<boolean>(false)
 
 /**
  * 打字中
@@ -43,6 +42,15 @@ const send = _.throttle(async () => {
     }
     messageStore.addMessage(result.data)
 }, 300)
+
+/**
+ * 取消回复
+ */
+const onCancelReply = () => {
+    messageStore.cancelReply()
+}
+
+const activeMoreFunction = ref<boolean>(false)
 </script>
 
 <template>
@@ -50,6 +58,20 @@ const send = _.throttle(async () => {
         class="chat-input h-[40px] flex px-[10px] items-center bg-third rounded-[10px] text-[#fff] text-[12px] relative"
         :class="activeMoreFunction ? 'rounded-b-[0px]' : ''"
     >
+        <div
+            class="recall w-full h-[25px] overflow-hidden absolute top-[-30px] left-0 rounded-full bg-[#777] flex items-center justify-between px-[10px] cursor-pointer hover:bg-opacity-80 transition-[background-color]"
+            v-if="messageStore.replyMessage.id"
+            title="回到原文"
+        >
+            <div>
+                <i class="iconfont icon-reply text-[11px]"></i>
+                <span class="ml-[10px]">
+                    <span>{{ messageStore.replyMessage.name }}: </span>
+                    <span>{{ messageStore.replyMessage.content }}</span>
+                </span>
+            </div>
+            <i class="iconfont icon-close" @click="onCancelReply"></i>
+        </div>
         <div
             v-if="!userStore.userInfo.name"
             :class="!userStore.userInfo.name ? 'backdrop-blur-md' : ''"
@@ -107,32 +129,10 @@ const send = _.throttle(async () => {
             ></i>
         </div>
     </div>
-    <div
-        class="w-full more-functions bg-third rounded-b-[10px] transition-[height]"
-        :class="activeMoreFunction ? 'h-[200px]' : 'h-0'"
-    >
-        <div
-            v-if="activeMoreFunction"
-            class="w-full h-full flex justify-start p-[10px]"
-        >
-            <div
-                class="flex-center flex-col w-[60px] h-[60px] cursor-pointer hover:bg-secondary mx-[5px]"
-            >
-                <SvgIcon icon-class="picture" />
-                <span class="text-[12px] mt-[5px] text-[#f5f5f5]">图片</span>
-            </div>
-            <div
-                class="flex-center flex-col w-[60px] h-[60px] cursor-pointer hover:bg-secondary mx-[5px]"
-            >
-                <SvgIcon icon-class="file" />
-                <span class="text-[12px] mt-[5px] text-[#f5f5f5]">文件</span>
-            </div>
-            <div
-                class="flex-center flex-col w-[60px] h-[60px] cursor-pointer hover:bg-secondary mx-[5px]"
-            >
-                <SvgIcon icon-class="video" />
-                <span class="text-[12px] mt-[5px] text-[#f5f5f5]">视频</span>
-            </div>
-        </div>
-    </div>
+    <MoreFunctions
+        :activeMoreFunction="activeMoreFunction"
+        :close="() => (activeMoreFunction = false)"
+    />
 </template>
+
+<style lang="scss"></style>

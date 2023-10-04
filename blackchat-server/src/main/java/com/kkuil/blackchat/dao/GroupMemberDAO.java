@@ -1,30 +1,21 @@
 package com.kkuil.blackchat.dao;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.GroupCache;
 import com.kkuil.blackchat.domain.entity.GroupMember;
 import com.kkuil.blackchat.domain.entity.Room;
-import com.kkuil.blackchat.domain.entity.RoomGroup;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
-import com.kkuil.blackchat.domain.vo.request.CursorPageBaseReq;
-import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.GroupMemberMapper;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.utils.CursorUtil;
-import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

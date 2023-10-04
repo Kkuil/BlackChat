@@ -28,6 +28,10 @@ spring:
             database: ${self.spring.redis.database}
             password: ${self.spring.redis.password}
             connect-timeout: ${self.spring.redis.timeout}
+    servlet:
+        multipart:
+            max-file-size: 110MB
+            max-request-size: 110MB
     main:
         lazy-initialization: ${self.spring.main.is-lazy}
 mybatis-plus:
@@ -55,12 +59,6 @@ knife4j:
     enable: true
     setting:
         language: zh_cn
-cors:
-    mapping: ${self.cors.mapping}
-    allowed-origins: ${self.cors.allowed-origins}
-    allowed-methods: ${self.cors.allowed-methods}
-    allow-credentials: ${self.cors.allow-credentials}
-    max-age: ${self.cors.max-age}
 wechat:
     mp:
         callback: ${self.wechat.callback}

@@ -3,13 +3,14 @@ package com.kkuil.blackchat.dao;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.enums.YesOrNoEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.UserMapper;
 import com.kkuil.blackchat.utils.CursorUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.member.ChatMemberCursorReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,9 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
 
     @Resource
     private UserBackpackDAO userBackpackDao;
+
+    @Resource
+    private UserCache userCache;
 
     /**
      * 通过openid获取用户
@@ -79,6 +83,10 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
         User user = new User();
         user.setId(uid);
         user.setName(username);
+
+        // 3. 更新缓存
+        userCache.updateUserInfo(user);
+
         return this.updateById(user);
     }
 }

@@ -2,10 +2,11 @@ package com.kkuil.blackchat.web.chat.service;
 
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberCursorReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
+import com.kkuil.blackchat.web.chat.domain.vo.request.member.ChatMemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.message.ChatMessageCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.response.member.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.message.ChatMessageResp;
 
 /**
  * @Author Kkuil
@@ -26,9 +27,18 @@ public interface ChatService {
     /**
      * 获取成员信息
      *
-     * @param uid       用户ID
+     * @param uid                 用户ID
      * @param chatMemberCursorReq 成员请求信息
      * @return 成员信息
      */
     CursorPageBaseResp<ChatMemberResp> listMember(Long uid, ChatMemberCursorReq chatMemberCursorReq);
+
+    /**
+     * 获取消息列表
+     *
+     * @param chatMessageCursorReq 消息请求参数
+     * @param uid 用户ID
+     * @return 响应参数
+     */
+    CursorPageBaseResp<ChatMessageResp> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq);
 }

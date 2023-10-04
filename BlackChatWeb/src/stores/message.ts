@@ -6,6 +6,12 @@ import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 
 const sessionStore = useSessionStore()
 
+export type TReplyMessage = {
+    id: number
+    name: string
+    content: string
+}
+
 export const useMessageStore = defineStore("message", () => {
     const messageInfo = ref<ChatMessageReq.ChatMessageBaseReq<any>>({
         roomId: 1,
@@ -16,6 +22,12 @@ export const useMessageStore = defineStore("message", () => {
             atUidList: [],
             urlContentMap: {}
         }
+    })
+
+    const replyMessage = ref<TReplyMessage>({
+        id: null,
+        name: null,
+        content: null
     })
 
     const messageList = ref<ChatMessageResp.ChatMessageBaseResp<any, any>[]>([])
@@ -35,13 +47,20 @@ export const useMessageStore = defineStore("message", () => {
      * @param content 内容
      */
     const typing = (content) => {
-        messageInfo.value = {
-            ...messageInfo.value,
-            body: {
-                ...messageInfo.value.body,
-                content
-            }
-        }
+        messageInfo.value.body.content = content
+    }
+
+    /**
+     * 更改上传类型
+     * @param type 消息类型
+     * @param body 消息体
+     */
+    const updateMessageType = (
+        type: MessageTypeEnum,
+        body: ChatMessageReq.MessageBody
+    ) => {
+        messageInfo.value.messageType = type
+        messageInfo.value.body = body
     }
 
     /**
@@ -49,12 +68,26 @@ export const useMessageStore = defineStore("message", () => {
      * @param emoji 表情
      */
     const addEmoji = (emoji: string) => {
-        messageInfo.value = {
-            ...messageInfo.value,
-            body: {
-                ...messageInfo.value.body,
-                content: messageInfo.value.body.content + emoji
-            }
+        messageInfo.value.body.content = messageInfo.value.body.content + emoji
+    }
+
+    /**
+     * 添加回复
+     */
+    const addReply = (message: TReplyMessage) => {
+        messageInfo.value.replyMessageId = message.id
+        replyMessage.value = message
+    }
+
+    /**
+     * 取消回复
+     */
+    const cancelReply = () => {
+        messageInfo.value.replyMessageId = null
+        replyMessage.value = {
+            id: null,
+            name: null,
+            content: null
         }
     }
 
@@ -132,9 +165,13 @@ export const useMessageStore = defineStore("message", () => {
     return {
         messageInfo,
         messageList,
+        replyMessage,
         listPage,
         typing,
+        updateMessageType,
         addEmoji,
+        addReply,
+        cancelReply,
         addMessage,
         getMessageList
     }

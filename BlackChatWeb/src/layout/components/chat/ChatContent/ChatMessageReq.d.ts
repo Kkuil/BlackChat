@@ -113,20 +113,8 @@ declare namespace ChatMessageReq {
          */
         url: string
         /**
-         * 缩略图宽度（像素）
+         * 视频名
          */
-        thumbWidth: number
-        /**
-         * 缩略图高度（像素）
-         */
-        thumbHeight: number
-        /**
-         * 缩略图大小（字节）
-         */
-        thumbSize: number
-        /**
-         * 缩略图下载地址
-         */
-        thumbUrl: string
+        videoName: string
     }
 }

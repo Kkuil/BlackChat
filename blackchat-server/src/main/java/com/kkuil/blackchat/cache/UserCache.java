@@ -8,6 +8,7 @@ import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.utils.RedisUtil;
 import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class UserCache {
 
     @Resource
+    @Lazy
     private UserDAO userDao;
 
     /**
@@ -90,6 +92,19 @@ public class UserCache {
         // 3. 缓存数据
         RedisUtil.set(userKey, userBaseInfo1);
         return userBaseInfo1;
+    }
+
+    /**
+     * 更新用户信息
+     *
+     * @param user 用户信息
+     */
+    public void updateUserInfo(User user) {
+        Long uid = user.getId();
+        String key = String.format(RedisKeyConst.USER_INFO_STRING, uid);
+        String userKey = RedisKeyConst.getKey(key);
+        UserBaseInfo userBaseInfo = BeanUtil.toBean(user, UserBaseInfo.class);
+        RedisUtil.set(userKey, userBaseInfo);
     }
 
     /**

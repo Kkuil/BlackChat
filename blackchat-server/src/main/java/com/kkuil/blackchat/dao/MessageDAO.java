@@ -3,8 +3,11 @@ package com.kkuil.blackchat.dao;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.Message;
+import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.MessageMapper;
+import com.kkuil.blackchat.utils.CursorUtil;
 import com.kkuil.blackchat.web.chat.domain.enums.MessageStatusEnum;
+import com.kkuil.blackchat.web.chat.domain.vo.request.message.ChatMessageCursorReq;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
 import org.springframework.stereotype.Service;
 
@@ -50,8 +53,21 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
                 .count();
         UpdateWrapper<Message> wrapper = new UpdateWrapper<>();
         wrapper
-                .eq(true, "id", fromId)
-                .set(true, "gap_count", gapCount);
+                .lambda()
+                .eq(true, Message::getId, toId)
+                .set(true, Message::getGapCount, gapCount);
         this.update(wrapper);
+    }
+
+    /**
+     * 获取消息列表
+     *
+     * @param request 消息请求
+     * @return 消息列表
+     */
+    public CursorPageBaseResp<Message> getCursorPage(ChatMessageCursorReq request) {
+        return CursorUtil.getCursorPageByMysql(this, request, wrapper -> {
+            wrapper.eq(Message::getStatus, MessageStatusEnum.NORMAL.getStatus());
+        }, Message::getCreateTime);
     }
 }

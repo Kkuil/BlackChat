@@ -4,11 +4,13 @@ import com.kkuil.blackchat.anotations.FrequencyControl;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberCursorReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
+import com.kkuil.blackchat.web.chat.domain.vo.request.member.ChatMemberCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.request.message.ChatMessageCursorReq;
+import com.kkuil.blackchat.web.chat.domain.vo.response.member.ChatMemberResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.message.ChatMessageResp;
 import com.kkuil.blackchat.web.chat.service.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +43,21 @@ public class ChatController {
     public ResultUtil<ChatMessageResp> send(@Valid @RequestBody ChatMessageReq chatMessageReq) {
         Long uid = RequestHolderDTO.get().getUid();
         return chatService.send(uid, chatMessageReq);
+    }
+
+    /**
+     * 获取消息列表接口
+     *
+     * @param request 消息请求
+     * @return 消息列表
+     */
+    @GetMapping("/message/list")
+    @Operation(summary = "消息列表", description = "消息列表")
+    @FrequencyControl(time = 120, count = 20, target = FrequencyControl.Target.IP)
+    public ResultUtil<CursorPageBaseResp<ChatMessageResp>> listMessage(@Valid ChatMessageCursorReq request) {
+        Long uid = RequestHolderDTO.get().getUid();
+        CursorPageBaseResp<ChatMessageResp> messageList = chatService.listMessage(uid, request);
+        return ResultUtil.success(messageList);
     }
 
     /**

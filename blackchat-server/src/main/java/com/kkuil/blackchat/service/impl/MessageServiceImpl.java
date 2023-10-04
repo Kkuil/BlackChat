@@ -1,14 +1,18 @@
 package com.kkuil.blackchat.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.dao.MessageDAO;
+import com.kkuil.blackchat.dao.UserDAO;
+import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.web.chat.domain.dto.message.handlers.AbstractMessageHandler;
-import com.kkuil.blackchat.web.chat.domain.dto.message.handlers.factory.MessageHandlerFactory;
+import com.kkuil.blackchat.web.chat.domain.vo.message.handlers.AbstractMessageHandler;
+import com.kkuil.blackchat.web.chat.domain.vo.message.handlers.factory.MessageHandlerFactory;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.message.ChatMessageResp;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +27,12 @@ public class MessageServiceImpl implements MessageService {
     @Resource
     private MessageDAO messageDao;
 
+    @Resource
+    private UserDAO userDao;
+
+    @Resource
+    private UserCache userCache;
+
 
     /**
      * 检查用户发送的消息
@@ -35,8 +45,8 @@ public class MessageServiceImpl implements MessageService {
         this.checkReplyMessage(chatMessageReq);
         // 2. 根据消息类型获取相应的处理器，对不同消息进行处理
         Integer messageType = chatMessageReq.getMessageType();
-        AbstractMessageHandler handler = MessageHandlerFactory.getStrategyNoNull(messageType);
-        // 3. 对不同的消息进行校验（例如：1. 文本：敏感词；2. 图片：带颜色的图片（这个需要用到AI技术，我觉得能实现 哈哈哈）还有是否有艾特全体成员的权限 等等）
+        AbstractMessageHandler<Object> handler = MessageHandlerFactory.getStrategyNoNull(messageType);
+        // 3. 对不同的消息进行校验（例如：1. 文本：敏感词；2. 图片：带颜色的图片（这个需要用到AI技术，我觉得能实现 哈哈哈）,还有是否有艾特全体成员的权限 等等）
         handler.checkMessage(chatMessageReq, uid);
     }
 
@@ -50,7 +60,7 @@ public class MessageServiceImpl implements MessageService {
     public void save(Message message, ChatMessageReq chatMessageReq) {
         // 1. 根据消息类型获取相应的处理器，对不同消息进行处理
         Integer messageType = chatMessageReq.getMessageType();
-        AbstractMessageHandler handler = MessageHandlerFactory.getStrategyNoNull(messageType);
+        AbstractMessageHandler<Object> handler = MessageHandlerFactory.getStrategyNoNull(messageType);
         // 2. 对不同的消息进行消息入库
         handler.saveMessage(message, chatMessageReq);
     }
@@ -63,11 +73,30 @@ public class MessageServiceImpl implements MessageService {
      */
     @Override
     public ChatMessageResp buildChatMessageResp(Long messageId, ChatMessageReq chatMessageReq) {
+        // 0. 构建回复消息
+        ChatMessageResp.ReplyMsg replyMsg = this.buildReplyMsg(messageId);
         // 1. 根据消息类型获取相应的处理器，对不同消息进行处理
         Integer messageType = chatMessageReq.getMessageType();
-        AbstractMessageHandler handler = MessageHandlerFactory.getStrategyNoNull(messageType);
+        AbstractMessageHandler<Object> handler = MessageHandlerFactory.getStrategyNoNull(messageType);
         // 2. 返回构建消息
-        return handler.buildChatMessageResp(messageId);
+        Message message = messageDao.getById(messageId);
+        ChatMessageResp.Message.MessageBuilder builder = ChatMessageResp.Message.builder()
+                .id(message.getId())
+                .sendTime(message.getCreateTime())
+                .type(message.getType())
+                .reply(replyMsg);
+        // 2.1 消息对象
+        ChatMessageResp.Message msg = handler.buildChatMessageResp(message, builder);
+        // 2.2 用户对象
+        UserBaseInfo baseUserInfo = userCache.getBaseUserInfo(message.getFromUid());
+        ChatMessageResp.UserInfo userInfo = ChatMessageResp.UserInfo.builder()
+                .uid(message.getFromUid())
+                .name(baseUserInfo.getName())
+                .avatar(baseUserInfo.getAvatar())
+                .build();
+        return ChatMessageResp.builder()
+                .message(msg)
+                .fromUser(userInfo).build();
     }
 
     /**
@@ -87,5 +116,36 @@ public class MessageServiceImpl implements MessageService {
             Long replyMsgRoomId = message.getRoomId();
             AssertUtil.equal(roomId, replyMsgRoomId, ChatErrorEnum.REPLY_MESSAGE_NOT_MATCH.getMsg());
         }
+    }
+
+    /**
+     * 构建回复消息
+     *
+     * @param messageId 消息ID
+     * @return 消息
+     */
+    @Override
+    public ChatMessageResp.ReplyMsg buildReplyMsg(Long messageId) {
+        Message message = messageDao.getById(messageId);
+        Long replyMessageId = message.getReplyMessageId();
+        ChatMessageResp.ReplyMsg replyMsg;
+        if (ObjectUtil.isNull(replyMessageId)) {
+            replyMsg = null;
+        } else {
+            Message replyMessage = messageDao.getById(replyMessageId);
+            String name = userDao.getById(replyMessage.getFromUid()).getName();
+
+            replyMsg = ChatMessageResp.ReplyMsg
+                    .builder()
+                    .id(replyMessage.getId())
+                    .uid(replyMessage.getFromUid())
+                    .name(name)
+                    .type(replyMessage.getType())
+                    .body(MessageHandlerFactory.getStrategyNoNull(replyMessage.getType()).showInReplyMessage(replyMessage))
+                    .canCallback(0)
+                    .gapCount(replyMessage.getGapCount())
+                    .build();
+        }
+        return replyMsg;
     }
 }

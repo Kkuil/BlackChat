@@ -2,8 +2,7 @@ package com.kkuil.blackchat.web.chat.service.adapter;
 
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
-import com.kkuil.blackchat.web.chat.domain.vo.request.ChatMemberExtraResp;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMemberResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.member.ChatMemberResp;
 
 import java.util.List;
 

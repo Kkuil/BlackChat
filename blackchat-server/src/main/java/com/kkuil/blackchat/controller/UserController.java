@@ -47,11 +47,16 @@ public class UserController {
         return ResultUtil.success(listResultUtil);
     }
 
+    /**
+     * 改名
+     *
+     * @param username 用户名
+     * @return 是否改名成功
+     */
     @PutMapping("/username")
     @Operation(summary = "用户名修改", description = "用户名修改")
     public ResultUtil<Boolean> updateUsername(String username) {
         Long uid = RequestHolderDTO.get().getUid();
         return ResultUtil.success(userService.updateUsername(uid, username));
     }
-
 }

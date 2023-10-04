@@ -2,7 +2,7 @@ package com.kkuil.blackchat.service;
 
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.ChatMessageResp;
+import com.kkuil.blackchat.web.chat.domain.vo.response.message.ChatMessageResp;
 
 /**
  * @Author Kkuil
@@ -31,6 +31,7 @@ public interface MessageService {
      * 构建消息返回体
      *
      * @param messageId 消息ID
+     * @param chatMessageReq 消息
      * @return 消息返回体
      */
     ChatMessageResp buildChatMessageResp(Long messageId, ChatMessageReq chatMessageReq);
@@ -42,4 +43,11 @@ public interface MessageService {
      */
     void checkReplyMessage(ChatMessageReq chatMessageReq);
 
+    /**
+     * 构建回复消息
+     *
+     * @param messageId 消息ID
+     * @return 回复消息对象
+     */
+    ChatMessageResp.ReplyMsg buildReplyMsg(Long messageId);
 }

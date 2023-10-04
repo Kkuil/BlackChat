@@ -9,8 +9,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.Builder;
-import lombok.Data;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.kkuil.blackchat.web.chat.domain.vo.request.message.MessageExtra;
+import lombok.*;
 
 /**
  * @Author Kkuil
@@ -19,7 +20,10 @@ import lombok.Data;
  */
 @Data
 @Builder
-@TableName(value = "message")
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+@TableName(value = "message", autoResultMap = true)
 public class Message implements Serializable {
     /**
      * id
@@ -72,8 +76,8 @@ public class Message implements Serializable {
     /**
      * 扩展信息
      */
-    @TableField(value = "extra")
-    private Object extra;
+    @TableField(value = "extra", typeHandler = JacksonTypeHandler.class)
+    private MessageExtra extra;
 
     /**
      * 创建时间

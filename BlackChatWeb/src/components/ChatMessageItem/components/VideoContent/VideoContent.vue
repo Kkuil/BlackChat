@@ -22,7 +22,7 @@ const init = () => {
     }
     player.value = new Player({
         id: "video" + number,
-        url: "http://s2.pstatp.com/cdn/expire-1-M/byted-player-videos/1.0.0/xgplayer-demo.mp4",
+        url: props.body.url,
         width: "70%",
         fitVideoSize: "fixWidth",
         videoInit: true, // 显示首帧
