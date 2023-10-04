@@ -46,7 +46,6 @@ const list = [
 ]
 
 const onChange = (id: string) => {
-    console.log(id)
     emits("change", id)
 }
 
@@ -67,7 +66,7 @@ const activeTab = ref<string>("contact")
             <el-tab-pane label="联系人" name="contact">
                 <BlackSortedList
                     title="联系人"
-                    class="mt-[10px]"
+                    class="h-full"
                     :list="list"
                     @change="onChange"
                 ></BlackSortedList>
@@ -77,9 +76,17 @@ const activeTab = ref<string>("contact")
     </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .contact-list {
     --el-text-color-primary: #fff;
     --el-border-color-light: #777;
+
+    .el-tabs__content {
+        height: 91% !important;
+
+        .el-tab-pane {
+            height: 100% !important;
+        }
+    }
 }
 </style>

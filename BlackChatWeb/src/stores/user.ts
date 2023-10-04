@@ -30,6 +30,13 @@ export const useUserStore = defineStore("user", () => {
     })
 
     /**
+     * 是否是管理员
+     */
+    const isAdmin = computed(() => {
+        return false
+    })
+
+    /**
      * 更新用户名
      * @param username 用户名
      */
@@ -37,5 +44,5 @@ export const useUserStore = defineStore("user", () => {
         userInfo.value.name = username
     }
 
-    return { userInfo, loginSuccess, updateName, isLogin }
+    return { userInfo, loginSuccess, updateName, isLogin, isAdmin }
 })

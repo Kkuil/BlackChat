@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import { ChatMessageItemTypes } from "@/components/ChatMessageItem/type"
-import ChatMessageItem from "@/components/ChatMessageItem/components/ChatMessageItem.vue"
-import ChatSystemItem from "@/components/ChatMessageItem/components/ChatSystemItem.vue"
+import ChatCommonMessageItem from "@/components/ChatMessageItem/components/ChatCommonMessageItem.vue"
+import ChatSystemMessageItem from "@/components/ChatMessageItem/components/ChatSystemMessageItem.vue"
+import { useUserStore } from "@/stores/user"
+import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 
-defineProps<ChatMessageItemTypes.ChatItemStrategyType>()
+defineProps<{ message: ChatMessageResp.ChatMessageBaseResp<any, any> }>()
+
+const userStore = useUserStore()
 </script>
 
 <template>
-    <ChatMessageItem
-        v-if="type === 'text'"
-        :avatar="configInfo.avatar"
-        :username="configInfo.username"
-        :message="configInfo.message"
-        :direction="'left'"
-        :send-time="configInfo.sendTime"
+    <ChatCommonMessageItem
+        v-if="message.message.type != MessageTypeEnum.RECALL"
+        :direction="
+            userStore.userInfo.uid == message.fromUser.uid ? 'right' : 'left'
+        "
+        :message="message"
     />
-    <ChatSystemItem v-if="type === 'system'" :message="configInfo.message" />
+    <ChatSystemMessageItem v-else :message="message" />
 </template>

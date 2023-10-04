@@ -8,7 +8,7 @@ import { TOKEN_KEY_IN_HEADER, TOKEN_KEY_IN_LOC, TOKEN_PREFIX } from "@/constant/
  */
 export const sendMessage = (
     data: ChatMessage.ChatMessageBaseReq<any>
-): Promise<GlobalTypes.ApiResult<string[]>> => {
+): Promise<GlobalTypes.ApiResult<ChatMessageResp.ChatMessageBaseResp>> => {
     return request({
         url: "/chat/send",
         method: "POST",

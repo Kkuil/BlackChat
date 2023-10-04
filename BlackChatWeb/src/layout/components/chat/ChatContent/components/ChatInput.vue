@@ -8,9 +8,11 @@ import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import ChatEmoji from "@/components/ChatEmoji/ChatEmoji.vue"
 import { ElMessage } from "element-plus"
 import _ from "lodash"
+import { useSessionStore } from "@/stores/session"
 
 const userStore = useUserStore()
-const sessionStore = useMessageStore()
+const messageStore = useMessageStore()
+const sessionStore = useSessionStore()
 
 const activeMoreFunction = ref<boolean>(false)
 
@@ -19,13 +21,9 @@ const activeMoreFunction = ref<boolean>(false)
  * @param e
  */
 const typing = (e: Event & { target: HTMLInputElement }) => {
-    const isText = sessionStore.sessionInfo.messageType === MessageTypeEnum.TEXT
+    const isText = messageStore.messageInfo.messageType === MessageTypeEnum.TEXT
     if (isText) {
-        sessionStore.typing({
-            replyMessageId: 123,
-            content: e.target.value,
-            atUidList: []
-        })
+        messageStore.typing(e.target.value)
     }
 }
 
@@ -33,15 +31,17 @@ const typing = (e: Event & { target: HTMLInputElement }) => {
  * 发送消息
  */
 const send = _.throttle(async () => {
-    if (!sessionStore.sessionInfo.body.content) {
+    if (!messageStore.messageInfo.body.content) {
         return ElMessage.error("消息不能为空")
     }
-    const result = await sendMessage(sessionStore.sessionInfo)
-    console.log(result)
+    const result = await sendMessage({
+        ...messageStore.messageInfo,
+        roomId: sessionStore.sessionInfo.chattingId
+    })
     if (!result.data) {
         return
     }
-    sessionStore.sendSuccess()
+    messageStore.addMessage(result.data)
 }, 300)
 </script>
 
@@ -59,19 +59,20 @@ const send = _.throttle(async () => {
             <a
                 class="text-[#0094ff] text-sm cursor-pointer"
                 @click="popUpLoginDialog"
-                >登录</a
             >
+                登录
+            </a>
             后再进行发言吧
         </div>
         <SvgIcon
-            class="flex-[1%] md:flex-[15%] lg:flex-[5%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
+            class="flex-[1%] md:flex-[15%] lg:flex-[2%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
             icon-class="voice"
             title="点击切换语音"
         />
         <input
-            class="flex-[89%] md:flex-[87%] lg:flex-[65%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:hover:border-[1px] focus:border-[#0094ff] hover:border-[#0094ff]"
+            class="flex-[89%] md:flex-[87%] lg:flex-[75%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:hover:border-[1px] focus:border-[#0094ff] hover:border-[#0094ff]"
             placeholder="我们期待您的发言，请文明发言"
-            :value="sessionStore.sessionInfo.body.content"
+            :value="messageStore.messageInfo.body.content"
             @input="typing"
             @keyup.enter="send"
         />
@@ -96,9 +97,9 @@ const send = _.throttle(async () => {
                 title="发送"
                 class="flex-center flex-1 iconfont icon-send text-[18px] w-[30px] h-[30px] rounded-[5px] cursor-pointer hover:bg-secondary transition-[transform]"
                 :class="
-                    sessionStore.sessionInfo.body &&
-                    sessionStore.sessionInfo.body?.content &&
-                    sessionStore.sessionInfo.messageType == MessageTypeEnum.TEXT
+                    messageStore.messageInfo.body &&
+                    messageStore.messageInfo.body?.content &&
+                    messageStore.messageInfo.messageType == MessageTypeEnum.TEXT
                         ? 'rotate-[45deg]'
                         : ''
                 "
@@ -125,6 +126,12 @@ const send = _.throttle(async () => {
             >
                 <SvgIcon icon-class="file" />
                 <span class="text-[12px] mt-[5px] text-[#f5f5f5]">文件</span>
+            </div>
+            <div
+                class="flex-center flex-col w-[60px] h-[60px] cursor-pointer hover:bg-secondary mx-[5px]"
+            >
+                <SvgIcon icon-class="video" />
+                <span class="text-[12px] mt-[5px] text-[#f5f5f5]">视频</span>
             </div>
         </div>
     </div>

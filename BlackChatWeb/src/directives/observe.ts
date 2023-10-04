@@ -1,27 +1,24 @@
-// observe.ts
-let observer: IntersectionObserver
-const Observe = {
-    // Vue 3
-    beforeMount(el: Element, binding) {
-        console.log(binding)
-        observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    binding.value()
-                    observer.unobserve(el)
-                    setTimeout(() => {
-                        observer.observe(el)
-                    }, 1500)
-                }
-            })
-        })
-    },
-    mounted(el: Element, binding) {
-        observer.observe(el)
+import { Ref } from "vue"
+
+const elMapCb = new WeakMap()
+
+const ob: IntersectionObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+        if (entry.isIntersecting) {
+            elMapCb.get(entry.target)()
+        }
+    }
+})
+
+export default {
+    mounted(el: Element, binding: Ref) {
+        if (!(binding?.value instanceof Function)) {
+            return
+        }
+        ob.observe(el)
+        elMapCb.set(el, binding.value)
     },
     unmounted(el: Element) {
-        observer.unobserve(el)
+        ob.unobserve(el)
     }
 }
-
-export default Observe

@@ -9,14 +9,13 @@ declare namespace GlobalTypes {
     type CursorPageReq = {
         pageSize: number
         cursor: number | null
-        isLast: boolean
     }
     // 游标格式
     type CursorPageResp<T> = {
         pageSize: number
         cursor: number | null
         isLast: boolean
-        list: T
+        list: T[]
         extraInfo: any
     }
     // 翻页格式

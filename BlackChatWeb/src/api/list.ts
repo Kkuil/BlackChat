@@ -18,7 +18,7 @@ export const listMember = (
     params: GlobalTypes.CursorPageReq
 ): Promise<
     ApiResult<
-        CursorPageResp<UserInfo[]> & {
+        CursorPageResp<UserInfo> & {
             extraInfo: { activeStatus: number; totalCount: number }
         }
     >
@@ -31,6 +31,31 @@ export const listMember = (
             cursor: params.cursor,
             roomId: params.roomId,
             activeStatus: params.activeStatus
+        },
+        headers: {
+            [TOKEN_KEY_IN_HEADER]:
+                TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""
+        }
+    })
+}
+
+/**
+ * 获取消息列表
+ *
+ * @param params CursorPage
+ */
+export const listMessage = (
+    params: GlobalTypes.CursorPageReq
+): Promise<
+    ApiResult<CursorPageResp<ChatMessageResp.ChatMessageBaseResp<any, any>>>
+> => {
+    return request({
+        url: "/chat/message/list",
+        method: "GET",
+        params: {
+            pageSize: params.pageSize,
+            cursor: params.cursor,
+            roomId: params.roomId
         },
         headers: {
             [TOKEN_KEY_IN_HEADER]:

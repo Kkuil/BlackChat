@@ -55,6 +55,7 @@ export const useSessionStore = defineStore("session", () => {
     const listPage = ref<
         GlobalTypes.CursorPageReq & {
             activeStatus: number
+            isLast: boolean
         }
     >({
         pageSize: 20,

@@ -4,10 +4,10 @@ import ToolSide from "@/layout/components/ToolSide/ToolSide.vue"
 
 <template>
     <div
-        class="w-full sm:w-[75%] h-full sm:h-[95%] sm:bg-primary rounded-[0px] sm:rounded-[15px] flex flex-col justify-between sm:flex-row overflow-hidden p-[15px]"
+        class="w-full sm:w-[85%] h-full sm:h-[95%] sm:bg-primary rounded-[0px] sm:rounded-[15px] flex flex-col justify-between sm:flex-row overflow-hidden p-[15px]"
     >
         <ToolSide
-            class="hidden sm:flex sm:flex-[15%] md:flex md:flex-[10%] xl:flex-[7%] rounded-[10px] bg-secondary sm:bg-transparent"
+            class="hidden sm:flex sm:flex-[15%] md:flex md:flex-[10%] xl:flex-[6%] rounded-[10px] bg-secondary sm:bg-transparent"
         />
         <RouterView></RouterView>
     </div>

@@ -1,28 +1,49 @@
 <script setup lang="ts">
 import ChatMessageItemStrategy from "@/components/ChatMessageItem/ChatMessageItemStrategy.vue"
-import { onMounted, ref } from "vue"
-import { ChatMessageItemTypes } from "@/components/ChatMessageItem/type"
+import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
+import { useMessageStore } from "@/stores/message"
+import SystemMessageBody = ChatMessageResp.SystemMessageBody
 
-const configInfo: ChatMessageItemTypes.ChatMessageItemPropsType = {
-    message: "已经到达顶部"
-}
+const messageStore = useMessageStore()
 
-const bodyRef = ref<HTMLElement | null>()
-
-onMounted(() => {
-    initReachBottom()
-})
-
-const initReachBottom = () => {
-    if ("scrollTop" in bodyRef.value) {
-        bodyRef.value.scrollTop = bodyRef.value?.scrollHeight
+const firstMessage: ChatMessageResp.ChatMessageBaseResp<
+    SystemMessageBody,
+    any
+> = {
+    fromUser: {
+        uid: "10003",
+        name: "Kkuil",
+        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
+    },
+    message: {
+        id: 3170000,
+        sendTime: "20210317",
+        type: MessageTypeEnum.RECALL,
+        body: {
+            content: "已到达顶部"
+        }
     }
 }
 </script>
 
 <template>
     <div class="h-full bg-secondary" ref="bodyRef">
-        <ChatMessageItemStrategy :config-info="configInfo" type="system" />
+        <span
+            class="w-full flex-center"
+            v-observe="messageStore.getMessageList"
+            v-if="!messageStore.listPage.isLast"
+        >
+            <i class="iconfont icon-loading animate-spin"></i>
+        </span>
+        <ChatMessageItemStrategy
+            v-if="messageStore.listPage.isLast"
+            :message="firstMessage"
+        />
+        <ChatMessageItemStrategy
+            v-for="message in messageStore.messageList"
+            :key="message.message.id"
+            :message="message"
+        />
     </div>
 </template>
 

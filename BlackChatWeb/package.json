@@ -15,14 +15,17 @@
     "dependencies": {
         "@element-plus/components": "^0.0.5",
         "@element-plus/icons-vue": "^2.1.0",
+        "@imengyu/vue3-context-menu": "^1.3.3",
         "axios": "^1.4.0",
         "element-plus": "^2.3.14",
         "lodash": "^4.17.21",
         "mitt": "^3.0.1",
+        "moment": "^2.29.4",
         "pinia": "^2.1.4",
         "qrcode.vue": "^3.4.1",
         "vue": "^3.3.4",
-        "vue-router": "^4.2.4"
+        "vue-router": "^4.2.4",
+        "xgplayer": "^3.0.9"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.3.2",

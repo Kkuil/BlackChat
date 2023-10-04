@@ -1,8 +1,8 @@
 @font-face {
     font-family: "iconfont"; /* Project id 4263035 */
-    src: url('//at.alicdn.com/t/c/font_4263035_hxdwzf2dhbe.woff2?t=1696251897809') format('woff2'),
-    url('//at.alicdn.com/t/c/font_4263035_hxdwzf2dhbe.woff?t=1696251897809') format('woff'),
-    url('//at.alicdn.com/t/c/font_4263035_hxdwzf2dhbe.ttf?t=1696251897809') format('truetype');
+    src: url('//at.alicdn.com/t/c/font_4263035_8e53pq7jq6w.woff2?t=1696347779554') format('woff2'),
+    url('//at.alicdn.com/t/c/font_4263035_8e53pq7jq6w.woff?t=1696347779554') format('woff'),
+    url('//at.alicdn.com/t/c/font_4263035_8e53pq7jq6w.ttf?t=1696347779554') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-reply:before {
+    content: "\e82f";
+}
+
+.icon-copy:before {
+    content: "\e85c";
+}
+
+.icon-recall:before {
+    content: "\e643";
+}
+
+.icon-video:before {
+    content: "\e78f";
+}
+
+.icon-sound:before {
+    content: "\e67f";
+}
+
+.icon-return-message:before {
+    content: "\e681";
 }
 
 .icon-editor:before {

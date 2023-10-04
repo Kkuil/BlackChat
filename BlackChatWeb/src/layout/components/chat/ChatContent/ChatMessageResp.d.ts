@@ -5,29 +5,35 @@ declare namespace ChatMessageResp {
         | FileMessageBody
         | SoundMessageBody
         | VideoMessageBody
+        | SystemMessageBody
 
     /**
      * 消息发送的基础请求体
      */
-    type ChatMessageBaseResp<T extends MessageBody> = {
+    type ChatMessageBaseResp<T extends MessageBody, R> = {
         fromUser: UserInfo
-        message: Message
+        message: Message<T, R>
     }
     type UserInfo = {
         uid: string
+        name: string
+        avatar: string
     }
-    type Message = {
+    type Message<T, R> = {
         id: number
         sendTime: string
         type: number
-        body: MessageBody
-        messageMark: MessageMark
+        body: T
+        reply?: ReplyMsg<R>
     }
-    type MessageMark = {
-        likeCount: number
-        userLike: number
-        dislikeCount: number
-        userDislike: number
+    type ReplyMsg<R extends MessageBody> = {
+        id: number
+        uid: number
+        name: string
+        type: number
+        body: R
+        canCallback: number
+        gapCount: number
     }
 
     /**
@@ -37,21 +43,18 @@ declare namespace ChatMessageResp {
         content: string
         urlContentMap: Record<string, UrlInfo>
         atUidList: number[]
-        reply: ReplyMsg
     }
     type UrlInfo = {
         title: string
         description: string
         image: string
     }
-    type ReplyMsg = {
-        id: number
-        uid: number
-        username: string
-        type: number
-        body: object
-        canCallback: number
-        gapCount: number
+
+    /**
+     * 系统消息体
+     */
+    type SystemMessageBody = {
+        content: string
     }
 
     /**

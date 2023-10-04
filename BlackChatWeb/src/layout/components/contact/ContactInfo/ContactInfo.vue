@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="contact-info w-full h-full px-[30px]">
+    <div class="contact-info w-full h-full px-[30px] bg-primary">
         <div class="flex user-info">
             <el-avatar :src="user.avatar" :size="85" />
             <div class="h-full info ml-[10px] font-sans">

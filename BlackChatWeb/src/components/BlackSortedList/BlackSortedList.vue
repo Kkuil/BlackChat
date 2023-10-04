@@ -72,9 +72,11 @@ const redirectToIndex = (letter: string) => {
  * 切换用户
  * @param e
  */
-const check = (e: Event) => {
+const check = (e: Event & { target: { dataset: { id: string } } }) => {
     const id = e.target?.dataset?.id
-    emits("change", id)
+    if (id != null) {
+        emits("change", id)
+    }
 }
 </script>
 
@@ -148,7 +150,7 @@ const check = (e: Event) => {
 .body .list {
     scroll-behavior: smooth;
     flex: 0.95;
-    height: 510px;
+    height: 100%;
     overflow-y: scroll;
 }
 
@@ -158,11 +160,11 @@ const check = (e: Event) => {
 
 .body .index {
     flex: 0.05;
-    height: 500px;
+    height: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     margin-left: 5px;
 }
 

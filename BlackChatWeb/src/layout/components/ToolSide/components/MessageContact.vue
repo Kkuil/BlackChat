@@ -40,5 +40,6 @@ const switchTab = (tab: string) => {
 <style scoped lang="scss">
 .selected {
     background: #424656;
+    color: #0094ff;
 }
 </style>
