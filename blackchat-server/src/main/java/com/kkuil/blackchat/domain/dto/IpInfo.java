@@ -3,6 +3,7 @@ package com.kkuil.blackchat.domain.dto;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @Data
 public class IpInfo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

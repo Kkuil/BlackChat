@@ -20,6 +20,7 @@ public class UserOnlineEventParamsDTO {
      * 通道
      */
     private Channel channel;
+
     /**
      * 用户登录成功体
      */

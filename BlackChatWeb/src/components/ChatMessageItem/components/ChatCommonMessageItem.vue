@@ -53,13 +53,17 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
                 class="user flex text-[12px] text-[#ccc] mb-[5px]"
                 :class="direction == 'left' ? 'flex-row' : 'flex-row-reverse'"
             >
+                <span>
+                    &nbsp;({{
+                        message.fromUser.ipInfo.updateIpDetail.city
+                    }})&nbsp;
+                </span>
                 <span class="username">{{ message.fromUser.name }}</span>
                 <span
                     class="opacity-0 hover:opacity-100 transition-[opacity] send-time mx-[5px]"
-                    >{{
-                        moment(message.message.sendTime).format("HH:mm")
-                    }}</span
                 >
+                    {{ moment(message.message.sendTime).format("HH:mm") }}
+                </span>
             </h3>
             <TextContent
                 v-if="message.message.type == MessageTypeEnum.TEXT"

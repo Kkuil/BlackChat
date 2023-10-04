@@ -9,6 +9,8 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.kkuil.blackchat.domain.dto.IpInfo;
 import lombok.*;
 
 /**
@@ -68,8 +70,8 @@ public class User implements Serializable {
     /**
      * ip信息
      */
-    @TableField(value = "ip_info")
-    private Object ipInfo;
+    @TableField(value = "ip_info", typeHandler = JacksonTypeHandler.class)
+    private IpInfo ipInfo;
 
     /**
      * 佩戴的徽章id
@@ -103,4 +105,11 @@ public class User implements Serializable {
      * 系统uid
      */
     public static Long UID_SYSTEM = 1L;
+
+    public void refreshIp(String ip) {
+        if (ipInfo == null) {
+            ipInfo = new IpInfo();
+        }
+        ipInfo.refreshIp(ip);
+    }
 }

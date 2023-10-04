@@ -4,25 +4,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kkuil.blackchat.mapper.UserMapper">
 
-    <resultMap id="BaseResultMap" type="com.kkuil.blackchat.domain.entity.User">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="name" column="name" jdbcType="VARCHAR"/>
-        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
-        <result property="sex" column="sex" jdbcType="INTEGER"/>
-        <result property="openId" column="open_id" jdbcType="CHAR"/>
-        <result property="activeStatus" column="status" jdbcType="INTEGER"/>
-        <result property="lastOptTime" column="last_opt_time" jdbcType="TIMESTAMP"/>
-        <result property="ipInfo" column="ip_info" jdbcType="OTHER"/>
-        <result property="itemId" column="item_id" jdbcType="BIGINT"/>
-        <result property="status" column="status" jdbcType="INTEGER"/>
-        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id,name,avatar,
-        sex,open_id,active_status,
-        last_opt_time,ip_info,item_id,
-        status,create_time,update_time
-    </sql>
 </mapper>

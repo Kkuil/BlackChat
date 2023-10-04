@@ -108,6 +108,7 @@ export const useMessageStore = defineStore("message", () => {
     const addMessage = (data: ChatMessageResp.ChatMessageBaseResp) => {
         messageInfo.value.body.content = ""
         messageList.value.push(data)
+        cancelReply()
     }
 
     /**

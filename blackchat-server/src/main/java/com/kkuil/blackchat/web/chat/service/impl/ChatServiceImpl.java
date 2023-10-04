@@ -207,6 +207,7 @@ public class ChatServiceImpl implements ChatService {
                             .uid(fromUid)
                             .name(baseUserInfo.getName())
                             .avatar(baseUserInfo.getAvatar())
+                            .ipInfo(baseUserInfo.getIpInfo())
                             .build();
 
                     // 3.2 构建消息信息

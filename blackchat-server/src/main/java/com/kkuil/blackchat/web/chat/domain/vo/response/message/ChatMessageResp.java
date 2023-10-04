@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.web.chat.domain.vo.response.message;
 
+import com.kkuil.blackchat.domain.dto.IpInfo;
 import com.kkuil.blackchat.domain.entity.MessageMark;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +50,11 @@ public class ChatMessageResp {
          * 用户头像
          */
         private String avatar;
+
+        /**
+         * 用户ip信息
+         */
+        private IpInfo ipInfo;
     }
 
     /**

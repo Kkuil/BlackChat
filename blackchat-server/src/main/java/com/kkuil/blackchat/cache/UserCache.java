@@ -87,11 +87,11 @@ public class UserCache {
 
         // 2. 从数据库中获取数据
         User user = userDao.getById(uid);
-        UserBaseInfo userBaseInfo1 = BeanUtil.toBean(user, UserBaseInfo.class);
+        UserBaseInfo userInfo = BeanUtil.toBean(user, UserBaseInfo.class);
 
         // 3. 缓存数据
-        RedisUtil.set(userKey, userBaseInfo1);
-        return userBaseInfo1;
+        RedisUtil.set(userKey, userInfo);
+        return userInfo;
     }
 
     /**
