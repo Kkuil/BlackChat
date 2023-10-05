@@ -28,7 +28,7 @@ request.interceptors.request.use(
 request.interceptors.response.use(
     (response: AxiosResponse & { data: ApiResult<any> }) => {
         if (!response.data.data) {
-            ElMessage.error(response.data.message)
+            response.data.message && ElMessage.error(response.data.message)
         }
         return response.data
     },

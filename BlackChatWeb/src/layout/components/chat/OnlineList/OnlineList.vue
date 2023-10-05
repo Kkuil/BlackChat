@@ -3,6 +3,7 @@ import SvgIcon from "@/components/SvgIcon/SvgIcon.vue"
 import { useSessionStore } from "@/stores/session"
 import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useUserStore } from "@/stores/user"
+import { HOT_GROUP_ID } from "@/constant/global"
 
 const sessionStore = useSessionStore()
 
@@ -14,7 +15,10 @@ const userStore = useUserStore()
         class="online-list flex flex-col ml-[10px] bg-secondary rounded-[10px] text-[#fff] p-[10px] relative"
     >
         <div
-            v-if="!userStore.userInfo.name"
+            v-if="
+                !userStore.userInfo.uid &&
+                sessionStore.sessionInfo.chattingId !== HOT_GROUP_ID
+            "
             :class="!userStore.userInfo.name ? 'backdrop-blur-md' : ''"
             class="w-full h-full absolute top-0 left-0 flex-center text-[12px] font-serif rounded-[10px]"
         >

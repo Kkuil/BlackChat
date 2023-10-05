@@ -68,6 +68,7 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
     public CursorPageBaseResp<Message> getCursorPage(ChatMessageCursorReq request) {
         return CursorUtil.getCursorPageByMysql(this, request, wrapper -> {
             wrapper.eq(Message::getStatus, MessageStatusEnum.NORMAL.getStatus());
+            wrapper.eq(Message::getRoomId, request.getRoomId());
         }, Message::getCreateTime);
     }
 }

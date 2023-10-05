@@ -25,6 +25,8 @@ import static com.kkuil.blackchat.constant.UserConst.USER_TOKEN_TTL;
 @Slf4j
 public class LoginServiceImpl implements LoginService {
 
+    public static final String NULL = "null";
+
     /**
      * 获取用户ID
      *
@@ -33,6 +35,9 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public Long getValidUid(String token) {
+        if (StrUtil.isEmpty(token) || NULL.equals(token)) {
+            return null;
+        }
         Claims userInfo = JwtUtil.parse(token, USER_TOKEN_SECRET);
         return Long.parseLong(userInfo.get("uid").toString());
     }

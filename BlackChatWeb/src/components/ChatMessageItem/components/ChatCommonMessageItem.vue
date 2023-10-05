@@ -7,6 +7,8 @@ import VideoContent from "@/components/ChatMessageItem/components/VideoContent/V
 import ContextMenu from "@/components/ContextMenuContainer/ContextMenuContainer.vue"
 import { ref } from "vue"
 import moment from "moment"
+import { Avatar } from "@element-plus/icons-vue"
+import FileContent from "@/components/ChatMessageItem/components/FileContent/FileContent.vue"
 
 const USER_ITEMS = ["aite", "add-friend"]
 const MESSAGE_ITEMS = ["recall", "reply"]
@@ -32,7 +34,7 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
 
 <template>
     <div
-        class="w-[92%] h-auto flex items-start my-[10px]"
+        class="w-[90%] h-auto flex items-start my-[10px]"
         :class="
             direction == 'right'
                 ? 'flex-row-reverse justify-end float-right'
@@ -44,9 +46,13 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
             size="default"
             class="cursor-pointer"
             @contextmenu.prevent.stop="handleUserRightClick($event, USER_ITEMS)"
-        />
+        >
+            <el-icon :size="20">
+                <Avatar />
+            </el-icon>
+        </el-avatar>
         <div
-            class="flex flex-[1] flex-col mx-[7px]"
+            class="flex w-[90%] flex-col mx-[7px]"
             :class="direction == 'left' ? 'items-start' : 'items-end'"
         >
             <h3
@@ -54,9 +60,9 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
                 :class="direction == 'left' ? 'flex-row' : 'flex-row-reverse'"
             >
                 <span>
-                    &nbsp;({{
-                        message.fromUser.ipInfo.updateIpDetail.city
-                    }})&nbsp;
+                    &nbsp; ({{
+                        message.fromUser.ipInfo?.updateIpDetail?.city ?? "未知"
+                    }}) &nbsp;
                 </span>
                 <span class="username">{{ message.fromUser.name }}</span>
                 <span
@@ -68,7 +74,7 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
             <TextContent
                 v-if="message.message.type == MessageTypeEnum.TEXT"
                 :content="message.message.body.content"
-                class="rounded-b-[15px] text-[#fff] text-[14px] p-[5px]"
+                class="rounded-b-[15px] text-[#fff] text-[14px] p-[5px] max-w-[100%] break-words"
                 :class="
                     direction == 'left'
                         ? 'rounded-tr-[15px] bg-third'

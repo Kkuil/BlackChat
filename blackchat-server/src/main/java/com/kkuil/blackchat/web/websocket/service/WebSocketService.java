@@ -2,7 +2,6 @@ package com.kkuil.blackchat.web.websocket.service;
 
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.WsUpdateOnlineListResp;
 import io.netty.channel.Channel;
 
 /**
@@ -53,9 +52,8 @@ public interface WebSocketService {
      * 订阅成功
      *
      * @param code 登录码
-     * @return 是否扫码
      */
-    Boolean subscribeSuccess(Integer code);
+    void subscribeSuccess(Integer code);
 
     /**
      * 扫码登录成功
@@ -63,16 +61,8 @@ public interface WebSocketService {
      * @param loginCode 登录吗
      * @param user      用户信息
      * @param token     token
-     * @return 是否扫码登录成功
      */
-    Boolean scanLoginSuccess(Integer loginCode, User user, String token);
-
-    /**
-     * 等待授权事件
-     *
-     * @param code 登录码
-     */
-    void waitAuthorize(Integer code);
+    void scanLoginSuccess(Integer loginCode, User user, String token);
 
     /**
      * 授权

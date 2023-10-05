@@ -133,11 +133,34 @@ const UPLOAD_CONFIG = {
         }
     },
     VIDEO: {
-        type: ["all"],
+        type: [
+            "avi",
+            "mp4",
+            "mov",
+            "wmv",
+            "flv",
+            "mkv",
+            "mpeg",
+            "3gp",
+            "vob",
+            "ts",
+            "m4v",
+            "webm",
+            "rm",
+            "swf",
+            "mpg"
+        ],
         maxSize: 100 * 1024 * 1024,
         handleVideoChange: async (file: UploadFile) => {
             videoUploadRef.value?.clearFiles()
-            if (file.raw?.size / UPLOAD_CONFIG.VIDEO.maxSize > 1) {
+            if (
+                UPLOAD_CONFIG.VIDEO.type.indexOf(
+                    file.raw?.name.split(".")[1]
+                ) == -1
+            ) {
+                ElMessage.error("只允许上传视频类型，请重新选择")
+                return false
+            } else if (file.raw?.size / UPLOAD_CONFIG.VIDEO.maxSize > 1) {
                 ElMessage.error("视频文件大小不能超过100MB，请重新选择")
                 return false
             }

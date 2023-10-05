@@ -79,12 +79,12 @@ export const useSessionStore = defineStore("session", () => {
      * 切换会话
      * @param id 会话ID
      */
-    const switchSession = (id: number) => {
+    const switchSession = (id: string) => {
         sessionInfo.value.memberList = []
         listPage.value.cursor = null
         listPage.value.isLast = false
         listPage.value.activeStatus = ChatActiveEnums.ONLINE
-        sessionInfo.value.chattingId = id
+        sessionInfo.value.chattingId = parseInt(id)
         initSessionMemberList(sessionInfo.value.memberList)
     }
 
@@ -136,7 +136,6 @@ export const useSessionStore = defineStore("session", () => {
             await getMemberList()
         },
         {
-            deep: false,
             immediate: true
         }
     )

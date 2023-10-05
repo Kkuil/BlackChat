@@ -81,10 +81,10 @@ const logout = () => {
     // 2. 通知后端修改用户状态为离线
     const logoutMessage = {
         type: WorkerTypeEnum.MESSAGE,
-        data: JSON.stringify({
+        data: {
             type: WsRequestTypeEnum.LOGOUT,
             data: token
-        })
+        }
     }
     pushMessageToMainThread(logoutMessage)
     // 3. 关闭弹框

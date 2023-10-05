@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.utils;
 
+import com.kkuil.blackchat.exception.UnAuthorizationException;
 import io.jsonwebtoken.*;
 
 import java.util.Date;
@@ -36,9 +37,13 @@ public class JwtUtil {
      * @return 解析结果
      */
     public static Claims parse(String token, String secret) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secret)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new UnAuthorizationException("登录失效请重新登录~~");
+        }
     }
 }

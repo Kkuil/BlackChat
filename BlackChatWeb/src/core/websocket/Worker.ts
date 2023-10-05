@@ -8,7 +8,7 @@ export const pushMessageToMainThread = ({
     type,
     value
 }: WebsocketTypes.WorkerParamsType) => {
-    self.postMessage(JSON.stringify({ type, value }))
+    self.postMessage({ type, value })
 }
 
 // ws instance
@@ -37,12 +37,12 @@ const initConnection = () => {
 
 // 往 ws 发消息
 const pushMessageToWs = (data: object) => {
-    connection?.send(data)
+    connection?.send(JSON.stringify(data))
 }
 
 // 线程监听消息
 self.onmessage = (e: MessageEvent<string>) => {
-    const { type, data } = JSON.parse(e.data)
+    const { type, data } = e.data
     switch (type) {
         case WorkerTypeEnum.INIT: {
             console.log("init")

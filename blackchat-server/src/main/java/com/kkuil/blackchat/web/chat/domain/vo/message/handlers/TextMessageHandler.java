@@ -3,6 +3,7 @@ package com.kkuil.blackchat.web.chat.domain.vo.message.handlers;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
@@ -126,7 +127,9 @@ public class TextMessageHandler extends AbstractMessageHandler<TextMessageRespBo
         MessageExtra extra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
         // 1.1 判断消息url跳转
         Map<String, UrlInfo> urlContentMap = URL_TITLE_DISCOVER.getUrlContentMap(textMessageReq.getContent());
-        extra.setUrlContentMap(urlContentMap);
+        if (ObjectUtil.isNotNull(urlContentMap)) {
+            extra.setUrlContentMap(urlContentMap);
+        }
         // 1.2 艾特消息保存
         if (CollectionUtil.isNotEmpty(textMessageReq.getAtUidList())) {
             extra.setAtUidList(textMessageReq.getAtUidList());

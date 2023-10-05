@@ -1,16 +1,20 @@
 <script setup lang="ts">
 import ChatItem from "@/layout/components/chat/ChatList/components/ChatItem.vue"
 import { useSessionStore } from "@/stores/session"
+import { useRouter } from "vue-router"
 
 const sessionStore = useSessionStore()
+
+const $router = useRouter()
 
 /**
  * 切换会话
  * @param e
  */
-const switchSession = (e: Event & { target: { dataset: { id: number } } }) => {
+const switchSession = (e: Event & { target: { dataset: { id: string } } }) => {
     const id = e.target.dataset.id
-    if (!id) return
+    console.log(id, sessionStore.sessionInfo.chattingId)
+    if (!id || id == sessionStore.sessionInfo.chattingId) return
     sessionStore.switchSession(id)
 }
 </script>
@@ -23,8 +27,8 @@ const switchSession = (e: Event & { target: { dataset: { id: number } } }) => {
             class="transition-[background-color] rounded-[10px] cursor-pointer item"
             :class="
                 session.id == sessionStore.sessionInfo.chattingId
-                    ? 'bg-[#090c10] hover:bg-[#090c10]'
-                    : 'bg-[#202124] hover:bg-[#090c10]'
+                    ? 'bg-[#2c3e50] hover:bg-[#2c3e50]'
+                    : 'bg-[#202124] hover:bg-[#484d50]'
             "
             :data-id="session.id"
         >

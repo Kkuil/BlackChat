@@ -3,7 +3,7 @@
  */
 export enum MessageTypeEnum {
     TEXT = 1,
-    RECALL = 2,
+    SYSTEM = 2,
     IMAGE = 3,
     FILE = 4,
     SOUND = 5,

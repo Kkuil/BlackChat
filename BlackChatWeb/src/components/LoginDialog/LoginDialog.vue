@@ -37,7 +37,7 @@ const init = () => {
     // 获取二维码链接
     const workerMessage: WebsocketTypes.WorkerParamsType = {
         type: WorkerTypeEnum.MESSAGE,
-        data: JSON.stringify(LOGIN_MESSAGE)
+        data: LOGIN_MESSAGE
     }
     // 向后端发起获取二维码的请求
     Websocket.send(workerMessage)

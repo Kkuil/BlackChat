@@ -33,7 +33,7 @@ class Websocket {
             type: WorkerTypeEnum.INIT,
             data: localStorage.getItem(TOKEN_KEY_IN_LOC)
         }
-        worker.postMessage(JSON.stringify(message))
+        worker.postMessage(message)
         this.#connectReady = true
     }
 
@@ -41,7 +41,7 @@ class Websocket {
      * 发送消息
      */
     send(message: WebsocketTypes.WorkerParamsType) {
-        worker.postMessage(JSON.stringify(message))
+        worker.postMessage(message)
     }
 
     /**
@@ -49,9 +49,7 @@ class Websocket {
      * @param e 消息事件对象
      */
     onWorkerMessage = (e: MessageEvent<string>) => {
-        const params: { type: WorkerTypeEnum; value?: unknown } = JSON.parse(
-            e.data
-        )
+        const params: { type: WorkerTypeEnum; value?: unknown } = e.data
         switch (params.type) {
             case WorkerTypeEnum.MESSAGE: {
                 this.onMessage(params.value)
@@ -84,7 +82,6 @@ class Websocket {
      */
     onMessage = (data: string) => {
         const params: WebsocketRespType = JSON.parse(data)
-        console.log(params.type)
         switch (params.type) {
             // 连接成功
             case WsResponseTypeEnum.CONN_SUCCESS: {
@@ -146,9 +143,9 @@ class Websocket {
         this.#heartBeatTimer = setInterval(() => {
             const heartPack = {
                 type: WorkerTypeEnum.MESSAGE,
-                data: JSON.stringify({
+                data: {
                     type: WsRequestTypeEnum.HEARTBEAT
-                })
+                }
             }
             self.send(heartPack)
         }, 1000)

@@ -17,11 +17,8 @@ import com.kkuil.blackchat.utils.RedisUtil;
 import com.kkuil.blackchat.web.websocket.adapter.WsAdapter;
 import com.kkuil.blackchat.web.websocket.constant.AuthorizationConst;
 import com.kkuil.blackchat.web.websocket.domain.dto.WsConnInfoDTO;
-import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
-import com.kkuil.blackchat.web.websocket.domain.enums.WsResponseTypeEnum;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
 import com.kkuil.blackchat.web.websocket.domain.vo.response.WsLoginSuccessMessage;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.WsUpdateOnlineListResp;
 import com.kkuil.blackchat.web.websocket.service.WebSocketService;
 import com.kkuil.blackchat.web.websocket.utils.NettyUtil;
 import io.netty.channel.Channel;
@@ -37,7 +34,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -171,23 +167,29 @@ public class WebSocketServiceImpl implements WebSocketService {
      * 当用户扫码成功时，返回前端提示用户扫码成功
      *
      * @param code 登录码
-     * @return 是否成功
      */
     @Override
-    public Boolean subscribeSuccess(Integer code) {
+    public void subscribeSuccess(Integer code) {
         if (code == null) {
             // TODO 这个地方是防止意外情况的发生：
             //  例如：当用户不是从扫码登录过来的，而是直接通过微信搜索进行了订阅公众号，从而导致报错
-            return Boolean.TRUE;
+            return;
         }
         Channel channel = WAIT_LOGIN_MAP.getIfPresent(code);
         if (Objects.isNull(channel)) {
             // 超时或已移除 code -> channel ×
             // TODO 通知用户二维码已过期，刷新二维码
-            return Boolean.FALSE;
+            return;
         }
+        Long uid = NettyUtil.getAttrFromChannel(channel, AuthorizationConst.UID_KEY_IN_CHANNEL);
+        String ip = NettyUtil.getAttrFromChannel(channel, AuthorizationConst.IP_KEY_IN_CHANNEL);
+        User user = userDao.getById(uid);
+        User update = new User();
+        update.setId(user.getId());
+        user.refreshIp(ip);
+        update.setIpInfo(user.getIpInfo());
+        update.setLastOptTime(new Date());
         sendMsgToOne(channel, WsAdapter.buildSubscribeSuccessResp());
-        return true;
     }
 
     /**
@@ -196,30 +198,19 @@ public class WebSocketServiceImpl implements WebSocketService {
      * @param code  登录码
      * @param user  用户信息
      * @param token token
-     * @return 是否登录成功
      */
     @Override
-    public Boolean scanLoginSuccess(Integer code, User user, String token) {
+    public void scanLoginSuccess(Integer code, User user, String token) {
         // 发送消息
         Channel channel = WAIT_LOGIN_MAP.getIfPresent(code);
         // 判断等待列表中是否存在该通道
         if (Objects.isNull(channel)) {
-            return Boolean.FALSE;
+            return;
         }
         // 移除code
         WAIT_LOGIN_MAP.invalidate(code);
         // 用户登录
         loginSuccess(channel, user, token);
-        return true;
-    }
-
-    /**
-     * 等待授权事件
-     *
-     * @param code 登录码
-     */
-    @Override
-    public void waitAuthorize(Integer code) {
     }
 
     /**

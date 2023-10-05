@@ -14,7 +14,7 @@ export type TReplyMessage = {
 
 export const useMessageStore = defineStore("message", () => {
     const messageInfo = ref<ChatMessageReq.ChatMessageBaseReq<any>>({
-        roomId: 1,
+        roomId: sessionStore.sessionInfo.chattingId,
         messageType: MessageTypeEnum.TEXT,
         replyMessageId: null,
         body: {
@@ -133,7 +133,6 @@ export const useMessageStore = defineStore("message", () => {
 
     /**
      * 获取消息列表
-     * @param roomId
      */
     const getMessageList = async () => {
         const result = await listMessage({
@@ -159,6 +158,7 @@ export const useMessageStore = defineStore("message", () => {
             await getMessageList()
         },
         {
+            deep: true,
             immediate: true
         }
     )

@@ -107,27 +107,28 @@ public class ChatServiceImpl implements ChatService {
         Room room = roomDao.getById(roomId);
         AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
 
-        // 1. 检查用户是否在房间内(用户不在房间内，不让获取群列表)
-        Boolean isMember = roomService.checkRoomMembership(roomId, uid);
-        AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
+        // 判断热点群聊
+        List<Long> uidList;
+        if (com.kkuil.blackchat.domain.enums.RoomTypeEnum.HOT_FLAG.getType().equals(room.getHotFlag())) {
+            uidList = null;
+        } else {
+            uidList = groupCache.getGroupUidByRoomId(roomId);
+            // 1. 检查用户是否在房间内(用户不在房间内，不让获取群列表)
+            Boolean isMember = roomService.checkRoomMembership(roomId, uid);
+            AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
 
-        Integer roomType = room.getType();
-        // 2. 判断当前房间的类型是否是群聊
-        boolean isGroup = RoomTypeEnum.GROUP.getType().equals(roomType);
-        AssertUtil.isTrue(isGroup, ChatErrorEnum.NOT_GROUP.getMsg());
+            Integer roomType = room.getType();
+            // 2. 判断当前房间的类型是否是群聊
+            boolean isGroup = RoomTypeEnum.GROUP.getType().equals(roomType);
+            AssertUtil.isTrue(isGroup, ChatErrorEnum.NOT_GROUP.getMsg());
+        }
+
 
         // 3. 获取数据
         CursorPageBaseResp<User> userCursorPageBaseResp;
         Integer activeStatus = chatMemberCursorReq.getActiveStatus();
         Integer pageSize = chatMemberCursorReq.getPageSize();
 
-        // 判断热点群聊
-        List<Long> uidList;
-        if (room.getHotFlag() == 1) {
-            uidList = null;
-        } else {
-            uidList = groupCache.getGroupUidByRoomId(roomId);
-        }
         ChatMemberExtraResp chatMemberExtraResp = new ChatMemberExtraResp();
         if (ChatActiveStatusEnum.ONLINE.getStatus().equals(activeStatus)) {
             // 3.1 获取在线成员
@@ -184,14 +185,16 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public CursorPageBaseResp<ChatMessageResp> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq) {
         Long roomId = chatMessageCursorReq.getRoomId();
-
         // 0. 检查房间号是否存在
         Room room = roomDao.getById(roomId);
         AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
 
-        // 1. 检查用户是否在房间内(用户不在房间内，不让获取群消息)
-        Boolean isMember = roomService.checkRoomMembership(roomId, uid);
-        AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
+        // 判断是否是大群聊
+        if (!com.kkuil.blackchat.domain.enums.RoomTypeEnum.HOT_FLAG.getType().equals(room.getHotFlag())) {
+            // 1. 检查用户是否在房间内(用户不在房间内，不让获取群消息)
+            Boolean isMember = roomService.checkRoomMembership(roomId, uid);
+            AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
+        }
 
         // 2. 获取群消息
         CursorPageBaseResp<Message> messageCursorPageBaseResp = messageDao.getCursorPage(chatMessageCursorReq);

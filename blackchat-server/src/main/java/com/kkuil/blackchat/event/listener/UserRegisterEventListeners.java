@@ -11,6 +11,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 /**
  * @Author Kkuil
  * @Date 2023/9/27 9:44
@@ -30,7 +32,7 @@ public class UserRegisterEventListeners {
      */
     @Async
     @EventListener(classes = UserRegisterEvent.class)
-    public void sendMsgToOne(UserRegisterEvent event) {
+    public void addUpdateNameCard(UserRegisterEvent event) {
         User user = event.getUser();
         //送一张改名卡
         userBackpackService.acquireItem(user.getId(), ItemEnum.MODIFY_NAME_CARD.getId(), IdempotentEnum.UID, user.getId().toString());

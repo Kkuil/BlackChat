@@ -8,7 +8,7 @@ export declare namespace WebsocketTypes {
      */
     type WorkerParamsType = {
         type: WorkerTypeEnum
-        data?: string
+        data?: Record<string, any>
     }
 
     /**
