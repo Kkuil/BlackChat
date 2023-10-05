@@ -5,6 +5,10 @@ import { useUserStore } from "@/stores/user"
 import { useBadgeStore } from "@/stores/badge"
 import { updateUsername } from "@/api/user"
 import { ElMessage } from "element-plus"
+import { TOKEN_KEY_IN_LOC } from "@/constant/auth"
+import { pushMessageToMainThread } from "@/core/websocket/Worker"
+import { WorkerTypeEnum } from "@/core/websocket/domain/enum/WorkerTypeEnum"
+import { WsRequestTypeEnum } from "@/core/websocket/domain/enum/WsRequestTypeEnum"
 
 const userStore = useUserStore()
 const badgeStore = useBadgeStore()
@@ -66,6 +70,26 @@ const updateName = async () => {
         ElMessage.success("更改成功")
     }
 }
+
+/**
+ * 退出登录
+ */
+const logout = () => {
+    // 1. 删除token
+    const token = localStorage.getItem(TOKEN_KEY_IN_LOC)
+    localStorage.removeItem(TOKEN_KEY_IN_LOC)
+    // 2. 通知后端修改用户状态为离线
+    const logoutMessage = {
+        type: WorkerTypeEnum.MESSAGE,
+        data: JSON.stringify({
+            type: WsRequestTypeEnum.LOGOUT,
+            data: token
+        })
+    }
+    pushMessageToMainThread(logoutMessage)
+    // 3. 关闭弹框
+    onClose()
+}
 </script>
 
 <template>
@@ -101,6 +125,9 @@ const updateName = async () => {
                         @click="updateName"
                     >
                         保存
+                    </el-button>
+                    <el-button type="primary" class="ml-[10px]" @click="logout">
+                        退出登录
                     </el-button>
                 </h1>
             </div>

@@ -8,6 +8,7 @@ import com.kkuil.blackchat.constant.RedisKeyConst;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.dao.UserRoleDAO;
 import com.kkuil.blackchat.domain.entity.User;
+import com.kkuil.blackchat.event.UserOfflineEvent;
 import com.kkuil.blackchat.event.UserOnlineEvent;
 import com.kkuil.blackchat.event.adapter.EventParamAdapter;
 import com.kkuil.blackchat.event.domain.dto.UserOnlineEventParamsDTO;
@@ -86,8 +87,6 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Resource
     private UserRoleDAO userRoleDao;
     @Resource
-    private UserCache userCache;
-    @Resource
     private LoginService loginService;
     @Resource
     private UserDAO userDao;
@@ -132,8 +131,6 @@ public class WebSocketServiceImpl implements WebSocketService {
      */
     @Override
     public void online(Channel channel, Long uid) {
-        // 更新用户上线信息
-        userCache.online(uid, new Date());
         // 记录当前连接信息
         UID_CHANNEL_MAP.putIfAbsent(uid, new CopyOnWriteArrayList<>());
         UID_CHANNEL_MAP.get(uid).add(channel);
@@ -148,10 +145,10 @@ public class WebSocketServiceImpl implements WebSocketService {
      */
     @Override
     public void offline(Channel channel, Long uid) {
-        // 在redis缓存中删除那个uid
-        userCache.offline(uid, new Date());
         // 删除本地缓存UID列表
         UID_CHANNEL_MAP.remove(uid);
+        // 发布下线事件
+        applicationEventPublisher.publishEvent(new UserOfflineEvent(this, uid));
     }
 
     /**
@@ -277,6 +274,18 @@ public class WebSocketServiceImpl implements WebSocketService {
             }
             threadPoolTaskExecutor.execute(() -> sendMsgToOne(channel, wsBaseResp));
         });
+    }
+
+    /**
+     * 退出登录
+     *
+     * @param channel 通道
+     */
+    @Override
+    public void logout(Channel channel) {
+        Long uid = NettyUtil.getAttrFromChannel(channel, AuthorizationConst.UID_KEY_IN_CHANNEL);
+        // 用户下线
+        offline(channel, uid);
     }
 
 

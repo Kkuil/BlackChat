@@ -37,7 +37,6 @@ const initConnection = () => {
 
 // 往 ws 发消息
 const pushMessageToWs = (data: object) => {
-    console.log(data)
     connection?.send(data)
 }
 

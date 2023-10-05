@@ -24,17 +24,17 @@ public enum WsRequestTypeEnum {
     /**
      * 心跳包
      */
-    HEARTBEAT(1002,
-            /**
-             * 登录认证
-             */"心跳包"),
-
-    AUTHORIZE(1003, "登录认证"),
+    HEARTBEAT(1002, "心跳包"),
 
     /**
      * 登录认证
      */
-    UPDATE_ONLINE_LIST(1004, "更新上线列表"),
+    AUTHORIZE(1003, "登录认证"),
+
+    /**
+     * 退出登录
+     */
+    LOGOUT(1004, "退出登录"),
     ;
 
     private final Integer type;

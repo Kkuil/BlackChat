@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.event.listener;
 
+import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.event.UserOnlineEvent;
@@ -38,6 +39,9 @@ public class UserOnlineEventListeners {
     @Resource
     private IpService ipService;
 
+    @Resource
+    private UserCache userCache;
+
     /**
      * 发送给用户登录成功
      *
@@ -53,13 +57,27 @@ public class UserOnlineEventListeners {
     }
 
     /**
-     * 更新数据库
+     * 更新缓存层数据库
      *
      * @param event 用户上线事件参数
      */
     @Async
     @EventListener(classes = UserOnlineEvent.class)
-    public void saveDB(UserOnlineEvent event) {
+    public void updateCacheDB(UserOnlineEvent event) {
+        UserOnlineEventParamsDTO userOnlineEventParamsDTO = event.getUserOnlineEventParamsDTO();
+        Long uid = userOnlineEventParamsDTO.getWsLoginSuccessWsBaseResp().getData().getUid();
+        // 更新用户上线信息
+        userCache.online(uid, new Date());
+    }
+
+    /**
+     * 更新持久层数据库
+     *
+     * @param event 用户上线事件参数
+     */
+    @Async
+    @EventListener(classes = UserOnlineEvent.class)
+    public void updatePersistenceDB(UserOnlineEvent event) {
         UserOnlineEventParamsDTO userOnlineEventParamsDTO = event.getUserOnlineEventParamsDTO();
         Long uid = userOnlineEventParamsDTO.getWsLoginSuccessWsBaseResp().getData().getUid();
         User user = userDao.getById(uid);

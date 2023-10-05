@@ -104,4 +104,11 @@ public interface WebSocketService {
      * @param skipUid    跳过的用户ID
      */
     void sendMsgToAll(WsBaseResp<?> wsBaseResp, Long skipUid);
+
+    /**
+     * 退出登录
+     *
+     * @param channel 通道
+     */
+    void logout(Channel channel);
 }

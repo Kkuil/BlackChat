@@ -15,7 +15,7 @@ export enum WsRequestTypeEnum {
     AUTHORIZE = 1003,
 
     /**
-     * 更新上线列表
+     * 退出登录
      */
-    UPDATE_ONLINE_LIST = 1004
+    LOGOUT = 1004
 }

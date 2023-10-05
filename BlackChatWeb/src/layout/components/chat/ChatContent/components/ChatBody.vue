@@ -29,11 +29,9 @@ const firstMessage: ChatMessageResp.ChatMessageBaseResp<
 <template>
     <div class="h-full bg-secondary" ref="bodyRef">
         <span
-            class="w-full flex-center"
             v-observe="messageStore.getMessageList"
             v-if="!messageStore.listPage.isLast"
         >
-            <i class="iconfont icon-loading animate-spin"></i>
         </span>
         <ChatMessageItemStrategy
             v-if="messageStore.listPage.isLast"

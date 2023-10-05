@@ -18,7 +18,7 @@ declare namespace ChatMessageResp {
         uid: string
         name: string
         avatar: string
-        ipInfo: IpInfo
+        ipInfo?: IpInfo
     }
     type IpInfo = {
         /**

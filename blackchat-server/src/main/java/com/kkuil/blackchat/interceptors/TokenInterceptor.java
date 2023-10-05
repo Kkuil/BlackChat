@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.interceptors;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.kkuil.blackchat.exception.UnAuthorizationException;
 import com.kkuil.blackchat.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,11 +36,11 @@ public class TokenInterceptor implements HandlerInterceptor {
         String token = getToken(request);
         Long uid = loginService.getValidUid(token);
         // 有登录态
-        if (Objects.nonNull(uid)) {
-            request.setAttribute(ATTRIBUTE_UID_IN_HEADER, uid);
-            return true;
+        if (Objects.isNull(uid)) {
+            throw new UnAuthorizationException("请先登录后再进行操作吧~");
         }
-        return false;
+        request.setAttribute(ATTRIBUTE_UID_IN_HEADER, uid);
+        return true;
     }
 
     private String getToken(HttpServletRequest request) {

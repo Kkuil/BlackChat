@@ -31,27 +31,36 @@ const userStore = useUserStore()
             总人数：{{ sessionStore.getSessionInfo.totalCount }}
         </h1>
         <ul
-            class="list flex-1 overflow-y-auto"
+            class="list flex-1 overflow-y-auto overflow-x-hidden"
             v-infinite-scroll="sessionStore.getMemberList"
             v-if="sessionStore.getSessionInfo.totalCount"
         >
-            <li
-                class="item flex items-center py-[7px] cursor-pointer mb-[5px] hover:bg-[#263242] rounded-[5px] px-[7px]"
-                v-for="member in sessionStore.sessionInfo.memberList"
-                :key="member.uid"
+            <TransitionGroup
+                v-show="sessionStore.sessionInfo.memberList.length"
+                tag="ul"
+                name="fade"
+                class="user-list"
             >
-                <el-badge
-                    is-dot
-                    :type="member.activeStatus === 1 ? 'primary' : 'warning'"
+                <li
+                    class="item flex items-center py-[7px] cursor-pointer mb-[5px] hover:bg-[#263242] rounded-[5px] px-[7px]"
+                    v-for="member in sessionStore.sessionInfo.memberList"
+                    :key="member.uid"
                 >
-                    <el-avatar :size="'small'" :src="member.avatar" />
-                </el-badge>
-                <div
-                    class="w-full line-clamp-1 overflow-hidden overflow-ellipsis text-[14px] ml-[5px]"
-                >
-                    {{ member.name }}
-                </div>
-            </li>
+                    <el-badge
+                        is-dot
+                        :type="
+                            member.activeStatus === 1 ? 'primary' : 'warning'
+                        "
+                    >
+                        <el-avatar :size="'small'" :src="member.avatar" />
+                    </el-badge>
+                    <div
+                        class="w-full line-clamp-1 overflow-hidden overflow-ellipsis text-[14px] ml-[5px]"
+                    >
+                        {{ member.name }}
+                    </div>
+                </li>
+            </TransitionGroup>
             <li
                 v-if="sessionStore.listPage.isLast"
                 class="w-full flex-center text-[#5b6061] text-[12px]"
@@ -92,5 +101,25 @@ const userStore = useUserStore()
 
 .online-list .el-badge__content {
     border: 0;
+}
+
+/* 1. 声明过渡效果 */
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. 声明进入和离开的状态 */
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: scaleY(0.01) translate(30px, 0);
+}
+
+/* 3. 确保离开的项目被移除出了布局流
+      以便正确地计算移动时的动画效果。 */
+.fade-leave-active {
+    position: absolute;
 }
 </style>
