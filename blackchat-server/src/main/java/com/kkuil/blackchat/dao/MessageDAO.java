@@ -1,15 +1,18 @@
 package com.kkuil.blackchat.dao;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.MessageMapper;
 import com.kkuil.blackchat.utils.CursorUtil;
-import com.kkuil.blackchat.web.chat.domain.enums.MessageStatusEnum;
-import com.kkuil.blackchat.web.chat.domain.vo.request.message.ChatMessageCursorReq;
-import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
+import com.kkuil.blackchat.core.chat.domain.enums.MessageStatusEnum;
+import com.kkuil.blackchat.core.chat.domain.vo.request.message.ChatMessageCursorReq;
+import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 /**
  * @Author Kkuil
@@ -70,5 +73,19 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
             wrapper.eq(Message::getStatus, MessageStatusEnum.NORMAL.getStatus());
             wrapper.eq(Message::getRoomId, request.getRoomId());
         }, Message::getCreateTime);
+    }
+
+    /**
+     * 获取未读数
+     *
+     * @param roomId 房间ID
+     * @param readTime 最后已读时间
+     * @return 未读数量
+     */
+    public Integer getUnReadCountByReadTime(Long roomId, Date readTime) {
+        return Math.toIntExact(lambdaQuery()
+                .eq(Message::getRoomId, roomId)
+                .gt(ObjectUtil.isNotNull(readTime), Message::getCreateTime, readTime)
+                .count());
     }
 }

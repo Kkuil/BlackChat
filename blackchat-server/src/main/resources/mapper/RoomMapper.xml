@@ -4,20 +4,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kkuil.blackchat.mapper.RoomMapper">
 
-    <resultMap id="BaseResultMap" type="com.kkuil.blackchat.domain.entity.Room">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="type" column="type" jdbcType="INTEGER"/>
-            <result property="hot_flag" column="hot_flag" jdbcType="INTEGER"/>
-            <result property="active_time" column="active_time" jdbcType="TIMESTAMP"/>
-            <result property="last_msg_id" column="last_msg_id" jdbcType="BIGINT"/>
-            <result property="ext_json" column="ext_json" jdbcType="OTHER"/>
-            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id,type,hot_flag,
-        active_time,last_msg_id,ext_json,
-        create_time,update_time
-    </sql>
 </mapper>

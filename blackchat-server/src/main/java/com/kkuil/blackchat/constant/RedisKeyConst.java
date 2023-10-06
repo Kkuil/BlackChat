@@ -73,6 +73,11 @@ public class RedisKeyConst {
     public static final String USER_SUMMARY_STRING = "userSummary:uid_%d";
 
     /**
+     * 用户的会话列表
+     */
+    public static final String USER_CONTACT_LIST = "contact:uid_%d";
+
+    /**
      * 用户GPT聊天次数
      */
     public static final String USER_CHAT_NUM = "useChatGPTNum:uid_%d";
@@ -83,7 +88,6 @@ public class RedisKeyConst {
      * 保存Open id
      */
     public static final String OPEN_ID_STRING = "openid:%s";
-
 
     /**
      * 用户上次使用GLM使用时间

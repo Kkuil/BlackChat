@@ -1,7 +1,7 @@
 package com.kkuil.blackchat.event.domain.dto;
 
-import com.kkuil.blackchat.web.websocket.domain.vo.response.WsBaseResp;
-import com.kkuil.blackchat.web.websocket.domain.vo.response.WsLoginSuccessMessage;
+import com.kkuil.blackchat.core.websocket.domain.vo.response.WsBaseResp;
+import com.kkuil.blackchat.core.websocket.domain.vo.response.WsLoginSuccessMessage;
 import io.netty.channel.Channel;
 import lombok.Data;
 import lombok.ToString;

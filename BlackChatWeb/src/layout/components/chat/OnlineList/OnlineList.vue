@@ -66,7 +66,7 @@ const userStore = useUserStore()
                 </li>
             </TransitionGroup>
             <li
-                v-if="sessionStore.listPage.isLast"
+                v-if="sessionStore.listSessionPage.isLast"
                 class="w-full flex-center text-[#5b6061] text-[12px]"
             >
                 暂无更多成员
@@ -74,7 +74,7 @@ const userStore = useUserStore()
             <li
                 class="w-full flex-center"
                 v-observe="sessionStore.getMemberList"
-                v-if="!sessionStore.listPage.isLast"
+                v-if="!sessionStore.listMemberPage.isLast"
             >
                 <i class="iconfont icon-loading animate-spin"></i>
             </li>

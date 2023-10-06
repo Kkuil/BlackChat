@@ -38,18 +38,6 @@ public class Room implements Serializable {
     private Integer hotFlag;
 
     /**
-     * 群最后消息的更新时间（热点群不需要写扩散，只更新这里）
-     */
-    @TableField(value = "active_time")
-    private Date activeTime;
-
-    /**
-     * 会话中的最后一条消息id
-     */
-    @TableField(value = "last_msg_id")
-    private Long lastMsgId;
-
-    /**
      * 额外信息（根据不同类型房间有不同存储的东西）
      */
     @TableField(value = "ext_json")

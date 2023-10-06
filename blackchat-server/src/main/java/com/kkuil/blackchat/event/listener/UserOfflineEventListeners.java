@@ -4,7 +4,7 @@ import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.event.UserOfflineEvent;
-import com.kkuil.blackchat.web.websocket.domain.enums.ChatActiveStatusEnum;
+import com.kkuil.blackchat.core.websocket.domain.enums.ChatActiveStatusEnum;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

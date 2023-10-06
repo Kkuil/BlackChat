@@ -1,8 +1,7 @@
 package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.util.StrUtil;
-import com.kkuil.blackchat.constant.RedisKey;
-import com.kkuil.blackchat.exception.UnAuthorizationException;
+import com.kkuil.blackchat.constant.RedisKeyConst;
 import com.kkuil.blackchat.service.LoginService;
 import com.kkuil.blackchat.utils.JwtUtil;
 import com.kkuil.blackchat.utils.RedisUtil;
@@ -50,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
      */
     @Override
     public String login(Long uid) {
-        String key = RedisKey.getKey(RedisKey.USER_TOKEN_STRING, uid);
+        String key = RedisKeyConst.getKey(RedisKeyConst.USER_TOKEN_STRING, uid);
         // 获取用户token
         String token = RedisUtil.getStr(key);
         if (StrUtil.isNotBlank(token)) {

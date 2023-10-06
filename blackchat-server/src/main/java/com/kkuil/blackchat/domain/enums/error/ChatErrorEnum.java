@@ -18,7 +18,7 @@ public enum ChatErrorEnum implements ErrorEnum {
     ROOM_IS_FULL(1003, "房间已满"),
     NOT_FRIEND(1004, "对方不是您的好友，请先加对方为好友吧~"),
     NOT_IN_GROUP(1005, "您不在该群聊中，请先加入该群在进行操作吧~"),
-    MESSAGE_NOT_EXIST(1006, "回复的消息不存在"),
+    MESSAGE_NOT_EXIST(1006, "消息不存在"),
     REPLY_MESSAGE_NOT_MATCH(1006, "发送消息和回复的消息不在一个会话内"),
     AT_USER_REPEAT(1007, "重复艾特同一名用户"),
     AT_USER_NOT_EXIST(1008, "艾特用户不存在"),

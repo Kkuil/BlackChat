@@ -75,7 +75,7 @@ public class UserCache {
      * @param uid 用户ID
      * @return 用户基本信息
      */
-    public UserBaseInfo getBaseUserInfo(Long uid) {
+    public UserBaseInfo getBaseUserInfoByUid(Long uid) {
         // 1. 先尝试从缓存中获取
         String key = String.format(RedisKeyConst.USER_INFO_STRING, uid);
         String userKey = RedisKeyConst.getKey(key);

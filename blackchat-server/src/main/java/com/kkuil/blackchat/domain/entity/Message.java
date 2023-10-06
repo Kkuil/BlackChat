@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
-import com.kkuil.blackchat.web.chat.domain.vo.request.message.MessageExtra;
+import com.kkuil.blackchat.core.chat.domain.vo.request.message.MessageExtra;
 import lombok.*;
 
 /**

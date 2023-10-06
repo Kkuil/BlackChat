@@ -10,7 +10,7 @@ import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.UserMapper;
 import com.kkuil.blackchat.utils.CursorUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.request.member.ChatMemberCursorReq;
+import com.kkuil.blackchat.core.chat.domain.vo.request.member.ChatMemberCursorReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 

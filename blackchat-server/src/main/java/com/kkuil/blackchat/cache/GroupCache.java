@@ -2,7 +2,6 @@ package com.kkuil.blackchat.cache;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.kkuil.blackchat.constant.RedisKey;
 import com.kkuil.blackchat.constant.RedisKeyConst;
 import com.kkuil.blackchat.dao.GroupMemberDAO;
 import com.kkuil.blackchat.domain.entity.GroupMember;
@@ -29,7 +28,7 @@ public class GroupCache {
      * @param roomId 房间ID
      */
     public List getGroupUidByRoomId(Long roomId) {
-        String key = RedisKey.getKey(RedisKeyConst.GROUP_UID_STRING, roomId);
+        String key = RedisKeyConst.getKey(RedisKeyConst.GROUP_UID_STRING, roomId);
         List list2 = RedisUtil.get(key, List.class);
 
         if (list2 == null) {

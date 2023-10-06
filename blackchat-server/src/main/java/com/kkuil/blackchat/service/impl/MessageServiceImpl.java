@@ -9,10 +9,10 @@ import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.web.chat.domain.vo.message.handlers.AbstractMessageHandler;
-import com.kkuil.blackchat.web.chat.domain.vo.message.handlers.factory.MessageHandlerFactory;
-import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
-import com.kkuil.blackchat.web.chat.domain.vo.response.message.ChatMessageResp;
+import com.kkuil.blackchat.core.chat.domain.vo.message.handlers.AbstractMessageHandler;
+import com.kkuil.blackchat.core.chat.domain.vo.message.handlers.factory.MessageHandlerFactory;
+import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
+import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +88,7 @@ public class MessageServiceImpl implements MessageService {
         // 2.1 消息对象
         ChatMessageResp.Message msg = handler.buildChatMessageResp(message, builder);
         // 2.2 用户对象
-        UserBaseInfo baseUserInfo = userCache.getBaseUserInfo(message.getFromUid());
+        UserBaseInfo baseUserInfo = userCache.getBaseUserInfoByUid(message.getFromUid());
         ChatMessageResp.UserInfo userInfo = ChatMessageResp.UserInfo.builder()
                 .uid(message.getFromUid())
                 .name(baseUserInfo.getName())

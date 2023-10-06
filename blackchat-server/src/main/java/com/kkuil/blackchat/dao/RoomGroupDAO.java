@@ -31,7 +31,6 @@ public class RoomGroupDAO extends ServiceImpl<RoomGroupMapper, RoomGroup> {
      * @return 群信息
      */
     public RoomGroup getByRoomId(Long roomId) {
-        LambdaQueryChainWrapper<RoomGroup> wrapper = lambdaQuery().eq(RoomGroup::getRoomId, roomId);
-        return this.getOne(wrapper);
+        return lambdaQuery().eq(RoomGroup::getRoomId, roomId).one();
     }
 }

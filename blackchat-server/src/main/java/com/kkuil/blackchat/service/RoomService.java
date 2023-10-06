@@ -1,6 +1,6 @@
 package com.kkuil.blackchat.service;
 
-import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
+import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 
 /**
  * @Author Kkuil

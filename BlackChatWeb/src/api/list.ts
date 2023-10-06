@@ -65,7 +65,7 @@ export const listMessage = (
 }
 
 /**
- * 获取上线列表
+ * 获取上徽章
  *
  * @param params CursorPage
  */
@@ -74,6 +74,25 @@ export const listBadge = (
 ): Promise<ApiResult<UserInfoDialogCompTypes.Badge>> => {
     return request({
         url: "/user/badge",
+        method: "GET",
+        params,
+        headers: {
+            [TOKEN_KEY_IN_HEADER]:
+                TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""
+        }
+    })
+}
+
+/**
+ * 获取会话列表
+ *
+ * @param params CursorPage
+ */
+export const listSession = (
+    params: GlobalTypes.CursorPageReq
+): Promise<ApiResult<CursorPageResp<Contact>>> => {
+    return request({
+        url: "/contact/list",
         method: "GET",
         params,
         headers: {

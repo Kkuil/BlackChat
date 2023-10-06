@@ -19,6 +19,16 @@
 			<groupId>com.kkuil</groupId>
 			<artifactId>blackchat-common</artifactId>
 			<version>1.0.0</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>hibernate-validator</artifactId>
+					<groupId>org.hibernate.validator</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jakarta.validation-api</artifactId>
+					<groupId>jakarta.validation</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- netty -->
@@ -60,6 +70,12 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
+
+		<dependency>
+			<groupId>javax.validation</groupId>
+			<artifactId>validation-api</artifactId>
+			<version>2.0.1.Final</version>
+		</dependency>
     </dependencies>
 
 	<build>

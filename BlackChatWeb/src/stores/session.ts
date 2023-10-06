@@ -1,58 +1,35 @@
 import { computed, ref, watch } from "vue"
 import { defineStore } from "pinia"
-import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
-import { Store } from "@/stores/store"
-import { listMember } from "@/api/list"
+import { listMember, listSession } from "@/api/list"
 import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
+import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
     chattingId: number
-    sessions: Store.SessionInfoType[]
+    sessions: (Session & { totalCount: number })[]
     memberList: UserInfo[]
+}
+
+export type Session = {
+    roomId: number
+    type: number
+    hotFlag: number
+    text: string
+    name: string
+    avatar: string
+    activeTime: string
+    unreadCount: number
 }
 
 export const useSessionStore = defineStore("session", () => {
     const sessionInfo = ref<TSessionInfo>({
-        chattingId: 1,
-        sessions: [
-            {
-                id: 1,
-                type: RoomTypeEnum.GROUP,
-                name: "Blackchat全员大群聊",
-                totalCount: 0,
-                avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132",
-                lastMsgInfo: {
-                    id: 1,
-                    content: "你好，我是黑哥",
-                    sendTime: "15:00",
-                    sender: {
-                        uid: 1,
-                        name: "黑哥"
-                    }
-                }
-            },
-            {
-                id: 2,
-                type: RoomTypeEnum.GROUP,
-                name: "Kkuil的群聊",
-                totalCount: 0,
-                avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132",
-                lastMsgInfo: {
-                    id: 1,
-                    content: "你好，我是黑哥",
-                    sendTime: "15:00",
-                    sender: {
-                        uid: 1,
-                        name: "黑哥"
-                    }
-                }
-            }
-        ],
+        chattingId: -99,
+        sessions: [],
         memberList: []
     })
 
-    const listPage = ref<
+    const listMemberPage = ref<
         GlobalTypes.CursorPageReq & {
             activeStatus: number
             isLast: boolean
@@ -67,10 +44,10 @@ export const useSessionStore = defineStore("session", () => {
     /**
      *  获取当前会话信息
      */
-    const getSessionInfo: Store.SessionInfoType = computed(() => {
+    const getSessionInfo: Session = computed(() => {
         return (
             sessionInfo.value.sessions.filter(
-                (session) => session.id == sessionInfo.value.chattingId
+                (session) => session.roomId == sessionInfo.value.chattingId
             )[0] ?? {}
         )
     })
@@ -81,9 +58,9 @@ export const useSessionStore = defineStore("session", () => {
      */
     const switchSession = (id: string) => {
         sessionInfo.value.memberList = []
-        listPage.value.cursor = null
-        listPage.value.isLast = false
-        listPage.value.activeStatus = ChatActiveEnums.ONLINE
+        listMemberPage.value.cursor = null
+        listMemberPage.value.isLast = false
+        listMemberPage.value.activeStatus = ChatActiveEnums.ONLINE
         sessionInfo.value.chattingId = parseInt(id)
         initSessionMemberList(sessionInfo.value.memberList)
     }
@@ -94,6 +71,8 @@ export const useSessionStore = defineStore("session", () => {
     const initSessionMemberList = (memberList: UserInfo[]) => {
         sessionInfo.value.memberList = memberList
     }
+
+    /**     成员     **/
 
     /**
      * 增加成员信息
@@ -107,24 +86,25 @@ export const useSessionStore = defineStore("session", () => {
      * 获取成员列表
      */
     const getMemberList = async () => {
-        if (listPage.value.isLast) {
+        if (listMemberPage.value.isLast) {
             return
         }
         const result = await listMember({
-            pageSize: listPage.value.pageSize,
-            cursor: listPage.value.cursor,
+            pageSize: listMemberPage.value.pageSize,
+            cursor: listMemberPage.value.cursor,
             roomId: sessionInfo.value.chattingId,
-            activeStatus: listPage.value.activeStatus
+            activeStatus: listMemberPage.value.activeStatus
         })
         if (result.data) {
-            if (!listPage.value.cursor) {
+            if (!listMemberPage.value.cursor) {
                 initSessionMemberList(result.data.list)
             } else {
                 updateAddSessionMemberList(result.data.list)
             }
-            listPage.value.cursor = result.data.cursor
-            listPage.value.isLast = result.data.isLast
-            listPage.value.activeStatus = result.data.extraInfo.activeStatus
+            listMemberPage.value.cursor = result.data.cursor
+            listMemberPage.value.isLast = result.data.isLast
+            listMemberPage.value.activeStatus =
+                result.data.extraInfo.activeStatus
             getSessionInfo.value.totalCount =
                 result.data.extraInfo.totalCount || 0
         }
@@ -133,19 +113,65 @@ export const useSessionStore = defineStore("session", () => {
     watch(
         () => sessionInfo.value.chattingId,
         async () => {
-            await getMemberList()
-        },
-        {
-            immediate: true
+            if (getSessionInfo.value.type == RoomTypeEnum.GROUP) {
+                await getMemberList()
+            }
         }
     )
 
+    /**    会话   **/
+    const listSessionPage = ref<
+        GlobalTypes.CursorPageReq & { isLast: boolean }
+    >({
+        pageSize: 10,
+        cursor: null,
+        isLast: false
+    })
+
+    /**
+     * 初始化会话列表信息
+     * @param list 会话列表
+     */
+    const initSessionList = (list: Session<any, any>[]) => {
+        sessionInfo.value.sessions = list
+        sessionInfo.value.chattingId = list[0].roomId
+    }
+
+    /**
+     * 增加会话信息
+     * @param list 会话
+     */
+    const updateSessionList = (list: Session<any, any>[]) => {
+        sessionInfo.value.sessions.unshift(...list)
+    }
+
+    /**
+     * 获取会话列表
+     */
+    const getSessionList = async () => {
+        const result = await listSession({
+            pageSize: listSessionPage.value.pageSize,
+            cursor: listSessionPage.value.cursor
+        })
+        if (result.data) {
+            if (!listSessionPage.value.cursor) {
+                initSessionList(result.data.list)
+            } else {
+                updateSessionList(result.data.list)
+            }
+            listSessionPage.value.isLast = result.data.isLast
+            listSessionPage.value.cursor = result.data.cursor
+        }
+    }
+
+    getSessionList()
+
     return {
         sessionInfo,
-        listPage,
-        updateAddSessionMemberList,
-        initSessionMemberList,
+        listSessionPage,
+        listMemberPage,
         getSessionInfo,
+        getSessionList,
         switchSession,
         getMemberList
     }

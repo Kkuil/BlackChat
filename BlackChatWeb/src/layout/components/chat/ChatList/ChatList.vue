@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import ChatItem from "@/layout/components/chat/ChatList/components/ChatItem.vue"
 import { useSessionStore } from "@/stores/session"
-import { useRouter } from "vue-router"
+import moment from "moment"
 
 const sessionStore = useSessionStore()
-
-const $router = useRouter()
 
 /**
  * 切换会话
@@ -23,21 +21,21 @@ const switchSession = (e: Event & { target: { dataset: { id: string } } }) => {
     <div class="chat-list overflow-y-scroll pr-[10px]" @click="switchSession">
         <div
             v-for="session in sessionStore.sessionInfo.sessions"
-            :key="session.id"
+            :key="session.roomId"
             class="transition-[background-color] rounded-[10px] cursor-pointer item"
             :class="
-                session.id == sessionStore.sessionInfo.chattingId
+                session.roomId == sessionStore.sessionInfo.chattingId
                     ? 'bg-[#2c3e50] hover:bg-[#2c3e50]'
                     : 'bg-[#202124] hover:bg-[#484d50]'
             "
-            :data-id="session.id"
+            :data-id="session.roomId"
         >
             <ChatItem
                 :avatar="session.avatar"
                 :name="session.name"
-                :message="`${session.lastMsgInfo.sender.name}: ${session.lastMsgInfo.content}`"
+                :message="session.text"
                 :extra-info="{
-                    sendTime: session.lastMsgInfo.sendTime
+                    sendTime: moment(session.activeTime).format('HH:mm')
                 }"
                 class="mb-[10px] pointer-events-none"
             />

@@ -8,8 +8,8 @@ import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.web.chat.domain.enums.RoomTypeEnum;
-import com.kkuil.blackchat.web.websocket.domain.vo.request.ChatMessageReq;
+import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
+import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -84,10 +84,15 @@ public class RoomServiceImpl implements RoomService {
 
         // 2. 检查该房间内是否有该用户
         Integer roomType = room.getType();
-        if (roomType.equals(RoomTypeEnum.FRIEND.getType())) {
+        if (RoomTypeEnum.FRIEND.getType().equals(roomType)) {
             // 2.1 单聊检查
-            AssertUtil.isTrue(uids.length == 2, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCH.getMsg());
-            Boolean hasUser = roomFriendDao.isFriend(uids);
+            AssertUtil.isTrue(uids.length < 3, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCH.getMsg());
+            Boolean hasUser;
+            if (uids.length == 1) {
+                hasUser = roomFriendDao.isFriend(roomId, uids[0]);
+            } else {
+                hasUser = roomFriendDao.isFriend(uids);
+            }
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
         } else {
             // 2.2 群聊检查
