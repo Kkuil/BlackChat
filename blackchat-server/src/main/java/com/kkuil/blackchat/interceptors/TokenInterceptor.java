@@ -43,12 +43,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         Long uid = loginService.getValidUid(token);
         // 有登录态
         if (Objects.isNull(uid)) {
-            // 判断是不是大群聊
-            String roomId = request.getParameterMap().get("roomId")[0];
-            if (StrUtil.isBlank(roomId)) {
-                throw new UnAuthorizationException("请先登录后再进行操作吧~");
-            }
-            return HOT_ROOM_ID.equals(Long.parseLong(roomId));
+            throw new UnAuthorizationException("请先登录");
         }
         request.setAttribute(ATTRIBUTE_UID_IN_HEADER, uid);
         return true;

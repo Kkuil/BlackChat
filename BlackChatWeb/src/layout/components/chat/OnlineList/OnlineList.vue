@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import SvgIcon from "@/components/SvgIcon/SvgIcon.vue"
 import { useSessionStore } from "@/stores/session"
 import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useUserStore } from "@/stores/user"
 import { HOT_GROUP_ID } from "@/constant/global"
+import { Avatar } from "@element-plus/icons-vue"
 
 const sessionStore = useSessionStore()
 
@@ -56,7 +56,11 @@ const userStore = useUserStore()
                             member.activeStatus === 1 ? 'primary' : 'warning'
                         "
                     >
-                        <el-avatar :size="'small'" :src="member.avatar" />
+                        <el-avatar :size="'small'" :src="member.avatar">
+                            <el-icon :size="18">
+                                <Avatar />
+                            </el-icon>
+                        </el-avatar>
                     </el-badge>
                     <div
                         class="w-full line-clamp-1 overflow-hidden overflow-ellipsis text-[14px] ml-[5px]"
@@ -79,21 +83,6 @@ const userStore = useUserStore()
                 <i class="iconfont icon-loading animate-spin"></i>
             </li>
         </ul>
-        <el-empty class="w-full flex-1 flex-center" v-else>
-            <template #image>
-                <div class="w-full h-full flex-center">
-                    <svg-icon icon-class="group" class="text-[50px]" />
-                </div>
-            </template>
-            <template #description>
-                <div class="font-serif text-[13px]">
-                    本房间还没有成员，去邀请一个吧~
-                </div>
-                <ElButton type="primary" class="mt-[10px]" size="small">
-                    邀请朋友
-                </ElButton>
-            </template>
-        </el-empty>
     </div>
 </template>
 

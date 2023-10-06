@@ -81,6 +81,14 @@ public interface WebSocketService {
     void sendMsgToOne(Channel channel, WsBaseResp<?> wsBaseResp);
 
     /**
+     * 向某个人发送消息
+     *
+     * @param uid        用户ID
+     * @param wsBaseResp 消息体
+     */
+    void sendMsgToOne(Long uid, WsBaseResp<?> wsBaseResp);
+
+    /**
      * 向全部人推送消息
      *
      * @param wsBaseResp 需要推送的消息

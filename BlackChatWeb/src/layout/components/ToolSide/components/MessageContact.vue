@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref } from "vue"
 import { useRoute } from "vue-router"
+import { useUserStore } from "@/stores/user"
 
 const $route = useRoute()
+const userStore = useUserStore()
 
 /**
  * 当前选中的tab
@@ -32,6 +34,7 @@ const switchTab = (tab: string) => {
         :class="selected === 'contact' ? 'selected' : ''"
         @click="switchTab('contact')"
         to="/contact"
+        v-if="userStore.userInfo.uid"
     >
         <i class="iconfont icon-contact text-[28px]"></i>
     </RouterLink>

@@ -10,10 +10,10 @@ const userStore = useUserStore()
 </script>
 
 <template>
-    <Transition v-if="message.message.type != MessageTypeEnum.SYSTEM">
+    <Transition v-if="message?.message?.type != MessageTypeEnum.SYSTEM">
         <ChatCommonMessageItem
             :direction="
-                userStore.userInfo.uid == message.fromUser.uid
+                userStore.userInfo.uid == message?.fromUser?.uid
                     ? 'right'
                     : 'left'
             "

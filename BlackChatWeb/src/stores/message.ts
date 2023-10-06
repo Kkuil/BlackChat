@@ -3,6 +3,7 @@ import { defineStore } from "pinia"
 import { listMessage } from "@/api/list"
 import { useSessionStore } from "@/stores/session"
 import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
+import eventBus from "@/utils/eventBus"
 
 const sessionStore = useSessionStore()
 
@@ -157,6 +158,10 @@ export const useMessageStore = defineStore("message", () => {
             await getMessageList()
         }
     )
+
+    eventBus.on("send_message", ({ message }) => {
+        addMessage(message)
+    })
 
     return {
         messageInfo,

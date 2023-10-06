@@ -55,8 +55,7 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
         // 2. 判断权限
         // 2.1 判断是否是大群聊
         Room room = roomDao.getById(roomId);
-        Integer hotFlag = room.getHotFlag();
-        if (hotFlag == 1) {
+        if (room.isHotRoom()) {
             // 2.1.1 大群聊
             return userRoleDao.hasAuthorities(uid);
         } else {
@@ -128,5 +127,21 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
         LambdaQueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>().lambda().eq(GroupMember::getRoomId, roomId);
         List<GroupMember> list = this.list(wrapper);
         return list.stream().map(GroupMember::getUid).toList();
+    }
+
+    /**
+     * 通过房间号获取房间成员uid列表
+     *
+     * @param roomId 房间ID
+     * @return 成员列表
+     */
+    public List<Long> getUidListByRoomId(Long roomId) {
+        return this.lambdaQuery()
+                .eq(GroupMember::getRoomId, roomId)
+                .select(GroupMember::getUid)
+                .list()
+                .stream()
+                .map(GroupMember::getUid)
+                .toList();
     }
 }

@@ -24,7 +24,9 @@ import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author Kkuil
@@ -55,9 +57,6 @@ public class ContactServiceImpl implements ContactService {
     @Resource
     private ContactDAO contactDao;
 
-    @Resource
-    private GroupCache groupCache;
-
     /**
      * 获取会话列表
      *
@@ -76,24 +75,25 @@ public class ContactServiceImpl implements ContactService {
             Long roomId = contactBaseInfo.getRoomId();
 
             chatContactCursorResp.setRoomId(roomId);
-            chatContactCursorResp.setActiveTime(contactBaseInfo.getActiveTime());
+            chatContactCursorResp.setActiveTime(Optional.ofNullable(contactBaseInfo.getActiveTime()).orElse(new Date()));
 
             // 通过房间ID获取房间信息
-            RoomBaseInfo roomBaseInfo = roomCache.getById(roomId);
+            RoomBaseInfo roomBaseInfo = roomCache.getRoomBaseInfoById(roomId);
             chatContactCursorResp.setType(roomBaseInfo.getType());
             chatContactCursorResp.setHotFlag(roomBaseInfo.getHotFlag());
 
-            Message message = messageDao.getById(contactBaseInfo.getLastMsgId());
-            AssertUtil.isNotEmpty(message, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
+            Long lastMsgId = contactBaseInfo.getLastMsgId();
+            if (lastMsgId != null) {
+                Message message = messageDao.getById(lastMsgId);
+                AssertUtil.isNotEmpty(message, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
 
-            Long fromUid = message.getFromUid();
-            UserBaseInfo baseInfo = userCache.getBaseUserInfoByUid(fromUid);
-            // 1. 判断有没有最新消息
-            if (contactBaseInfo.getLastMsgId() == null) {
-                chatContactCursorResp.setText("暂无消息");
-            } else {
+                Long fromUid = message.getFromUid();
+                UserBaseInfo baseInfo = userCache.getBaseUserInfoByUid(fromUid);
                 String showInContactMessage = MessageHandlerFactory.getStrategyNoNull(message.getType()).showInContactMessage(message);
                 chatContactCursorResp.setText(baseInfo.getName() + ": " + showInContactMessage);
+            } else {
+                // 1. 判断有没有最新消息
+                chatContactCursorResp.setText("暂无消息");
             }
 
             if (RoomTypeEnum.GROUP.getType().equals(roomBaseInfo.getType())) {
@@ -104,7 +104,7 @@ public class ContactServiceImpl implements ContactService {
                 // 设房间名
                 String name = groupBaseInfo.getName();
                 if (StrUtil.isEmpty(name)) {
-                    chatContactCursorResp.setName(baseInfo.getName() + "的房间");
+                    chatContactCursorResp.setName("没有名字的房间");
                 } else {
                     chatContactCursorResp.setName(name);
                 }

@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.core.websocket.adapter;
 
+import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.core.websocket.domain.enums.WsResponseTypeEnum;
 import com.kkuil.blackchat.core.websocket.domain.vo.WsLoginVO;
@@ -70,6 +71,13 @@ public class WsAdapter {
     public static WsBaseResp<WsLoginSuccessMessage> buildInvalidateTokenResp() {
         WsBaseResp<WsLoginSuccessMessage> wsBaseResp = new WsBaseResp<>();
         wsBaseResp.setType(WsResponseTypeEnum.INVALIDATE_TOKEN.getType());
+        return wsBaseResp;
+    }
+
+    public static WsBaseResp<ChatMessageResp> buildMsgSend(ChatMessageResp msgResp) {
+        WsBaseResp<ChatMessageResp> wsBaseResp = new WsBaseResp<>();
+        wsBaseResp.setType(WsResponseTypeEnum.MESSAGE.getType());
+        wsBaseResp.setData(msgResp);
         return wsBaseResp;
     }
 }

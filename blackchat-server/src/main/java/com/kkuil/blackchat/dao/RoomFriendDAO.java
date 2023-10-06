@@ -7,6 +7,8 @@ import com.kkuil.blackchat.domain.entity.RoomFriend;
 import com.kkuil.blackchat.mapper.RoomFriendMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author Kkuil
  * @Date 2023/9/28 15:02
@@ -33,7 +35,7 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
      * 判断用户是否是朋友关系
      *
      * @param roomId 房间ID
-     * @param uid 用户id
+     * @param uid    用户id
      * @return 是否是朋友关系
      */
     public Boolean isFriend(Long roomId, Long uid) {
@@ -79,6 +81,19 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
     public RoomFriend getByRoomId(Long roomId) {
         return lambdaQuery()
                 .eq(RoomFriend::getRoomId, roomId)
+                .one();
+    }
+
+    /**
+     * 通过房间ID获取信息
+     *
+     * @param roomId 房间ID
+     * @return 信息
+     */
+    public RoomFriend getUidByRoomId(Long roomId) {
+        return this.lambdaQuery()
+                .eq(RoomFriend::getRoomId, roomId)
+                .select(RoomFriend::getUid1, RoomFriend::getUid2)
                 .one();
     }
 }

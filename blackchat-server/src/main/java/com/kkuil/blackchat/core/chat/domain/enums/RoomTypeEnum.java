@@ -26,7 +26,7 @@ public enum RoomTypeEnum {
     private final Integer type;
     private final String desc;
 
-    private static Map<Integer, RoomTypeEnum> CACHE;
+    private static final Map<Integer, RoomTypeEnum> CACHE;
 
     static {
         CACHE = Arrays.stream(RoomTypeEnum.values()).collect(Collectors.toMap(RoomTypeEnum::getType, Function.identity()));

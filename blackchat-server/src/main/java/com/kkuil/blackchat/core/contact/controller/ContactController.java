@@ -22,7 +22,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("contact")
 public class ContactController {
-
     @Resource
     private ContactService contactService;
 

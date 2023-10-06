@@ -1,4 +1,4 @@
 export enum RoomTypeEnum {
-    SINGLE = 0,
-    GROUP = 1
+    GROUP = 1,
+    SINGLE = 2
 }

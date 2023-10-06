@@ -39,6 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static com.kkuil.blackchat.constant.RedisKeyConst.LOGIN_CODE;
+import static com.kkuil.blackchat.constant.RedisKeyConst.ONLINE_UID_ZET;
 import static com.kkuil.blackchat.core.websocket.domain.enums.WsResponseTypeEnum.CONN_SUCCESS;
 
 /**
@@ -95,7 +96,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void connect(Channel channel) {
         CHANNEL_CONN_MAP.put(channel, new WsConnInfoDTO());
         WsBaseResp<String> wsBaseResp = new WsBaseResp<>();
-        wsBaseResp.setType(CONN_SUCCESS.getType()).setData("connected successfully!");
+        wsBaseResp.setType(CONN_SUCCESS.getType()).setData("eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjAsImV4cCI6MTY5NjcwNjQxOH0.0fWDYBvLhLmTXEo3dqgOVsUVuStuz0aTjrHTusVCmFw");
         sendMsgToOne(channel, wsBaseResp);
         log.info("CHANNEL_CONN_MAP: {}", CHANNEL_CONN_MAP);
     }
@@ -240,6 +241,19 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Override
     public void sendMsgToOne(Channel channel, WsBaseResp<?> wsBaseResp) {
         channel.writeAndFlush(new TextWebSocketFrame(JSONUtil.toJsonStr(wsBaseResp)));
+    }
+
+    /**
+     * 向某个人发送消息
+     *
+     * @param uid        用户ID
+     * @param wsBaseResp 消息体
+     */
+    @Override
+    public void sendMsgToOne(Long uid, WsBaseResp<?> wsBaseResp) {
+        CopyOnWriteArrayList<Channel> channels = UID_CHANNEL_MAP.get(uid);
+        Channel channel = channels.get(0);
+        sendMsgToOne(channel, wsBaseResp);
     }
 
     /**

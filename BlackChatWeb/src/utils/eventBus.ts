@@ -11,6 +11,8 @@ type Events = {
     login_success: { message: MessageResponseTypes.TLoginSuccess }
     // 扫码成功事件
     subscribe_success: void
+    // 发送消息事件
+    send_message: { message: ChatMessageResp.ChatMessageBaseResp<any, any> }
 }
 
 const eventHub: Emitter<Events> = mitt<Events>()

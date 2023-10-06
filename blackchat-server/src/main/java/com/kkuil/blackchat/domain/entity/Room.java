@@ -9,6 +9,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kkuil.blackchat.core.chat.domain.enums.HotFlagEnum;
+import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import lombok.Data;
 
 /**
@@ -58,4 +61,19 @@ public class Room implements Serializable {
     @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    @JsonIgnore
+    public boolean isHotRoom() {
+        return HotFlagEnum.of(this.hotFlag) == HotFlagEnum.YES;
+    }
+
+    @JsonIgnore
+    public boolean isRoomFriend() {
+        return RoomTypeEnum.of(this.type) == RoomTypeEnum.FRIEND;
+    }
+
+    @JsonIgnore
+    public boolean isRoomGroup() {
+        return RoomTypeEnum.of(this.type) == RoomTypeEnum.GROUP;
+    }
 }

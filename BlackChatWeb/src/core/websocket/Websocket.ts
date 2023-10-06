@@ -85,11 +85,15 @@ class Websocket {
         switch (params.type) {
             // 连接成功
             case WsResponseTypeEnum.CONN_SUCCESS: {
+                localStorage.setItem(TOKEN_KEY_IN_LOC, params.data)
                 break
             }
             // 收到消息
             case WsResponseTypeEnum.MESSAGE: {
                 console.log("收到消息", params.data)
+                eventBus.emit(WsEventEnum.SEND_MESSAGE, {
+                    message: params.data
+                })
                 break
             }
             // 获取登录二维码

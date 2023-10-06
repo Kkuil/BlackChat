@@ -72,14 +72,13 @@ public class MessageServiceImpl implements MessageService {
      * @return 消息返回体
      */
     @Override
-    public ChatMessageResp buildChatMessageResp(Long messageId, ChatMessageReq chatMessageReq) {
+    public ChatMessageResp buildChatMessageResp(Long messageId) {
         // 0. 构建回复消息
         ChatMessageResp.ReplyMsg replyMsg = this.buildReplyMsg(messageId);
         // 1. 根据消息类型获取相应的处理器，对不同消息进行处理
-        Integer messageType = chatMessageReq.getMessageType();
-        AbstractMessageHandler<Object> handler = MessageHandlerFactory.getStrategyNoNull(messageType);
-        // 2. 返回构建消息
         Message message = messageDao.getById(messageId);
+        AbstractMessageHandler<Object> handler = MessageHandlerFactory.getStrategyNoNull(message.getType());
+        // 2. 返回构建消息
         ChatMessageResp.Message.MessageBuilder builder = ChatMessageResp.Message.builder()
                 .id(message.getId())
                 .sendTime(message.getCreateTime())

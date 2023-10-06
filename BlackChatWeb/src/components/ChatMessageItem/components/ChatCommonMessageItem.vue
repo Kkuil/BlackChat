@@ -4,11 +4,12 @@ import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import ImageContent from "@/components/ChatMessageItem/components/ImageContent/ImageContent.vue"
 import SoundContent from "@/components/ChatMessageItem/components/SoundContent/SoundContent.vue"
 import VideoContent from "@/components/ChatMessageItem/components/VideoContent/VideoContent.vue"
-import ContextMenu from "@/components/ContextMenuContainer/ContextMenuContainer.vue"
+import ContextMenuContainer from "@/components/ContextMenuContainer/ContextMenuContainer.vue"
 import { ref } from "vue"
 import moment from "moment"
 import { Avatar } from "@element-plus/icons-vue"
 import FileContent from "@/components/ChatMessageItem/components/FileContent/FileContent.vue"
+import { useUserStore } from "@/stores/user"
 
 const USER_ITEMS = ["aite", "add-friend"]
 const MESSAGE_ITEMS = ["recall", "reply"]
@@ -17,6 +18,8 @@ defineProps<{
     message: ChatMessageResp.ChatMessageBaseResp<any, any>
     direction: "left" | "right"
 }>()
+
+const userStore = useUserStore()
 
 const menuOptions = ref({ x: 0, y: 0 })
 const isShowMenu = ref<boolean>(false)
@@ -42,7 +45,7 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
         "
     >
         <el-avatar
-            :src="message.fromUser.avatar"
+            :src="message?.fromUser?.avatar"
             size="default"
             class="cursor-pointer"
             @contextmenu.prevent.stop="handleUserRightClick($event, USER_ITEMS)"
@@ -61,19 +64,20 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
             >
                 <span>
                     &nbsp; ({{
-                        message.fromUser.ipInfo?.updateIpDetail?.city ?? "未知"
+                        message?.fromUser?.ipInfo?.updateIpDetail?.city ??
+                        "未知"
                     }}) &nbsp;
                 </span>
-                <span class="username">{{ message.fromUser.name }}</span>
+                <span class="username">{{ message?.fromUser?.name }}</span>
                 <span
                     class="opacity-0 hover:opacity-100 transition-[opacity] send-time mx-[5px]"
                 >
-                    {{ moment(message.message.sendTime).format("HH:mm") }}
+                    {{ moment(message?.message?.sendTime).format("HH:mm") }}
                 </span>
             </h3>
             <TextContent
-                v-if="message.message.type == MessageTypeEnum.TEXT"
-                :content="message.message.body.content"
+                v-if="message?.message?.type == MessageTypeEnum.TEXT"
+                :content="message?.message?.body.content"
                 class="rounded-b-[15px] text-[#fff] text-[14px] p-[5px] max-w-[100%] break-words"
                 :class="
                     direction == 'left'
@@ -85,53 +89,54 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
                 "
             />
             <ImageContent
-                v-else-if="message.message.type == MessageTypeEnum.IMAGE"
-                :body="message.message.body"
+                v-else-if="message?.message?.type == MessageTypeEnum.IMAGE"
+                :body="message?.message?.body"
                 @contextmenu.prevent.stop="
                     handleUserRightClick($event, MESSAGE_ITEMS)
                 "
             />
             <FileContent
-                v-else-if="message.message.type == MessageTypeEnum.FILE"
-                :body="message.message.body"
+                v-else-if="message?.message?.type == MessageTypeEnum.FILE"
+                :body="message?.message?.body"
                 @contextmenu.prevent.stop="
                     handleUserRightClick($event, MESSAGE_ITEMS)
                 "
             />
             <SoundContent
-                v-else-if="message.message.type == MessageTypeEnum.SOUND"
-                :body="message.message.body"
+                v-else-if="message?.message?.type == MessageTypeEnum.SOUND"
+                :body="message?.message?.body"
                 @contextmenu.prevent.stop="
                     handleUserRightClick($event, MESSAGE_ITEMS)
                 "
             />
             <VideoContent
-                v-else-if="message.message.type == MessageTypeEnum.VIDEO"
-                :body="message.message.body"
+                v-else-if="message?.message?.type == MessageTypeEnum.VIDEO"
+                :body="message?.message?.body"
                 @contextmenu.prevent.stop="
                     handleUserRightClick($event, MESSAGE_ITEMS)
                 "
             />
             <div
-                v-if="message.message.reply"
-                class="recall p-[2px] text-[#f5f5f5] text-[8px] mt-[5px] bg-[#777] rounded-[4px] cursor-pointer transition-[background-color] hover:bg-opacity-[80%]"
+                v-if="message?.message?.reply"
+                class="flex-center justify-between w-[75%] p-[2px] text-[#f5f5f5] text-[13px] mt-[5px] bg-[#777] rounded-[4px] cursor-pointer transition-[background-color] hover:bg-opacity-[80%]"
                 title="回到原文"
             >
-                <span class="username">
-                    {{ message.message.reply.name }}:
-                </span>
-                <span class="content">
-                    {{ message.message.reply.body }}
-                </span>
+                <div
+                    class="w-full whitespace-nowrap overflow-ellipsis overflow-hidden"
+                >
+                    {{ message?.message?.reply.name }}:
+                    {{ message?.message?.reply.body }}
+                </div>
                 <i
                     class="iconfont icon-return-message ml-[10px] text-[12px]"
                 ></i>
             </div>
-            <ContextMenu
+            <ContextMenuContainer
                 v-model:show="isShowMenu"
                 :message="message"
                 :options="menuOptions"
                 :items="items"
+                v-if="userStore.userInfo.uid"
             />
         </div>
     </div>

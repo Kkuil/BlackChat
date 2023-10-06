@@ -48,8 +48,7 @@ public class RoomServiceImpl implements RoomService {
         Long roomId = chatMessageReq.getRoomId();
         Room room = roomDao.getById(roomId);
         // 0. 如果是大群聊跳过校验
-        Integer hotFlag = room.getHotFlag();
-        if (hotFlag == 1) {
+        if (room.isHotRoom()) {
             return;
         }
         // 1. 检查房间是否存在
@@ -74,8 +73,7 @@ public class RoomServiceImpl implements RoomService {
         Room room = roomDao.getById(roomId);
 
         // 0. 如果是大群聊跳过校验
-        Integer hotFlag = room.getHotFlag();
-        if (hotFlag == 1) {
+        if (room.isHotRoom()) {
             return true;
         }
 
@@ -83,8 +81,7 @@ public class RoomServiceImpl implements RoomService {
         AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
 
         // 2. 检查该房间内是否有该用户
-        Integer roomType = room.getType();
-        if (RoomTypeEnum.FRIEND.getType().equals(roomType)) {
+        if (room.isRoomFriend()) {
             // 2.1 单聊检查
             AssertUtil.isTrue(uids.length < 3, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCH.getMsg());
             Boolean hasUser;

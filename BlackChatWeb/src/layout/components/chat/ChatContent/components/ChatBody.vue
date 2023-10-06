@@ -38,7 +38,7 @@ const lastMessage: ChatMessageResp.ChatMessageBaseResp<SystemMessageBody, any> =
         />
         <ChatMessageItemStrategy
             v-for="message in messageStore.messageList"
-            :key="message.message.id"
+            :key="message?.message?.id"
             :message="message"
         />
     </div>

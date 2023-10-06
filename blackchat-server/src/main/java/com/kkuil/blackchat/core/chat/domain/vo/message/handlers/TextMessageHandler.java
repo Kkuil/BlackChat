@@ -91,8 +91,7 @@ public class TextMessageHandler extends AbstractMessageHandler<TextMessageRespBo
             // 2.4 判断艾特用户中是否有全体用户
             boolean isContainAll = atUidList.contains(ChatGroupSpecialMemberEnum.ALL.getId());
             Room room = roomDao.getById(roomId);
-            Integer roomType = room.getType();
-            if (isContainAll && roomType.equals(RoomTypeEnum.GROUP.getType())) {
+            if (isContainAll && room.isRoomGroup()) {
                 // 2.4.1 有且是群聊，则判断是否有权限
                 List<Integer> authorities = new ArrayList<>();
                 // 这是群中的两个可以艾特全体人员的权限

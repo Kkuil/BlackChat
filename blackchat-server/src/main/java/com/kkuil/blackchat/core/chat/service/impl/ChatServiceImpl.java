@@ -9,6 +9,7 @@ import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
+import com.kkuil.blackchat.event.MessageSendEvent;
 import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
@@ -26,6 +27,7 @@ import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
 import com.kkuil.blackchat.core.chat.service.ChatService;
 import com.kkuil.blackchat.core.websocket.service.adapter.MessageAdapter;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.kkuil.blackchat.core.chat.service.adapter.GroupMemberAdapter;
@@ -61,6 +63,9 @@ public class ChatServiceImpl implements ChatService {
     @Resource
     private UserDAO userDao;
 
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
+
     /**
      * 发送消息
      *
@@ -89,7 +94,10 @@ public class ChatServiceImpl implements ChatService {
         messageService.save(message, chatMessageReq);
 
         // 6. 构建消息响应体
-        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId, chatMessageReq);
+        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId);
+
+        // 7. 发送消息事件
+        applicationEventPublisher.publishEvent(new MessageSendEvent(this, messageId));
         return ResultUtil.success(chatMessageResp);
     }
 
@@ -109,21 +117,14 @@ public class ChatServiceImpl implements ChatService {
 
         // 判断热点群聊
         List<Long> uidList;
-        if (com.kkuil.blackchat.domain.enums.RoomTypeEnum.HOT_FLAG.getType().equals(room.getHotFlag())) {
+        if (room.isHotRoom()) {
             uidList = null;
         } else {
             uidList = groupCache.getGroupUidByRoomId(roomId);
             // 1. 检查用户是否在房间内(用户不在房间内，不让获取群列表)
             Boolean isMember = roomService.checkRoomMembership(roomId, uid);
             AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
-
-            Integer roomType = room.getType();
-
-            // 2. 判断当前房间的类型是否是群聊
-            boolean isGroup = RoomTypeEnum.GROUP.getType().equals(roomType);
-            AssertUtil.isTrue(isGroup, ChatErrorEnum.NOT_GROUP.getMsg());
         }
-
 
         // 3. 获取数据
         CursorPageBaseResp<User> userCursorPageBaseResp;
@@ -191,7 +192,7 @@ public class ChatServiceImpl implements ChatService {
         AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
 
         // 判断是否是大群聊
-        if (!com.kkuil.blackchat.domain.enums.RoomTypeEnum.HOT_FLAG.getType().equals(room.getHotFlag())) {
+        if (!room.isHotRoom()) {
             // 1. 检查用户是否在房间内(用户不在房间内，不让获取群消息)
             Boolean isMember = roomService.checkRoomMembership(roomId, uid);
             AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());

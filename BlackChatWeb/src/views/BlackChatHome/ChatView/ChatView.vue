@@ -9,7 +9,7 @@ const sessionStore = useSessionStore()
 </script>
 
 <template>
-    <ChatList class="hidden xl:block xl:flex-[25%]" />
+    <ChatList class="hidden md:block md:flex-[25%] xl:flex-[25%]" />
     <ChatContent
         class="flex-[96%] sm:flex sm:flex-[85%] md:flex-[71%] xl:flex-[50%]"
         :class="
@@ -19,7 +19,7 @@ const sessionStore = useSessionStore()
         "
     />
     <OnlineList
-        class="hidden md:flex md:flex-[19%] xl:flex-[18%]"
+        class="hidden xl:flex xl:flex-[18%]"
         v-if="sessionStore.getSessionInfo.type == RoomTypeEnum.GROUP"
     />
 </template>

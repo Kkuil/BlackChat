@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.dao;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.core.chat.domain.enums.MessageStatusEnum;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
@@ -12,6 +13,7 @@ import com.kkuil.blackchat.mapper.ContactMapper;
 import com.kkuil.blackchat.utils.CursorUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,5 +57,19 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
         return CursorUtil.getCursorPageByMysql(this, request, wrapper -> {
             wrapper.eq(Contact::getUid, uid);
         }, Contact::getActiveTime);
+    }
+
+    /**
+     * 更新会话的最新消息
+     *
+     * @param roomId 房间ID
+     * @param date   最新时间
+     * @param msgId  消息ID
+     */
+    public void updateNewestMessage(Long roomId, Date date, Long msgId) {
+        this.lambdaUpdate()
+                .eq(Contact::getRoomId, roomId)
+                .set(ObjectUtil.isNotNull(date), Contact::getActiveTime, date)
+                .set(ObjectUtil.isNotNull(msgId), Contact::getLastMsgId, msgId);
     }
 }

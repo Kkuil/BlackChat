@@ -2,6 +2,7 @@
 import ChatInput from "@/layout/components/chat/ChatContent/components/ChatInput.vue"
 import ChatBody from "@/layout/components/chat/ChatContent/components/ChatBody.vue"
 import { useSessionStore } from "@/stores/session"
+import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 
 const sessionStore = useSessionStore()
 </script>
@@ -11,9 +12,19 @@ const sessionStore = useSessionStore()
         class="w-full h-full flex flex-col bg-secondary rounded-[10px] overflow-hidden"
     >
         <div
-            class="w-full h-[8%] bg-third hidden sm:flex items-center px-[10px] text-[#f5f5f5] font-extrabold"
+            class="w-full h-[8%] bg-third flex items-center justify-between px-[10px] text-[#f5f5f5] font-extrabold"
         >
-            {{ sessionStore.getSessionInfo.name }}
+            <h1>{{ sessionStore.getSessionInfo.name }}</h1>
+            <el-button
+                type="danger"
+                size="small"
+                v-if="
+                    sessionStore.sessionInfo.chattingId != 1 &&
+                    sessionStore.getSessionInfo.type != RoomTypeEnum.SINGLE
+                "
+            >
+                退出群聊
+            </el-button>
         </div>
         <div class="px-[15px] py-[10px] h-[92%] flex flex-col">
             <ChatBody class="flex-1 overflow-y-scroll mb-[10px]" />

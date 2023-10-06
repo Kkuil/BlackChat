@@ -31,10 +31,9 @@ public interface MessageService {
      * 构建消息返回体
      *
      * @param messageId 消息ID
-     * @param chatMessageReq 消息
      * @return 消息返回体
      */
-    ChatMessageResp buildChatMessageResp(Long messageId, ChatMessageReq chatMessageReq);
+    ChatMessageResp buildChatMessageResp(Long messageId);
 
     /**
      * 检查回复消息

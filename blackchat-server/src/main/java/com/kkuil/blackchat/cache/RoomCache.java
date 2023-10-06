@@ -1,18 +1,13 @@
 package com.kkuil.blackchat.cache;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.constant.RedisKeyConst;
 import com.kkuil.blackchat.dao.RoomDAO;
-import com.kkuil.blackchat.domain.bo.ContactBaseInfo;
 import com.kkuil.blackchat.domain.bo.RoomBaseInfo;
-import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.utils.RedisUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * @Author Kkuil
@@ -25,7 +20,7 @@ public class RoomCache {
     @Resource
     private RoomDAO roomDao;
 
-    public RoomBaseInfo getById(Long roomId) {
+    public RoomBaseInfo getRoomBaseInfoById(Long roomId) {
         String key = RedisKeyConst.getKey(RedisKeyConst.ROOM_INFO_STRING, roomId);
         RoomBaseInfo roomMap = RedisUtil.get(key, RoomBaseInfo.class);
 

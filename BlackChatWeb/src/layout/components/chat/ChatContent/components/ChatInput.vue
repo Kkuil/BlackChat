@@ -40,7 +40,6 @@ const send = _.throttle(async () => {
     if (!result.data) {
         return
     }
-    messageStore.addMessage(result.data)
 }, 300)
 
 /**

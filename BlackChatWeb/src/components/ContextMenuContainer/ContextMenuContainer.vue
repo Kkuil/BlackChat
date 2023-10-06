@@ -18,22 +18,22 @@ const props = defineProps<{
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
-const isCurrentUser = props.message.fromUser.uid == userStore.userInfo.uid
+const isCurrentUser = props?.message?.fromUser?.uid == userStore.userInfo.uid
 
 const onAite = () => {
-    console.log(props.message.fromUser.uid)
+    console.log(props?.message?.fromUser?.uid)
 }
 
 const onAddFriend = () => {
-    console.log(props.message.fromUser.uid)
+    console.log(props?.message?.fromUser?.uid)
 }
 
 const onRecall = () => {}
 const onReply = () => {
     messageStore.addReply({
-        id: props.message.message.id,
-        name: props.message.fromUser.name,
-        content: props.message.message.body.content
+        id: props?.message?.message?.id,
+        name: props?.message?.fromUser?.name,
+        content: props?.message?.message?.body?.content
     })
 }
 </script>

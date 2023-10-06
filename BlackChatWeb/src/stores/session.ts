@@ -69,6 +69,7 @@ export const useSessionStore = defineStore("session", () => {
      * 初始化成员列表信息
      */
     const initSessionMemberList = (memberList: UserInfo[]) => {
+        console.log("init: ", memberList)
         sessionInfo.value.memberList = memberList
     }
 
@@ -79,6 +80,7 @@ export const useSessionStore = defineStore("session", () => {
      * @param memberList 成员信息
      */
     const updateAddSessionMemberList = (memberList: UserInfo[]) => {
+        console.log("update: ", memberList)
         sessionInfo.value.memberList.push(...memberList)
     }
 
