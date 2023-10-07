@@ -1,27 +1,34 @@
 <script setup lang="ts">
-import { ChatItem } from "@/layout/components/chat/ChatList/components/type"
 import { Avatar } from "@element-plus/icons-vue"
+import type { Session } from "@/stores/session"
+import { formatTimestamp } from "@/utils/TimeUtil"
 
-defineProps<ChatItem.ChatItemPropsType>()
+defineProps<{
+    session: Session
+}>()
 </script>
 
 <template>
     <div class="w-full h-[65px] flex items-center px-[10px]">
-        <el-avatar :src="avatar">
-            <el-icon :size="25">
-                <Avatar />
-            </el-icon>
-        </el-avatar>
-        <div class="w-[70%] flex flex-col ml-[10px] text-[#fff]">
-            <div class="text-[15px] flex-[1/2]">{{ name }}</div>
+        <el-badge :value="session.unreadCount" :max="99">
+            <el-avatar :src="session.avatar">
+                <el-icon :size="25">
+                    <Avatar />
+                </el-icon>
+            </el-avatar>
+        </el-badge>
+        <div class="w-[62%] flex flex-col ml-[10px] text-[#fff]">
+            <div class="text-[15px] flex-[1/2]">{{ session.name }}</div>
             <div
                 class="w-full text-[13px] flex-[1/2] whitespace-nowrap overflow-hidden overflow-ellipsis"
             >
-                {{ message }}
+                {{ session.text }}
             </div>
         </div>
-        <div class="last-opt-time w-[10%] flex-center text-[13px] text-[#777]">
-            {{ extraInfo.sendTime }}
+        <div
+            class="last-opt-time hidden xl:block w-[20%] flex-center text-[8px] text-[#777] whitespace-nowrap"
+        >
+            {{ formatTimestamp(new Date(session.activeTime)) }}
         </div>
     </div>
 </template>

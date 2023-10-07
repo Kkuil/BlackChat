@@ -2,7 +2,7 @@ import { computed, ref } from "vue"
 import { defineStore } from "pinia"
 import type { Store } from "@/stores/store"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
-import { TOKEN_KEY_IN_LOC } from "@/constant/auth"
+import { TEMP_USER_UID, TOKEN_KEY_IN_LOC } from "@/constant/auth"
 
 export const useUserStore = defineStore("user", () => {
     const userInfo = ref<Store.UserInfoType>({})
@@ -26,7 +26,7 @@ export const useUserStore = defineStore("user", () => {
      * 是否已经登录
      */
     const isLogin = computed(() => {
-        return !!userInfo.value.name
+        return !!userInfo.value.uid
     })
 
     /**
@@ -44,5 +44,12 @@ export const useUserStore = defineStore("user", () => {
         userInfo.value.name = username
     }
 
-    return { userInfo, loginSuccess, updateName, isLogin, isAdmin }
+    /**
+     * 是否是临时用户
+     */
+    const isTempUser = computed(() => {
+        return userInfo.value.uid === TEMP_USER_UID || !userInfo.value.uid
+    })
+
+    return { userInfo, loginSuccess, updateName, isTempUser, isLogin, isAdmin }
 })

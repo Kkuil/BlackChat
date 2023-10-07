@@ -3,6 +3,7 @@ import { defineStore } from "pinia"
 import { listMember, listSession } from "@/api/list"
 import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
 import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
+import { useUserStore } from "@/stores/user"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
@@ -21,6 +22,8 @@ export type Session = {
     activeTime: string
     unreadCount: number
 }
+
+const userStore = useUserStore()
 
 export const useSessionStore = defineStore("session", () => {
     const sessionInfo = ref<TSessionInfo>({
@@ -167,6 +170,13 @@ export const useSessionStore = defineStore("session", () => {
     }
 
     getSessionList()
+
+    watch(
+        () => userStore.userInfo.uid,
+        async () => {
+            await getSessionList()
+        }
+    )
 
     return {
         sessionInfo,

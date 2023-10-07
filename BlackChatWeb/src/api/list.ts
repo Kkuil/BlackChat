@@ -88,13 +88,13 @@ export const listBadge = (
  *
  * @param params CursorPage
  */
-export const listSession = (): Promise<ApiResult<CursorPageResp<Contact>>> => {
+export const listSession = (
+    params: GlobalTypes.CursorPageReq
+): Promise<ApiResult<CursorPageResp<Contact>>> => {
     return request({
         url: "/contact/list",
         method: "GET",
-        params: {
-            roomId: 1
-        },
+        params,
         headers: {
             [TOKEN_KEY_IN_HEADER]:
                 TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""

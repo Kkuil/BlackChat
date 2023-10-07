@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ChatItem from "@/layout/components/chat/ChatList/components/ChatItem.vue"
 import { useSessionStore } from "@/stores/session"
-import moment from "moment"
 
 const sessionStore = useSessionStore()
 
@@ -31,12 +30,7 @@ const switchSession = (e: Event & { target: { dataset: { id: string } } }) => {
             :data-id="session.roomId"
         >
             <ChatItem
-                :avatar="session.avatar"
-                :name="session.name"
-                :message="session.text"
-                :extra-info="{
-                    sendTime: moment(session.activeTime).format('HH:mm')
-                }"
+                :session="session"
                 class="mb-[10px] pointer-events-none"
             />
         </div>

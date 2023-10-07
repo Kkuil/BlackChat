@@ -19,8 +19,7 @@ export const useMessageStore = defineStore("message", () => {
         replyMessageId: null,
         body: {
             content: "",
-            atUidList: [],
-            urlContentMap: {}
+            atUidList: []
         }
     })
 
@@ -92,7 +91,7 @@ export const useMessageStore = defineStore("message", () => {
     }
 
     /**
-     * 重置
+     * 重置游标
      */
     const resetListPage = () => {
         listPage.value = {
@@ -103,12 +102,23 @@ export const useMessageStore = defineStore("message", () => {
     }
 
     /**
+     * 重置消息类型
+     */
+    const resetMessage = () => {
+        messageInfo.value.messageType = MessageTypeEnum.TEXT
+        messageInfo.value.body = {
+            content: "",
+            atUidList: []
+        }
+    }
+
+    /**
      * 添加消息
      */
     const addMessage = (data: ChatMessageResp.ChatMessageBaseResp) => {
-        messageInfo.value.body.content = ""
         messageList.value.push(data)
         cancelReply()
+        resetMessage()
     }
 
     /**
@@ -173,6 +183,7 @@ export const useMessageStore = defineStore("message", () => {
         addEmoji,
         addReply,
         cancelReply,
+        resetMessage,
         addMessage,
         getMessageList
     }

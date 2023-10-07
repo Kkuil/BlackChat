@@ -7,11 +7,12 @@ import {
     UploadInstance,
     UploadRawFile
 } from "element-plus"
-import { convertImageToBase64, getImageSize } from "@/utils/imageUtil"
+import { convertImageToBase64, getImageSize } from "@/utils/ImageUtil"
 import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import { upload, uploadFile, uploadVideo } from "@/api/upload"
 import { useMessageStore } from "@/stores/message"
 import { sendMessage } from "@/api/chat"
+import { useSessionStore } from "@/stores/session"
 
 defineProps<{
     activeMoreFunction: boolean
@@ -20,6 +21,7 @@ defineProps<{
 
 const moreFunctionRef = ref<HTMLDivElement>()
 const messageStore = useMessageStore()
+const sessionStore = useSessionStore()
 
 const imageUploadRef = ref<UploadInstance>()
 const fileUploadRef = ref<UploadInstance>()
@@ -73,16 +75,17 @@ const UPLOAD_CONFIG = {
                             imageBody
                         )
                         // 发送消息
-                        const result = await sendMessage(
-                            messageStore.messageInfo
-                        )
-                        if (result.data) {
-                            messageStore.addMessage(result.data)
-                        }
+                        await sendMessage({
+                            roomId: sessionStore.sessionInfo.chattingId,
+                            ...messageStore.messageInfo
+                        })
                     }
                 })
                 .catch(() => {
                     console.log("close")
+                })
+                .finally(() => {
+                    messageStore.resetMessage()
                 })
         }
     },
@@ -119,16 +122,17 @@ const UPLOAD_CONFIG = {
                             fileBody
                         )
                         // 发送消息
-                        const result = await sendMessage(
-                            messageStore.messageInfo
-                        )
-                        if (result.data) {
-                            messageStore.addMessage(result.data)
-                        }
+                        await sendMessage({
+                            roomId: sessionStore.sessionInfo.chattingId,
+                            ...messageStore.messageInfo
+                        })
                     }
                 })
                 .catch(() => {
                     console.log("close")
+                })
+                .finally(() => {
+                    messageStore.resetMessage()
                 })
         }
     },
@@ -188,16 +192,17 @@ const UPLOAD_CONFIG = {
                             videoBody
                         )
                         // 发送消息
-                        const result = await sendMessage(
-                            messageStore.messageInfo
-                        )
-                        if (result.data) {
-                            messageStore.addMessage(result.data)
-                        }
+                        await sendMessage({
+                            roomId: sessionStore.sessionInfo.chattingId,
+                            ...messageStore.messageInfo
+                        })
                     }
                 })
                 .catch(() => {
                     console.log("close")
+                })
+                .finally(() => {
+                    messageStore.resetMessage()
                 })
         }
     }
