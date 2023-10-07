@@ -14,7 +14,6 @@ import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.utils.ResultUtil;
-import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.chat.domain.vo.message.handlers.AbstractMessageHandler;
 import com.kkuil.blackchat.core.chat.domain.vo.message.handlers.factory.MessageHandlerFactory;
 import com.kkuil.blackchat.core.chat.domain.vo.request.member.ChatMemberCursorReq;
@@ -33,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kkuil.blackchat.core.chat.service.adapter.GroupMemberAdapter;
 
 import java.util.List;
+
+import static com.kkuil.blackchat.constant.UserConst.TEMP_USER_UID;
 
 /**
  * @Author Kkuil
@@ -67,6 +68,16 @@ public class ChatServiceImpl implements ChatService {
     private ApplicationEventPublisher applicationEventPublisher;
 
     /**
+     * 检查是否是临时用户
+     *
+     * @param uid 用户ID
+     */
+    @Override
+    public Boolean isTemUser(Long uid) {
+        return TEMP_USER_UID.equals(uid);
+    }
+
+    /**
      * 发送消息
      *
      * @param chatMessageReq 消息体
@@ -75,6 +86,10 @@ public class ChatServiceImpl implements ChatService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultUtil<ChatMessageResp> send(Long uid, ChatMessageReq chatMessageReq) {
+        // 0. 检查是否是临时用户
+        Boolean isTemp = this.isTemUser(uid);
+        AssertUtil.isFalse(isTemp, ChatErrorEnum.TEMP_USER_NOT_ALLOWED.getMsg());
+
         // 1. 检查用户与房间的关系
         roomService.check(uid, chatMessageReq);
 

@@ -8,7 +8,6 @@ import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,9 @@ public class RoomServiceImpl implements RoomService {
             return;
         }
         Long roomId = chatMessageReq.getRoomId();
+
         Room room = roomDao.getById(roomId);
+        AssertUtil.isNotEmpty(room, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
         // 0. 如果是大群聊跳过校验
         if (room.isHotRoom()) {
             return;

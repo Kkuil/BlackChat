@@ -53,7 +53,6 @@ public class ChatController {
      */
     @GetMapping("/message/list")
     @Operation(summary = "消息列表", description = "消息列表")
-    @FrequencyControl(time = 120, count = 20, target = FrequencyControl.Target.IP)
     public ResultUtil<CursorPageBaseResp<ChatMessageResp>> listMessage(@Valid ChatMessageCursorReq request) {
         Long uid = RequestHolderDTO.get().getUid();
         CursorPageBaseResp<ChatMessageResp> messageList = chatService.listMessage(uid, request);
@@ -62,6 +61,9 @@ public class ChatController {
 
     /**
      * 获取群成员信息
+     *
+     * @param chatMemberCursorReq 信息
+     * @return 列表
      */
     @GetMapping("member/list")
     public ResultUtil<CursorPageBaseResp<ChatMemberResp>> listMember(@Valid ChatMemberCursorReq chatMemberCursorReq) {

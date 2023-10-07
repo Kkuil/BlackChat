@@ -9,12 +9,11 @@ import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
 import com.kkuil.blackchat.dao.ContactDAO;
 import com.kkuil.blackchat.dao.MessageDAO;
-import com.kkuil.blackchat.domain.bo.ContactBaseInfo;
-import com.kkuil.blackchat.domain.bo.FriendBaseInfo;
-import com.kkuil.blackchat.domain.bo.GroupBaseInfo;
-import com.kkuil.blackchat.domain.bo.RoomBaseInfo;
+import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
+import com.kkuil.blackchat.domain.bo.room.FriendBaseInfo;
+import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
+import com.kkuil.blackchat.domain.bo.room.RoomBaseInfo;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
-import com.kkuil.blackchat.domain.entity.Contact;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
@@ -35,9 +34,6 @@ import java.util.Optional;
  */
 @Service
 public class ContactServiceImpl implements ContactService {
-
-    @Resource
-    private ContactCache contactCache;
 
     @Resource
     private RoomCache roomCache;
@@ -66,23 +62,21 @@ public class ContactServiceImpl implements ContactService {
      */
     @Override
     public CursorPageBaseResp<ChatContactCursorResp> listContact(Long uid, ChatContactCursorReq request) {
-        // 1. 通过用户ID获取该用户下的所有会话信息
-        List<ContactBaseInfo> listContactBaseInfo = contactCache.listContactByUid(uid);
+        CursorPageBaseResp<ContactWithActiveMsg> cursorPage = contactDao.getCursorPage(uid, request);
 
-        // 2. 组装信息
-        List<ChatContactCursorResp> list = listContactBaseInfo.stream().map(contactBaseInfo -> {
+        List<ChatContactCursorResp> list = cursorPage.getList().stream().map(contact -> {
             ChatContactCursorResp chatContactCursorResp = new ChatContactCursorResp();
-            Long roomId = contactBaseInfo.getRoomId();
+            Long roomId = contact.getRoomId();
 
             chatContactCursorResp.setRoomId(roomId);
-            chatContactCursorResp.setActiveTime(Optional.ofNullable(contactBaseInfo.getActiveTime()).orElse(new Date()));
+            chatContactCursorResp.setActiveTime(Optional.ofNullable(contact.getActiveTime()).orElse(new Date()));
 
             // 通过房间ID获取房间信息
             RoomBaseInfo roomBaseInfo = roomCache.getRoomBaseInfoById(roomId);
             chatContactCursorResp.setType(roomBaseInfo.getType());
             chatContactCursorResp.setHotFlag(roomBaseInfo.getHotFlag());
 
-            Long lastMsgId = contactBaseInfo.getLastMsgId();
+            Long lastMsgId = contact.getLastMsgId();
             if (lastMsgId != null) {
                 Message message = messageDao.getById(lastMsgId);
                 AssertUtil.isNotEmpty(message, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
@@ -130,12 +124,12 @@ public class ContactServiceImpl implements ContactService {
                 }
             }
 
-            Integer count = messageDao.getUnReadCountByReadTime(roomId, contactBaseInfo.getReadTime());
+            Integer count = messageDao.getUnReadCountByReadTime(roomId, contact.getReadTime());
             chatContactCursorResp.setUnreadCount(count);
 
             return chatContactCursorResp;
         }).toList();
-        CursorPageBaseResp<Contact> cursorPage = contactDao.getCursorPage(uid, request);
+
         return ContactAdapter.buildContactCursorPage(list, cursorPage);
     }
 }

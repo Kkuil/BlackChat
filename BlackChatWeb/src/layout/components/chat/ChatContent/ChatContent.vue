@@ -2,7 +2,6 @@
 import ChatInput from "@/layout/components/chat/ChatContent/components/ChatInput.vue"
 import ChatBody from "@/layout/components/chat/ChatContent/components/ChatBody.vue"
 import { useSessionStore } from "@/stores/session"
-import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 
 const sessionStore = useSessionStore()
 </script>
@@ -18,10 +17,7 @@ const sessionStore = useSessionStore()
             <el-button
                 type="danger"
                 size="small"
-                v-if="
-                    sessionStore.sessionInfo.chattingId != 1 &&
-                    sessionStore.getSessionInfo.type != RoomTypeEnum.SINGLE
-                "
+                v-if="sessionStore.getSessionInfo.hotFlag !== 1"
             >
                 退出群聊
             </el-button>

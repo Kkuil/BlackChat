@@ -4,17 +4,4 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kkuil.blackchat.mapper.UserFriendMapper">
 
-    <resultMap id="BaseResultMap" type="com.kkuil.blackchat.domain.entity.UserFriend">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="uid" column="uid" jdbcType="BIGINT"/>
-            <result property="friend_uid" column="friend_uid" jdbcType="BIGINT"/>
-            <result property="delete_status" column="delete_status" jdbcType="INTEGER"/>
-            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id,uid,friend_uid,
-        delete_status,create_time,update_time
-    </sql>
 </mapper>

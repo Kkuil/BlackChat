@@ -6,6 +6,8 @@ import {
 } from "@imengyu/vue3-context-menu"
 import { useUserStore } from "@/stores/user"
 import { useMessageStore } from "@/stores/message"
+import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
+import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 
 const props = defineProps<{
     // 消息体
@@ -31,10 +33,22 @@ const onAddFriend = () => {
 const onRecall = () => {}
 const onReply = () => {
     messageStore.addReply({
-        id: props?.message?.message?.id,
-        name: props?.message?.fromUser?.name,
-        content: props?.message?.message?.body?.content
+        id: props.message.message.id,
+        name: props.message.fromUser.name,
+        content: getMessageShowInReply(props.message.message)
     })
+}
+
+const showInReplyMap = {
+    [MessageTypeEnum.TEXT]: null,
+    [MessageTypeEnum.FILE]: "[文件]",
+    [MessageTypeEnum.IMAGE]: "[图片]",
+    [MessageTypeEnum.SOUND]: "[语音]",
+    [MessageTypeEnum.VIDEO]: "[视频]"
+}
+
+const getMessageShowInReply = (message: ChatMessageResp.Message<any, any>) => {
+    return showInReplyMap[message.type] ?? message.body.content
 }
 </script>
 

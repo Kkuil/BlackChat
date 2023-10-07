@@ -1,17 +1,11 @@
 package com.kkuil.blackchat.cache;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.ObjectUtil;
-import com.kkuil.blackchat.constant.RedisKeyConst;
 import com.kkuil.blackchat.dao.RoomGroupDAO;
-import com.kkuil.blackchat.domain.bo.ContactBaseInfo;
-import com.kkuil.blackchat.domain.bo.GroupBaseInfo;
+import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
 import com.kkuil.blackchat.domain.entity.RoomGroup;
-import com.kkuil.blackchat.utils.RedisUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @Author Kkuil

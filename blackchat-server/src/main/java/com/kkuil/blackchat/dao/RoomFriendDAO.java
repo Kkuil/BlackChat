@@ -7,8 +7,6 @@ import com.kkuil.blackchat.domain.entity.RoomFriend;
 import com.kkuil.blackchat.mapper.RoomFriendMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
  * @Author Kkuil
  * @Date 2023/9/28 15:02

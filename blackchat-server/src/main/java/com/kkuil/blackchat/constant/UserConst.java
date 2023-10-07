@@ -37,7 +37,12 @@ public class UserConst {
     public static final String ATTRIBUTE_UID_IN_HEADER = "uid";
 
     /**
-     * 用户加密盐值
+     * 临时用户ID
      */
-    public static final String USER_ENCRYPT_VALUE = "kkuil";
+    public static final Long TEMP_USER_UID = 0L;
+
+    /**
+     * 临时用户token
+     */
+    public static final String TEMP_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjAsImV4cCI6MTY5NjcwNjQxOH0.0fWDYBvLhLmTXEo3dqgOVsUVuStuz0aTjrHTusVCmFw";
 }

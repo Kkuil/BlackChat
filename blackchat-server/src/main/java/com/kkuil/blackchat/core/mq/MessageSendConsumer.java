@@ -16,7 +16,6 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,9 +32,6 @@ public class MessageSendConsumer implements RocketMQListener<MsgSendMessageDTO> 
 
     @Resource
     private RoomDAO roomDao;
-
-    @Resource
-    private ContactDAO contactDao;
 
     @Resource
     private PushService pushService;
@@ -56,9 +52,6 @@ public class MessageSendConsumer implements RocketMQListener<MsgSendMessageDTO> 
         Long roomId = message.getRoomId();
         Room room = roomDao.getById(roomId);
         ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(msgId);
-        // 1. 更新该房间下的所有会话的最后更新时间和最后一条消息
-        contactDao.updateNewestMessage(roomId, new Date(), msgId);
-
         // 2. 判断是否是热点群聊
         if (room.isHotRoom()) {
             // 2.1 热点群聊

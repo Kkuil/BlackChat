@@ -1,12 +1,9 @@
 package com.kkuil.blackchat.service.adapter;
 
-import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.ItemConfig;
 import com.kkuil.blackchat.domain.entity.User;
-import com.kkuil.blackchat.domain.entity.UserBackpack;
 import com.kkuil.blackchat.domain.enums.YesOrNoEnum;
 import com.kkuil.blackchat.domain.vo.response.BadgeBatchReq;
-import jakarta.annotation.Resource;
 
 import java.util.List;
 

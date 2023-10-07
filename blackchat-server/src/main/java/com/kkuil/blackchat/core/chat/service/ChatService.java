@@ -16,6 +16,14 @@ import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
 public interface ChatService {
 
     /**
+     * 检查是否是临时用户
+     *
+     * @param uid 用户ID
+     * @return 是否是临时用户
+     */
+    Boolean isTemUser(Long uid);
+
+    /**
      * 发送消息
      *
      * @param chatMessageReq 消息体
@@ -37,7 +45,7 @@ public interface ChatService {
      * 获取消息列表
      *
      * @param chatMessageCursorReq 消息请求参数
-     * @param uid 用户ID
+     * @param uid                  用户ID
      * @return 响应参数
      */
     CursorPageBaseResp<ChatMessageResp> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq);

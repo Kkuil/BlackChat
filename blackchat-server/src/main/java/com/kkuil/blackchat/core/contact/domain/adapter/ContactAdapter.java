@@ -1,8 +1,8 @@
 package com.kkuil.blackchat.core.contact.domain.adapter;
 
-import com.kkuil.blackchat.core.chat.domain.vo.response.member.ChatMemberResp;
+import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
-import com.kkuil.blackchat.domain.entity.Contact;
+import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 
 import java.util.List;
@@ -20,12 +20,14 @@ public class ContactAdapter {
      * @param cursorPage 游标对象
      * @return 返回响应
      */
-    public static CursorPageBaseResp<ChatContactCursorResp> buildContactCursorPage(List<ChatContactCursorResp> list, CursorPageBaseResp<Contact> cursorPage) {
+    public static CursorPageBaseResp<ChatContactCursorResp> buildContactCursorPage(List<ChatContactCursorResp> list, CursorPageBaseResp<ContactWithActiveMsg> cursorPage) {
         CursorPageBaseResp<ChatContactCursorResp> chatMemberRespCursorPageBaseResp = new CursorPageBaseResp<>();
         chatMemberRespCursorPageBaseResp.setCursor(cursorPage.getCursor());
         chatMemberRespCursorPageBaseResp.setIsLast(cursorPage.getIsLast());
         chatMemberRespCursorPageBaseResp.setList(list);
-        chatMemberRespCursorPageBaseResp.setExtraInfo(cursorPage.getExtraInfo());
+        if (ObjectUtil.isNotNull(cursorPage.getExtraInfo())) {
+            chatMemberRespCursorPageBaseResp.setExtraInfo(cursorPage.getExtraInfo());
+        }
         return chatMemberRespCursorPageBaseResp;
     }
 }

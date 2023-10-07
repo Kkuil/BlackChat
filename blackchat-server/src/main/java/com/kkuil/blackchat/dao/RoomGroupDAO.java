@@ -1,17 +1,10 @@
 package com.kkuil.blackchat.dao;
 
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkuil.blackchat.domain.entity.GroupMember;
 import com.kkuil.blackchat.domain.entity.RoomGroup;
-import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.mapper.RoomGroupMapper;
-import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * @Author Kkuil

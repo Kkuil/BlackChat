@@ -3,20 +3,18 @@ package com.kkuil.blackchat.core.chat.domain.vo.message.handlers;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
-import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.service.impl.ChatGroupSpecialMemberEnum;
 import com.kkuil.blackchat.utils.AssertUtil;
+import com.kkuil.blackchat.utils.discover.CommonUrlDiscover;
 import com.kkuil.blackchat.utils.discover.PrioritizedUrlDiscover;
 import com.kkuil.blackchat.utils.discover.domain.UrlInfo;
 import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.core.chat.domain.enums.MessageTypeEnum;
-import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.chat.domain.vo.request.message.MessageExtra;
 import com.kkuil.blackchat.core.chat.domain.vo.request.message.body.TextMessageReqBody;
 import com.kkuil.blackchat.core.chat.domain.vo.response.message.body.TextMessageRespBody;
@@ -50,7 +48,7 @@ public class TextMessageHandler extends AbstractMessageHandler<TextMessageRespBo
     @Resource
     private RoomDAO roomDao;
 
-    private static final PrioritizedUrlDiscover URL_TITLE_DISCOVER = new PrioritizedUrlDiscover();
+    private static final CommonUrlDiscover URL_TITLE_DISCOVER = new CommonUrlDiscover();
 
     /**
      * 消息类型
@@ -122,7 +120,7 @@ public class TextMessageHandler extends AbstractMessageHandler<TextMessageRespBo
         MessageExtra extra = Optional.ofNullable(message.getExtra()).orElse(new MessageExtra());
         // 1.1 判断消息url跳转
         Map<String, UrlInfo> urlContentMap = URL_TITLE_DISCOVER.getUrlContentMap(textMessageReq.getContent());
-        if (ObjectUtil.isNotNull(urlContentMap)) {
+        if (CollectionUtil.isNotEmpty(urlContentMap)) {
             extra.setUrlContentMap(urlContentMap);
         }
         // 1.2 艾特消息保存

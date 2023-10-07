@@ -1,4 +1,6 @@
-declare namespace ChatMessageResp {
+import type { MessageTypeEnum } from "@/enums/MessageTypeEnum"
+
+export declare namespace ChatMessageResp {
     type MessageBody =
         | TextMessageBody
         | ImageMessageBody
@@ -55,7 +57,7 @@ declare namespace ChatMessageResp {
     type Message<T, R> = {
         id: number
         sendTime: string
-        type: number
+        type: MessageTypeEnum
         body: T
         reply?: ReplyMsg<R>
     }

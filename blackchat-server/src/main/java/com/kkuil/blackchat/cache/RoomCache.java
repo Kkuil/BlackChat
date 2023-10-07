@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.constant.RedisKeyConst;
 import com.kkuil.blackchat.dao.RoomDAO;
-import com.kkuil.blackchat.domain.bo.RoomBaseInfo;
+import com.kkuil.blackchat.domain.bo.room.RoomBaseInfo;
 import com.kkuil.blackchat.utils.RedisUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;

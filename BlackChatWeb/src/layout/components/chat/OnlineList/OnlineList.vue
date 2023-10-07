@@ -4,10 +4,23 @@ import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useUserStore } from "@/stores/user"
 import { HOT_GROUP_ID } from "@/constant/global"
 import { Avatar } from "@element-plus/icons-vue"
+import { ref } from "vue"
+import ContextMenuContainer from "@/components/ContextMenuContainer/ContextMenuContainer.vue"
 
 const sessionStore = useSessionStore()
 
 const userStore = useUserStore()
+const USER_ITEMS = ["aite", "add-friend"]
+const menuOptions = ref({ x: 0, y: 0 })
+const isShowMenu = ref<boolean>(false)
+
+/** 右键菜单 */
+const handleUserRightClick = (e: MouseEvent) => {
+    const { x, y } = e
+    menuOptions.value.x = x
+    menuOptions.value.y = y
+    isShowMenu.value = true
+}
 </script>
 
 <template>
@@ -49,6 +62,7 @@ const userStore = useUserStore()
                     class="item flex items-center py-[7px] cursor-pointer mb-[5px] hover:bg-[#263242] rounded-[5px] px-[7px]"
                     v-for="member in sessionStore.sessionInfo.memberList"
                     :key="member.uid"
+                    @contextmenu.prevent.stop="handleUserRightClick"
                 >
                     <el-badge
                         is-dot
@@ -83,6 +97,12 @@ const userStore = useUserStore()
                 <i class="iconfont icon-loading animate-spin"></i>
             </li>
         </ul>
+        <ContextMenuContainer
+            v-model:show="isShowMenu"
+            :message="message"
+            :options="menuOptions"
+            :items="USER_ITEMS"
+        />
     </div>
 </template>
 

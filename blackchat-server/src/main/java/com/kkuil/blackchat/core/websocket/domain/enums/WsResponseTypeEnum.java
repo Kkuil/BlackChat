@@ -80,7 +80,7 @@ public enum WsResponseTypeEnum {
     /**
      * 更新上线列表
      */
-    UPDATE_ONLINE_LIST(12, "更新上线列表", List.class),
+    LIMIT_CONCURRENT_LOGIN(12, "同时在线设备已经达到上限，请先退出后再进行操作吧~", List.class),
     ;
 
     private final Integer type;

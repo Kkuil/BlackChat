@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.domain.bo;
+package com.kkuil.blackchat.domain.bo.room;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;

@@ -1,8 +1,6 @@
 package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.kkuil.blackchat.cache.UserCache;
-import com.kkuil.blackchat.dao.ItemConfigDAO;
 import com.kkuil.blackchat.dao.UserBackpackDAO;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.User;
@@ -12,7 +10,6 @@ import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.event.UserRegisterEvent;
 import com.kkuil.blackchat.service.UserService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

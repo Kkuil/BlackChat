@@ -3,21 +3,20 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kkuil.blackchat.mapper.ContactMapper">
-
-    <resultMap id="BaseResultMap" type="com.kkuil.blackchat.domain.entity.Contact">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="uid" column="uid" jdbcType="BIGINT"/>
-            <result property="room_id" column="room_id" jdbcType="BIGINT"/>
-            <result property="read_time" column="read_time" jdbcType="TIMESTAMP"/>
-            <result property="active_time" column="active_time" jdbcType="TIMESTAMP"/>
-            <result property="last_msg_id" column="last_msg_id" jdbcType="BIGINT"/>
-            <result property="create_time" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="update_time" column="update_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <sql id="Base_Column_List">
-        id,uid,room_id,
-        read_time,active_time,last_msg_id,
-        create_time,update_time
-    </sql>
+    <select id="getCursorPage" resultType="com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg">
+        SELECT c.uid,
+               c.room_id,
+               c.read_time,
+               r.active_time,
+               r.last_msg_id
+        FROM contact AS c
+                 JOIN room AS r
+                      ON c.room_id = r.id
+        WHERE uid = #{uid}
+        <if test="request.cursor">
+            AND r.active_time > #{request.cursor}
+        </if>
+        ORDER BY r.active_time DESC
+        LIMIT 0, #{request.pageSize}
+    </select>
 </mapper>

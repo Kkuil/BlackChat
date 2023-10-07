@@ -25,8 +25,14 @@ public class ContactController {
     @Resource
     private ContactService contactService;
 
+    /**
+     * 获取会话列表
+     *
+     * @param request 请求信息
+     * @return 会话列表
+     */
     @GetMapping("list")
-    @Operation(summary = "获取联系人列表", description = "获取联系人列表")
+    @Operation(summary = "获取会话列表", description = "获取会话列表")
     public ResultUtil<CursorPageBaseResp<ChatContactCursorResp>> listContact(@Valid ChatContactCursorReq request) {
         Long uid = RequestHolderDTO.get().getUid();
         return ResultUtil.success(contactService.listContact(uid, request));

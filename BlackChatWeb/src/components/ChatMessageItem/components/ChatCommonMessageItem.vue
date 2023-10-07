@@ -9,7 +9,7 @@ import { ref } from "vue"
 import moment from "moment"
 import { Avatar } from "@element-plus/icons-vue"
 import FileContent from "@/components/ChatMessageItem/components/FileContent/FileContent.vue"
-import { useUserStore } from "@/stores/user"
+import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
 
 const USER_ITEMS = ["aite", "add-friend"]
 const MESSAGE_ITEMS = ["recall", "reply"]
@@ -18,8 +18,6 @@ defineProps<{
     message: ChatMessageResp.ChatMessageBaseResp<any, any>
     direction: "left" | "right"
 }>()
-
-const userStore = useUserStore()
 
 const menuOptions = ref({ x: 0, y: 0 })
 const isShowMenu = ref<boolean>(false)
@@ -77,8 +75,8 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
             </h3>
             <TextContent
                 v-if="message?.message?.type == MessageTypeEnum.TEXT"
-                :content="message?.message?.body.content"
-                class="rounded-b-[15px] text-[#fff] text-[14px] p-[5px] max-w-[100%] break-words"
+                :body="message.message.body"
+                class="rounded-b-[15px] text-[#fff] text-[14px] p-[7px] max-w-[100%] break-words"
                 :class="
                     direction == 'left'
                         ? 'rounded-tr-[15px] bg-third'
@@ -118,7 +116,7 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
             />
             <div
                 v-if="message?.message?.reply"
-                class="flex-center justify-between w-[75%] p-[2px] text-[#f5f5f5] text-[13px] mt-[5px] bg-[#777] rounded-[4px] cursor-pointer transition-[background-color] hover:bg-opacity-[80%]"
+                class="flex-center justify-between max-w-[75%] p-[2px] text-[#f5f5f5] text-[13px] mt-[5px] bg-[#777] rounded-[4px] cursor-pointer transition-[background-color] hover:bg-opacity-[80%]"
                 title="回到原文"
             >
                 <div
@@ -136,7 +134,6 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
                 :message="message"
                 :options="menuOptions"
                 :items="items"
-                v-if="userStore.userInfo.uid"
             />
         </div>
     </div>

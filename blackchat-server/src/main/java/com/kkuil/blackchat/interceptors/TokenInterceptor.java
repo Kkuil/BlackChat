@@ -1,14 +1,8 @@
 package com.kkuil.blackchat.interceptors;
 
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import com.kkuil.blackchat.dao.RoomDAO;
-import com.kkuil.blackchat.domain.entity.Room;
-import com.kkuil.blackchat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.exception.UnAuthorizationException;
 import com.kkuil.blackchat.service.LoginService;
-import com.kkuil.blackchat.utils.AssertUtil;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +12,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.kkuil.blackchat.constant.RoomConst.HOT_ROOM_ID;
 import static com.kkuil.blackchat.constant.UserConst.*;
 
 /**

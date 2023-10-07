@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.domain.bo;
+package com.kkuil.blackchat.domain.bo.ip;
 
 import lombok.Data;
 

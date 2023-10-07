@@ -1,9 +1,12 @@
 package com.kkuil.blackchat.core.websocket.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.constant.UserConst;
+import com.kkuil.blackchat.core.websocket.domain.enums.WsResponseTypeEnum;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.dao.UserRoleDAO;
 import com.kkuil.blackchat.domain.entity.User;
@@ -39,7 +42,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static com.kkuil.blackchat.constant.RedisKeyConst.LOGIN_CODE;
-import static com.kkuil.blackchat.constant.RedisKeyConst.ONLINE_UID_ZET;
+import static com.kkuil.blackchat.constant.UserConst.TEMP_TOKEN;
 import static com.kkuil.blackchat.core.websocket.domain.enums.WsResponseTypeEnum.CONN_SUCCESS;
 
 /**
@@ -58,6 +61,8 @@ public class WebSocketServiceImpl implements WebSocketService {
 
     /**
      * 所有已连接的在线用户ID和连接通道的映射
+     * <p>
+     * 这里使用数组的原因是为了适应单账户多端登录的场景也可以同步消息
      */
     public static final ConcurrentHashMap<Long, CopyOnWriteArrayList<Channel>> UID_CHANNEL_MAP = new ConcurrentHashMap<>();
 
@@ -73,6 +78,11 @@ public class WebSocketServiceImpl implements WebSocketService {
      * 登录有效期
      */
     private static final Duration LOGIN_EXPIRE_TIME = Duration.ofHours(1);
+
+    /**
+     * 设置每个账户的最大登录数
+     */
+    public static final Integer MAX_CONCURRENT_LONGIN = 0;
 
     @Resource
     private WxMpService wxMpService;
@@ -96,7 +106,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void connect(Channel channel) {
         CHANNEL_CONN_MAP.put(channel, new WsConnInfoDTO());
         WsBaseResp<String> wsBaseResp = new WsBaseResp<>();
-        wsBaseResp.setType(CONN_SUCCESS.getType()).setData("eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjAsImV4cCI6MTY5NjcwNjQxOH0.0fWDYBvLhLmTXEo3dqgOVsUVuStuz0aTjrHTusVCmFw");
+        wsBaseResp.setType(CONN_SUCCESS.getType()).setData(TEMP_TOKEN);
         sendMsgToOne(channel, wsBaseResp);
         log.info("CHANNEL_CONN_MAP: {}", CHANNEL_CONN_MAP);
     }
@@ -129,7 +139,16 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void online(Channel channel, Long uid) {
         // 记录当前连接信息
         UID_CHANNEL_MAP.putIfAbsent(uid, new CopyOnWriteArrayList<>());
-        UID_CHANNEL_MAP.get(uid).add(channel);
+        // 这里必须使用add，不然不支持单账户多端登录
+        // 这里可以限制登录限制
+        CopyOnWriteArrayList<Channel> channels = UID_CHANNEL_MAP.get(uid);
+        if (UserConst.TEMP_USER_UID.equals(uid) || channels.size() < MAX_CONCURRENT_LONGIN) {
+            channels.add(channel);
+        } else {
+            WsBaseResp<Void> wsBaseResp = new WsBaseResp<>();
+            wsBaseResp.setType(WsResponseTypeEnum.LIMIT_CONCURRENT_LOGIN.getType());
+            sendMsgToOne(channel, wsBaseResp);
+        }
         // 将用户id记录在当前通道中
         NettyUtil.setAttrInChannel(channel, AuthorizationConst.UID_KEY_IN_CHANNEL, uid);
     }
@@ -252,8 +271,13 @@ public class WebSocketServiceImpl implements WebSocketService {
     @Override
     public void sendMsgToOne(Long uid, WsBaseResp<?> wsBaseResp) {
         CopyOnWriteArrayList<Channel> channels = UID_CHANNEL_MAP.get(uid);
-        Channel channel = channels.get(0);
-        sendMsgToOne(channel, wsBaseResp);
+        if (CollectionUtil.isEmpty(channels)) {
+            log.info("用户：{}不在线", uid);
+            return;
+        }
+        channels.forEach(channel -> {
+            threadPoolTaskExecutor.execute(() -> sendMsgToOne(channel, wsBaseResp));
+        });
     }
 
     /**

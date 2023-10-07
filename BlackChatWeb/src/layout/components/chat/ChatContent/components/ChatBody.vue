@@ -3,6 +3,7 @@ import ChatMessageItemStrategy from "@/components/ChatMessageItem/ChatMessageIte
 import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import { useMessageStore } from "@/stores/message"
 import { ref } from "vue"
+import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
 import SystemMessageBody = ChatMessageResp.SystemMessageBody
 
 const messageStore = useMessageStore()
