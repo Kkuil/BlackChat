@@ -30,7 +30,9 @@ public class ChatMessageResp {
     private Message message;
 
     /**
-     * 用户信息（TODO 暂时只先保存用户ID，后需要再进行添加，因为用户如果能发消息，就已经代表已上线，上线列表已经获取到，本地缓存已经生效，本地缓存了用户的姓名和头像，没必要再进行重新获取）
+     * 用户信息（TODO 暂时只先保存用户ID，后需要再进行添加，
+     * 因为用户如果能发消息，就已经代表已上线，上线列表已经获取到，本地缓存已经生效，
+     * 本地缓存了用户的姓名和头像，没必要再进行重新获取）
      */
     @Data
     @Builder
@@ -41,19 +43,9 @@ public class ChatMessageResp {
         private Long uid;
 
         /**
-         * 用户名
+         * 归属地
          */
-        private String name;
-
-        /**
-         * 用户头像
-         */
-        private String avatar;
-
-        /**
-         * 用户ip信息
-         */
-        private IpInfo ipInfo;
+        private String place;
     }
 
     /**

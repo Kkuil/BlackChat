@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.enums.YesOrNoEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
@@ -89,4 +90,5 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
 
         return this.updateById(user);
     }
+
 }

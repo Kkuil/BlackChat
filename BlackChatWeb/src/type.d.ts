@@ -38,4 +38,14 @@ declare namespace GlobalTypes {
         sendTime: number
         sender: UserInfo
     }
+    // 用户基本信息
+    type UserBaseInfo = {
+        id: number
+        name: string
+        avatar: string
+    }
+    // 用户缓存信息
+    type UserInfoCache = UserBaseInfo & {
+        expireTime: string
+    }
 }

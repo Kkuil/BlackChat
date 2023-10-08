@@ -1,6 +1,7 @@
 import type { Emitter } from "mitt"
 import mitt from "mitt"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
+import { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp"
 
 type Events = {
     // 刷新二维码事件
@@ -13,6 +14,8 @@ type Events = {
     subscribe_success: void
     // 发送消息事件
     send_message: { message: ChatMessageResp.ChatMessageBaseResp<any, any> }
+    // 艾特事件
+    aite: { people: { uid: number; name: string } }
 }
 
 const eventHub: Emitter<Events> = mitt<Events>()

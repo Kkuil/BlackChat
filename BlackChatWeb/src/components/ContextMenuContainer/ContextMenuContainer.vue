@@ -22,8 +22,14 @@ const userStore = useUserStore()
 const messageStore = useMessageStore()
 const isCurrentUser = props?.message?.fromUser?.uid == userStore.userInfo.uid
 
+/**
+ * 增加艾特
+ */
 const onAite = () => {
-    console.log(props?.message?.fromUser?.uid)
+    messageStore.addAite({
+        uid: Number(props.message.fromUser.uid),
+        name: props.message.fromUser.name
+    })
 }
 
 const onAddFriend = () => {

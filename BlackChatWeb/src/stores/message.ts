@@ -4,6 +4,10 @@ import { listMessage } from "@/api/list"
 import { useSessionStore } from "@/stores/session"
 import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import eventBus from "@/utils/eventBus"
+import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
+import { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp"
+import { updateByUidList } from "@/utils/userCache"
+import { useUserStore } from "@/stores/user"
 
 const sessionStore = useSessionStore()
 
@@ -13,7 +17,10 @@ export type TReplyMessage = {
     content: string
 }
 
+const userStore = useUserStore()
+
 export const useMessageStore = defineStore("message", () => {
+    // 消息信息
     const messageInfo = ref<ChatMessageReq.ChatMessageBaseReq<any>>({
         messageType: MessageTypeEnum.TEXT,
         replyMessageId: null,
@@ -23,14 +30,17 @@ export const useMessageStore = defineStore("message", () => {
         }
     })
 
+    // 消息回复
     const replyMessage = ref<TReplyMessage>({
         id: null,
         name: null,
         content: null
     })
 
+    // 消息列表
     const messageList = ref<ChatMessageResp.ChatMessageBaseResp<any, any>[]>([])
 
+    // 消息列表分页
     const listPage = ref<
         GlobalTypes.CursorPageReq & {
             isLast: boolean
@@ -45,7 +55,7 @@ export const useMessageStore = defineStore("message", () => {
      * 打字中
      * @param content 内容
      */
-    const typing = (content) => {
+    const typing = (content: string) => {
         messageInfo.value.body.content = content
     }
 
@@ -76,6 +86,16 @@ export const useMessageStore = defineStore("message", () => {
     const addReply = (message: TReplyMessage) => {
         messageInfo.value.replyMessageId = message.id
         replyMessage.value = message
+    }
+
+    /**
+     * 添加艾特
+     */
+    const addAite = ({ uid, name }: { uid: number; name: string }) => {
+        messageInfo.value.body.atUidList.push([
+            ...new Set([...messageInfo.value.body.atUidList, uid])
+        ])
+        messageInfo.value.body.content += "@" + name + " "
     }
 
     /**
@@ -158,7 +178,20 @@ export const useMessageStore = defineStore("message", () => {
             }
             listPage.value.isLast = result.data.isLast
             listPage.value.cursor = result.data.cursor
+            refreshCache(result.data.list)
         }
+    }
+
+    const refreshCache = (
+        list: ChatMessageResp.ChatMessageBaseResp<any, any>[]
+    ) => {
+        const needGetLUidList = []
+        list.forEach((message) => {
+            if (!userStore.userInfoCache[message.fromUser.uid + ""]) {
+                needGetLUidList.push(message.fromUser.uid)
+            }
+        })
+        updateByUidList(needGetLUidList)
     }
 
     watch(
@@ -169,7 +202,7 @@ export const useMessageStore = defineStore("message", () => {
         }
     )
 
-    eventBus.on("send_message", ({ message }) => {
+    eventBus.on(WsEventEnum.SEND_MESSAGE, ({ message }) => {
         addMessage(message)
     })
 
@@ -182,6 +215,7 @@ export const useMessageStore = defineStore("message", () => {
         updateMessageType,
         addEmoji,
         addReply,
+        addAite,
         cancelReply,
         resetMessage,
         addMessage,

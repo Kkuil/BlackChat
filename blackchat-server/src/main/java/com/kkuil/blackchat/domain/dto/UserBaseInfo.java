@@ -18,7 +18,7 @@ public class UserBaseInfo {
     /**
      * 用户ID
      */
-    private Long uid;
+    private Long id;
 
     /**
      * 用户名

@@ -1,6 +1,9 @@
 package com.kkuil.blackchat.service;
 
+import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
 import com.kkuil.blackchat.utils.ResultUtil;
+
+import java.util.List;
 
 /**
  * @Author Kkuil
@@ -19,9 +22,17 @@ public interface UserService {
     /**
      * 更新用户名
      *
-     * @param uid 用户ID
+     * @param uid      用户ID
      * @param username 用户名
      * @return 是否更改成功
      */
     Boolean updateUsername(Long uid, String username);
+
+    /**
+     * 批量获取用户信息
+     *
+     * @param uidList 用户ID列表
+     * @return 用户缓存列表
+     */
+    List<UserInfoCache> getBatchUserInfoCache(List<Long> uidList);
 }

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * @Author Kkuil
  * @Date 2023/9/26
- * @Description 抽象url发现
+ * @Description 抽象url识别
  */
 @Slf4j
 public abstract class AbstractUrlDiscover implements UrlDiscover {

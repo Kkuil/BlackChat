@@ -3,9 +3,21 @@ import { defineStore } from "pinia"
 import type { Store } from "@/stores/store"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
 import { TEMP_USER_UID, TOKEN_KEY_IN_LOC } from "@/constant/auth"
+import { USER_CACHE_LOC_KEY } from "@/constant/userKeys"
+import UserInfoCache = GlobalTypes.UserInfoCache
 
 export const useUserStore = defineStore("user", () => {
+    /**
+     * 用户信息
+     */
     const userInfo = ref<Store.UserInfoType>({})
+
+    /**
+     * 用户信息缓存
+     */
+    const userInfoCache = ref<Record<string, UserInfoCache>>(
+        JSON.parse(localStorage.getItem(USER_CACHE_LOC_KEY) ?? "{}")
+    )
 
     /**
      * 登录成功保存信息
@@ -51,5 +63,13 @@ export const useUserStore = defineStore("user", () => {
         return userInfo.value.uid === TEMP_USER_UID || !userInfo.value.uid
     })
 
-    return { userInfo, loginSuccess, updateName, isTempUser, isLogin, isAdmin }
+    return {
+        userInfo,
+        userInfoCache,
+        loginSuccess,
+        updateName,
+        isTempUser,
+        isLogin,
+        isAdmin
+    }
 })

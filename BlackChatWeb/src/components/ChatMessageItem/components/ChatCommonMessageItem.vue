@@ -10,6 +10,7 @@ import moment from "moment"
 import { Avatar } from "@element-plus/icons-vue"
 import FileContent from "@/components/ChatMessageItem/components/FileContent/FileContent.vue"
 import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
+import { useUserStore } from "@/stores/user"
 
 const USER_ITEMS = ["aite", "add-friend"]
 const MESSAGE_ITEMS = ["recall", "reply"]
@@ -18,6 +19,8 @@ defineProps<{
     message: ChatMessageResp.ChatMessageBaseResp<any, any>
     direction: "left" | "right"
 }>()
+
+const userStore = useUserStore()
 
 const menuOptions = ref({ x: 0, y: 0 })
 const isShowMenu = ref<boolean>(false)
@@ -43,7 +46,7 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
         "
     >
         <el-avatar
-            :src="message?.fromUser?.avatar"
+            :src="userStore.userInfoCache[message.fromUser.uid + '']?.avatar"
             size="default"
             class="cursor-pointer"
             @contextmenu.prevent.stop="handleUserRightClick($event, USER_ITEMS)"
@@ -60,13 +63,12 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
                 class="user flex text-[12px] text-[#ccc] mb-[5px]"
                 :class="direction == 'left' ? 'flex-row' : 'flex-row-reverse'"
             >
-                <span>
-                    &nbsp; ({{
-                        message?.fromUser?.ipInfo?.updateIpDetail?.city ??
-                        "未知"
-                    }}) &nbsp;
+                <span> ({{ message?.fromUser.place }}) </span>
+                <span class="username">
+                    {{
+                        userStore.userInfoCache[message.fromUser.uid + ""]?.name
+                    }}
                 </span>
-                <span class="username">{{ message?.fromUser?.name }}</span>
                 <span
                     class="opacity-0 hover:opacity-100 transition-[opacity] send-time mx-[5px]"
                 >

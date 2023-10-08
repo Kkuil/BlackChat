@@ -3,6 +3,7 @@ package com.kkuil.blackchat.cache;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.User;
@@ -11,6 +12,7 @@ import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -124,5 +126,21 @@ public class UserCache {
         }
 
         return totalCount;
+    }
+
+    /**
+     * 批量获取用户基本信息
+     *
+     * @param uidList 用户ID列表
+     * @return 用户ID列表
+     */
+    public List<UserInfoCache> getBatch(List<Long> uidList) {
+        List<UserInfoCache> userInfoCaches = new ArrayList<>();
+        uidList.forEach(uid -> {
+            UserBaseInfo baseInfo = this.getBaseUserInfoByUid(uid);
+            UserInfoCache userInfoCache = BeanUtil.toBean(baseInfo, UserInfoCache.class);
+            userInfoCaches.add(userInfoCache);
+        });
+        return userInfoCaches;
     }
 }

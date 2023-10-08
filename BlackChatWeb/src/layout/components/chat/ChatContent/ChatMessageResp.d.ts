@@ -18,9 +18,7 @@ export declare namespace ChatMessageResp {
     }
     type UserInfo = {
         uid: string
-        name: string
-        avatar: string
-        ipInfo?: IpInfo
+        place?: string
     }
     type IpInfo = {
         /**

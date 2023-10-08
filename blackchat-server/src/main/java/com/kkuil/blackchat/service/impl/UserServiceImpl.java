@@ -1,6 +1,8 @@
 package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
 import com.kkuil.blackchat.dao.UserBackpackDAO;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.User;
@@ -10,6 +12,7 @@ import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.event.UserRegisterEvent;
 import com.kkuil.blackchat.service.UserService;
 import com.kkuil.blackchat.utils.AssertUtil;
+import com.kkuil.blackchat.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,9 @@ import java.util.List;
  */
 @Service
 public class UserServiceImpl implements UserService {
+
+    @Resource
+    private UserCache userCache;
 
     @Resource
     private UserDAO userDao;
@@ -69,5 +75,16 @@ public class UserServiceImpl implements UserService {
 
         // 3. 更改用户名
         return userDao.updateUsername(uid, username);
+    }
+
+    /**
+     * 批量获取用户信息
+     *
+     * @param uidList 用户ID列表
+     * @return 用户缓存列表
+     */
+    @Override
+    public List<UserInfoCache> getBatchUserInfoCache(List<Long> uidList) {
+        return userCache.getBatch(uidList);
     }
 }

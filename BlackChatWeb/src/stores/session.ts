@@ -4,6 +4,7 @@ import { listMember, listSession } from "@/api/list"
 import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
 import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 import { useUserStore } from "@/stores/user"
+import { updateUserInfoCache } from "@/utils/userCache"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
@@ -112,6 +113,15 @@ export const useSessionStore = defineStore("session", () => {
                 result.data.extraInfo.activeStatus
             getSessionInfo.value.totalCount =
                 result.data.extraInfo.totalCount || 0
+            const list = result.data.list.map((member) => {
+                const user: UserInfo = {
+                    uid: member.uid,
+                    name: member.name,
+                    avatar: member.avatar
+                }
+                return user
+            })
+            updateUserInfoCache(list)
         }
     }
 

@@ -4,6 +4,8 @@ import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.dao.MessageDAO;
 import com.kkuil.blackchat.dao.UserDAO;
+import com.kkuil.blackchat.domain.dto.IpDetail;
+import com.kkuil.blackchat.domain.dto.IpInfo;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
@@ -15,6 +17,8 @@ import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 /**
  * @Author Kkuil
@@ -88,10 +92,12 @@ public class MessageServiceImpl implements MessageService {
         ChatMessageResp.Message msg = handler.buildChatMessageResp(message, builder);
         // 2.2 用户对象
         UserBaseInfo baseUserInfo = userCache.getBaseUserInfoByUid(message.getFromUid());
+
+        IpInfo ipInfo = Optional.ofNullable(baseUserInfo.getIpInfo()).orElse(new IpInfo());
+        IpDetail ipDetail = Optional.ofNullable(ipInfo.getUpdateIpDetail()).orElse(new IpDetail());
         ChatMessageResp.UserInfo userInfo = ChatMessageResp.UserInfo.builder()
                 .uid(message.getFromUid())
-                .name(baseUserInfo.getName())
-                .avatar(baseUserInfo.getAvatar())
+                .place(ipDetail.getCity())
                 .build();
         return ChatMessageResp.builder()
                 .message(msg)

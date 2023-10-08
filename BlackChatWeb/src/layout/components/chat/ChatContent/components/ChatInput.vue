@@ -10,10 +10,14 @@ import { ElMessage } from "element-plus"
 import _ from "lodash"
 import { useSessionStore } from "@/stores/session"
 import MoreFunctions from "@/layout/components/chat/ChatContent/components/MoreFunctions.vue"
+import eventBus from "@/utils/eventBus"
+import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
 const sessionStore = useSessionStore()
+
+const editorRef = ref<HTMLElement | null>()
 
 /**
  * 打字中
@@ -50,6 +54,10 @@ const onCancelReply = () => {
 }
 
 const activeMoreFunction = ref<boolean>(false)
+
+eventBus.on(WsEventEnum.AITE, ({ people }) => {
+    console.log(people)
+})
 </script>
 
 <template>
@@ -91,11 +99,16 @@ const activeMoreFunction = ref<boolean>(false)
             title="点击切换语音"
         />
         <input
-            class="flex-[89%] md:flex-[87%] lg:flex-[75%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:hover:border-[1px] focus:border-[#0094ff] hover:border-[#0094ff]"
+            ref="editorRef"
+            class="editor flex-[89%] flex items-center md:flex-[87%] lg:flex-[75%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:border-[#0094ff] hover:border-[#0094ff]"
+            :class="
+                messageStore.messageInfo.body.content ? 'border-[#0094ff]' : ''
+            "
             placeholder="我们期待您的发言，请文明发言"
             :value="messageStore.messageInfo.body.content"
             @input="typing"
             @keyup.enter="send"
+            contenteditable="true"
         />
         <div class="flex-center flex-[6%] ml-[10px]">
             <i

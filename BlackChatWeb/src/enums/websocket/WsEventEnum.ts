@@ -12,5 +12,8 @@ export enum WsEventEnum {
     LOGIN_SUCCESS = "login_success",
 
     // 发送消息
-    SEND_MESSAGE = "send_message"
+    SEND_MESSAGE = "send_message",
+
+    // 发送消息
+    AITE = "aite"
 }

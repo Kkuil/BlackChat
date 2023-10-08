@@ -3,6 +3,8 @@ package com.kkuil.blackchat.core.chat.service.impl;
 import com.kkuil.blackchat.cache.GroupCache;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.dao.*;
+import com.kkuil.blackchat.domain.dto.IpDetail;
+import com.kkuil.blackchat.domain.dto.IpInfo;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.entity.Room;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kkuil.blackchat.core.chat.service.adapter.GroupMemberAdapter;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.kkuil.blackchat.constant.UserConst.TEMP_USER_UID;
 
@@ -222,12 +225,13 @@ public class ChatServiceImpl implements ChatService {
                     Long fromUid = message.getFromUid();
                     UserBaseInfo baseUserInfo = userCache.getBaseUserInfoByUid(fromUid);
 
+                    IpInfo ipInfo = Optional.ofNullable(baseUserInfo.getIpInfo()).orElse(new IpInfo());
+                    IpDetail ipDetail = Optional.ofNullable(ipInfo.getUpdateIpDetail()).orElse(new IpDetail());
+
                     // 3.1 构建用户信息
                     ChatMessageResp.UserInfo fromUser = ChatMessageResp.UserInfo.builder()
                             .uid(fromUid)
-                            .name(baseUserInfo.getName())
-                            .avatar(baseUserInfo.getAvatar())
-                            .ipInfo(baseUserInfo.getIpInfo())
+                            .place(ipDetail.getCity())
                             .build();
 
                     // 3.2 构建消息信息

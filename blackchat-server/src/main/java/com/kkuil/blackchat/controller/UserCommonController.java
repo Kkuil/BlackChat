@@ -25,7 +25,7 @@ import java.util.List;
 @RequestMapping("user")
 @RestController
 @Slf4j
-public class UserController {
+public class UserCommonController {
 
     @Resource
     private ItemConfigService itemConfigService;
