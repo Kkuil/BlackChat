@@ -80,8 +80,8 @@ eventBus.on(WsEventEnum.AITE, ({ people }) => {
             <i class="iconfont icon-close" @click="onCancelReply"></i>
         </div>
         <div
-            v-if="!userStore.userInfo.name"
-            :class="!userStore.userInfo.name ? 'backdrop-blur-md' : ''"
+            v-if="userStore.isTempUser"
+            :class="userStore.isTempUser ? 'backdrop-blur-md' : ''"
             class="w-full h-full absolute top-0 left-0 flex-center text-[12px] font-serif rounded-[10px]"
         >
             点击

@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.dao;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.Message;
@@ -78,7 +79,7 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
     /**
      * 获取未读数
      *
-     * @param roomId 房间ID
+     * @param roomId   房间ID
      * @param readTime 最后已读时间
      * @return 未读数量
      */
@@ -87,5 +88,19 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
                 .eq(Message::getRoomId, roomId)
                 .gt(ObjectUtil.isNotNull(readTime), Message::getCreateTime, readTime)
                 .count());
+    }
+
+    /**
+     * 删除某用户在某个会话中的消息记录
+     *
+     * @param roomId 房间ID
+     * @param uid 用户ID
+     * @return 是否删除
+     */
+    public Boolean delRecordBatch(Long roomId, Long uid) {
+        QueryWrapper<Message> wrapper = new QueryWrapper<Message>()
+                .eq("room_id", roomId)
+                .eq("uid", uid);
+        return this.remove(wrapper);
     }
 }

@@ -1,7 +1,4 @@
-import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
-
 declare namespace Store {
-    import Message = GlobalTypes.Message
     type UserInfoType = {
         /** 用户唯一标识 */
         uid: number
@@ -18,12 +15,10 @@ declare namespace Store {
         /** 权限 */
         power?: number
     }
-    type SessionInfoType = {
-        id: number
-        type: RoomTypeEnum
+    type FriendInfo = {
+        uid: number
         name: string
         avatar: string
-        totalCount: number
-        lastMsgInfo: Message
+        place: string
     }
 }

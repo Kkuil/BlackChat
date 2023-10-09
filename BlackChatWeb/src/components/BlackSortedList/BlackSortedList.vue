@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
-import _ from "lodash"
+import pinyin from "pinyin"
+import FriendInfo = Store.FriendInfo
 
 const emits = defineEmits<{
     (e: "change", id: string): void
@@ -40,33 +41,46 @@ const computedLetters = computed(() => {
 /**
  * 排序
  */
-const sortedList: object = computed(() => {
-    const orderBy = _.orderBy(props.list, ["name"], ["asc"])
-    const lower = orderBy.map((item) => ({
-        ...item,
-        name: item.name.toLowerCase()
-    }))
-    return _.groupBy(lower, (item) => item.name[0])
+const sortedList = computed(() => {
+    const pyMap: Record<string, (FriendInfo & { pinyin: string })[]> = {}
+    props.list?.forEach((item: FriendInfo & { pinyin: string }) => {
+        const pinyinA = pinyin(item.name, {
+            style: pinyin.STYLE_NORMAL
+        }).join("")
+        console.log(pinyinA)
+        item["pinyin"] = pinyinA
+        const firstLetter = pinyinA[0].toUpperCase()
+        if (pyMap[firstLetter]) {
+            pyMap[firstLetter].push(item)
+        } else {
+            pyMap[firstLetter] = [item]
+        }
+    })
+
+    for (const key of Object.keys(pyMap)) {
+        pyMap[key] = pyMap[key].sort((a, b) => a.pinyin - b.pinyin)
+    }
+    console.log(pyMap)
+
+    return pyMap
 })
 
 /**
  * 重定向索引
  * @param letter
  */
-const redirectToIndex = (letter: string) => {
-    let height = 0
-    for (let i = 97; i <= 122; i++) {
-        height += 25 + 10
-        const word = String.fromCharCode(i).toLowerCase()
-        if (word === letter) {
-            break
-        }
-        console.log(word, sortedList, sortedList[word])
-        const itemHeight = (sortedList.value[word]?.length ?? 0) * (10 + 40)
-        height += itemHeight
-    }
-    console.log(height, listRef.value?.clientHeight, listRef.value?.scrollTop)
-}
+// const redirectToIndex = (letter: string) => {
+//     let height = 0
+//     for (let i = 97; i <= 122; i++) {
+//         height += 25 + 10
+//         const word = String.fromCharCode(i).toLowerCase()
+//         if (word === letter) {
+//             break
+//         }
+//         const itemHeight = (sortedList.value[word]?.length ?? 0) * (10 + 40)
+//         height += itemHeight
+//     }
+// }
 
 /**
  * 切换用户
@@ -83,37 +97,41 @@ const check = (e: Event & { target: { dataset: { id: string } } }) => {
 <template>
     <div class="sorted-list">
         <div class="body">
-            <div class="list" ref="listRef">
+            <div v-if="list && list.length" class="list" ref="listRef">
                 <div
                     class="item"
-                    v-for="letter in computedLetters"
+                    v-for="letter in Object.keys(sortedList)"
                     :key="letter"
                 >
-                    <div v-show="sortedList[letter]" class="title-word">
-                        {{ letter.toUpperCase() }}
+                    <div class="title-word">
+                        {{ letter }}
                     </div>
                     <ul class="inner-list" @click="check">
                         <li
                             class="inner-item"
-                            v-for="innerItem in sortedList[letter]"
-                            :key="innerItem.name"
-                            :data-id="innerItem.name"
+                            v-for="item in sortedList[letter]"
+                            :key="item.name"
+                            :data-id="item.name"
                         >
                             <div class="assigned-el">
-                                <el-avatar :size="30" :src="innerItem.avatar" />
-                                <h3>{{ innerItem.name }}</h3>
+                                <el-avatar :size="30" :src="item.avatar" />
+                                <h3>{{ item.name }}</h3>
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
+            <el-empty v-else description="暂无数据">
+                <template #image>
+                    <el-icon>
+                        <i
+                            class="iconfont icon-empty text-[#ccc] text-[50px]"
+                        ></i>
+                    </el-icon>
+                </template>
+            </el-empty>
             <ul class="index">
-                <li
-                    class="dot"
-                    v-for="letter in computedLetters"
-                    :key="letter"
-                    @click="redirectToIndex(letter)"
-                >
+                <li class="dot" v-for="letter in computedLetters" :key="letter">
                     {{ letter }}
                 </li>
             </ul>

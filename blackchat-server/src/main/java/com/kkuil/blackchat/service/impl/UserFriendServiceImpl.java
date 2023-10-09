@@ -1,18 +1,34 @@
 package com.kkuil.blackchat.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkuil.blackchat.domain.entity.UserFriend;
+import cn.hutool.core.bean.BeanUtil;
+import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
+import com.kkuil.blackchat.dao.UserFriendDAO;
+import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.service.UserFriendService;
-import com.kkuil.blackchat.mapper.UserFriendMapper;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-/**
-* @author 小K
-* @description 针对表【user_friend(用户联系人表)】的数据库操作Service实现
-* @createDate 2023-09-28 14:48:23
-*/
-@Service
-public class UserFriendServiceImpl extends ServiceImpl<UserFriendMapper, UserFriend>
-    implements UserFriendService {
+import java.util.List;
 
+/**
+ * @Author Kkuil
+ * @Date 2023/10/9 21:51
+ * @Description 针对表【user_friend(用户联系人表)】的数据库操作Service实现
+ */
+@Service
+public class UserFriendServiceImpl implements UserFriendService {
+
+    @Resource
+    private UserFriendDAO userFriendDao;
+
+    /**
+     * 获取朋友列表
+     *
+     * @param uid 用户ID
+     * @return 朋友列表
+     */
+    @Override
+    public List<FriendResp> listFriend(Long uid) {
+        return userFriendDao.listByUid(uid);
+    }
 }

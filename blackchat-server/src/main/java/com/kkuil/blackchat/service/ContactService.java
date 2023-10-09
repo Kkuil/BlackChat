@@ -3,7 +3,10 @@ package com.kkuil.blackchat.service;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatReadMessageReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
+import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
+
+import java.util.List;
 
 /**
  * @Author Kkuil

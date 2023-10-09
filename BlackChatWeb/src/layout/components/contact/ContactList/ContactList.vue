@@ -1,55 +1,30 @@
 <script setup lang="ts">
 import BlackSortedList from "@/components/BlackSortedList/BlackSortedList.vue"
-import { ref } from "vue"
+import { ref, watch } from "vue"
+import { useUserStore } from "@/stores/user"
+import { useFriendStore } from "@/stores/friend"
 
 const emits = defineEmits<{
     (e: "change", id: string): void
 }>()
 
-const list = [
-    {
-        name: "Kkuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "akuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "bkuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "bauil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "ckuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "dkuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "ekuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "fkuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    },
-    {
-        name: "ekuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    }
-]
+const userStore = useUserStore()
+const friendStore = useFriendStore()
 
 const onChange = (id: string) => {
     emits("change", id)
 }
 
-const activeTab = ref<string>("contact")
+const activeTab = ref<string>("friend")
+watch(
+    () => userStore.userInfo,
+    () => {
+        friendStore.getFriends()
+    },
+    {
+        immediate: true
+    }
+)
 </script>
 
 <template>
@@ -63,11 +38,11 @@ const activeTab = ref<string>("contact")
             </ElButton>
         </div>
         <el-tabs :model-value="activeTab" class="h-[94%]">
-            <el-tab-pane label="联系人" name="contact">
+            <el-tab-pane label="朋友" name="friend">
                 <BlackSortedList
-                    title="联系人"
+                    title="朋友"
                     class="h-full"
-                    :list="list"
+                    :list="friendStore.friends"
                     @change="onChange"
                 ></BlackSortedList>
             </el-tab-pane>

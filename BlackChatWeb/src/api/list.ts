@@ -101,3 +101,17 @@ export const listSession = (
         }
     })
 }
+
+/**
+ * 获取朋友列表
+ */
+export const listFriend = (): Promise<ApiResult<Store.FriendInfo[]>> => {
+    return request({
+        url: "/friend/list",
+        method: "GET",
+        headers: {
+            [TOKEN_KEY_IN_HEADER]:
+                TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""
+        }
+    })
+}

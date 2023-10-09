@@ -144,4 +144,18 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .map(GroupMember::getUid)
                 .toList();
     }
+
+    /**
+     * 退出群聊
+     *
+     * @param groupId 群聊ID
+     * @param uid     用户ID
+     * @return 是否退出
+     */
+    public Boolean exitGroup(Long groupId, Long uid) {
+        QueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>()
+                .eq("room_id", groupId)
+                .eq("uid", uid);
+        return this.remove(wrapper);
+    }
 }

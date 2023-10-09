@@ -10,6 +10,7 @@ import com.kkuil.blackchat.core.contact.domain.adapter.ContactAdapter;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatReadMessageReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
+import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.dao.ContactDAO;
 import com.kkuil.blackchat.dao.MessageDAO;
 import com.kkuil.blackchat.dao.RoomDAO;

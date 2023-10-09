@@ -4,4 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kkuil.blackchat.mapper.UserFriendMapper">
 
+    <select id="listByUid" resultType="com.kkuil.blackchat.core.contact.domain.bo.FriendBaseInfoBO">
+        SELECT ur.friend_uid AS uid,
+               u.ip_info     AS ipInfo
+        FROM user_friend AS ur
+                 JOIN user AS u ON ur.uid = u.id
+        WHERE ur.uid = #{uid};
+    </select>
 </mapper>

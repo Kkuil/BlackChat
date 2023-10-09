@@ -35,6 +35,15 @@ export const useUserStore = defineStore("user", () => {
     }
 
     /**
+     * 刷新缓存
+     */
+    const refreshCache = () => {
+        userInfoCache.value = JSON.parse(
+            localStorage.getItem(USER_CACHE_LOC_KEY) ?? "{}"
+        )
+    }
+
+    /**
      * 是否已经登录
      */
     const isLogin = computed(() => {
@@ -68,6 +77,7 @@ export const useUserStore = defineStore("user", () => {
         userInfoCache,
         loginSuccess,
         updateName,
+        refreshCache,
         isTempUser,
         isLogin,
         isAdmin

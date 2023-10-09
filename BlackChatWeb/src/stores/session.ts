@@ -7,6 +7,8 @@ import { updateUserInfoCache } from "@/utils/userCache"
 import { pushReadMessage } from "@/api/contact"
 import eventBus from "@/utils/eventBus"
 import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
+import { exitGroup } from "@/api/group"
+import { ElMessage } from "element-plus"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
@@ -54,26 +56,6 @@ export const useSessionStore = defineStore("session", () => {
             (session) => session.roomId == roomId
         )[0]
     }
-
-    /**
-     *  获取当前会话信息
-     */
-    const getSessionInfo: Session = computed(() => {
-        return (
-            sessionInfo.value.sessions.filter(
-                (session) => session.roomId == sessionInfo.value.chattingId
-            )[0] ?? {}
-        )
-    })
-
-    /**
-     * 获取当前未读总数
-     */
-    const getUnreadTotalCount = computed(() => {
-        return sessionInfo.value.sessions.reduce((total, session) => {
-            return total + session.unreadCount
-        }, 0)
-    })
 
     /**
      * 切换会话
@@ -161,16 +143,6 @@ export const useSessionStore = defineStore("session", () => {
         }
     }
 
-    watch(
-        () => sessionInfo.value.chattingId,
-        async (chattingId) => {
-            // 获取群成员列表信息
-            if (getSessionInfo.value.type == RoomTypeEnum.GROUP) {
-                await getMemberList()
-            }
-        }
-    )
-
     /**    会话   **/
     const listSessionPage = ref<
         GlobalTypes.CursorPageReq & { isLast: boolean }
@@ -229,6 +201,59 @@ export const useSessionStore = defineStore("session", () => {
         }
     }
 
+    /**
+     * 退出群聊
+     */
+    const exitGroupRoom = async () => {
+        const result = await exitGroup(sessionInfo.value.chattingId)
+        if (result.data) {
+            // 删除会话
+            const index = sessionInfo.value.sessions.findIndex(
+                (session) => session.roomId === sessionInfo.value.chattingId
+            )
+            sessionInfo.value.sessions.splice(index, 1)
+            sessionInfo.value.chattingId = sessionInfo.value.sessions[0]
+            ElMessage.success(result.message)
+        }
+    }
+
+    /**
+     *  获取当前会话信息
+     */
+    const getSessionInfo: Session = computed(() => {
+        return (
+            sessionInfo.value.sessions.filter(
+                (session) => session.roomId == sessionInfo.value.chattingId
+            )[0] ?? {}
+        )
+    })
+
+    /**
+     * 获取当前未读总数
+     */
+    const getUnreadTotalCount = computed(() => {
+        return sessionInfo.value.sessions.reduce((total, session) => {
+            return total + session.unreadCount
+        }, 0)
+    })
+
+    /**
+     * 判断是否是群聊
+     */
+    const isGroup = computed(() => {
+        return getSessionInfo.value.type === RoomTypeEnum.GROUP
+    })
+
+    watch(
+        () => sessionInfo.value.chattingId,
+        async () => {
+            // 获取群成员列表信息
+            if (getSessionInfo.value.type == RoomTypeEnum.GROUP) {
+                await getMemberList()
+            }
+        }
+    )
+
     eventBus.on(WsEventEnum.SEND_MESSAGE, ({ message }) => {
         // 更新当前会话的最新消息信息
         const index = sessionInfo.value.sessions.findIndex(
@@ -247,7 +272,9 @@ export const useSessionStore = defineStore("session", () => {
         listMemberPage,
         getSessionInfo,
         getUnreadTotalCount,
+        exitGroupRoom,
         getSessionList,
+        isGroup,
         readMessage,
         switchSession,
         getMemberList
