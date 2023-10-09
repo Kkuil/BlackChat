@@ -115,7 +115,7 @@ public class ChatServiceImpl implements ChatService {
         ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId);
 
         // 7. 发送消息事件
-        applicationEventPublisher.publishEvent(new MessageSendEvent(this, messageId));
+        applicationEventPublisher.publishEvent(new MessageSendEvent(this, message));
         return ResultUtil.success(chatMessageResp);
     }
 

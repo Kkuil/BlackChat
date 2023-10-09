@@ -22,8 +22,8 @@ public class PushConsumer implements RocketMQListener<PushMessageDTO> {
     private WebSocketService webSocketService;
 
     /**
-     * 监听消息
      *
+     * 监听消息
      * @param message 消息
      */
     @Override

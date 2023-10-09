@@ -1,6 +1,9 @@
 package com.kkuil.blackchat.dao;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.domain.entity.Contact;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.mapper.RoomMapper;
 import org.springframework.stereotype.Service;
@@ -23,9 +26,9 @@ public class RoomDAO extends ServiceImpl<RoomMapper, Room> {
      * @param lastMsgId  最新消息ID
      */
     public void updateRoomNewestMsg(Long roomId, Date activeTime, Long lastMsgId) {
-        this.lambdaUpdate()
-                .eq(Room::getId, roomId)
+        LambdaUpdateWrapper<Room> updateWrapper = new UpdateWrapper<Room>().lambda().eq(Room::getId, roomId)
                 .set(Room::getActiveTime, activeTime)
                 .set(Room::getLastMsgId, lastMsgId);
+        this.update(updateWrapper);
     }
 }

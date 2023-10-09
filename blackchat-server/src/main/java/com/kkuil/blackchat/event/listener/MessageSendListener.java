@@ -2,7 +2,7 @@ package com.kkuil.blackchat.event.listener;
 
 import com.kkuil.blackchat.core.mq.MqProducer;
 import com.kkuil.blackchat.core.mq.constant.MqConstant;
-import com.kkuil.blackchat.dao.MessageDAO;
+import com.kkuil.blackchat.dao.ContactDAO;
 import com.kkuil.blackchat.dao.RoomDAO;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.event.MessageSendEvent;
@@ -13,6 +13,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.Date;
 
 /**
  * @Author Kkuil
@@ -30,7 +32,7 @@ public class MessageSendListener {
     private RoomDAO roomDao;
 
     @Resource
-    private MessageDAO messageDao;
+    private ContactDAO contactDao;
 
     /**
      * 消息路由
@@ -39,8 +41,8 @@ public class MessageSendListener {
      */
     @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT, classes = MessageSendEvent.class, fallbackExecution = true)
     public void messageRoute(MessageSendEvent event) {
-        Long msgId = event.getMsgId();
-        mqProducer.sendMessage(MqConstant.SEND_MSG_TOPIC, msgId);
+        Message message = event.getMessage();
+        mqProducer.sendMessage(MqConstant.SEND_MSG_TOPIC, message.getId());
     }
 
     /**
@@ -51,10 +53,13 @@ public class MessageSendListener {
     @Async
     @EventListener(classes = MessageSendEvent.class)
     public void updateMessage(MessageSendEvent event) {
-        Long msgId = event.getMsgId();
         // 更新每个房间的最新消息时间（active_time）和最新消息ID (last_msg_id)
-        Message message = messageDao.getById(msgId);
-        roomDao.updateRoomNewestMsg(message.getRoomId(), message.getCreateTime(), message.getId());
+        Message message = event.getMessage();
+        Long roomId = message.getRoomId();
+        Date createTime = message.getCreateTime();
+        roomDao.updateRoomNewestMsg(roomId, createTime, message.getId());
+        contactDao.updateReadTime(roomId, createTime);
+        log.info("消息发送成功，消息ID：{}", message.getId());
     }
 
     // @TransactionalEventListener(classes = MessageSendEvent.class, fallbackExecution = true)

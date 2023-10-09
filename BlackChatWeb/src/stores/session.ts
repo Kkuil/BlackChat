@@ -5,6 +5,8 @@ import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
 import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 import { updateUserInfoCache } from "@/utils/userCache"
 import { pushReadMessage } from "@/api/contact"
+import eventBus from "@/utils/eventBus"
+import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
@@ -42,6 +44,16 @@ export const useSessionStore = defineStore("session", () => {
         isLast: false,
         activeStatus: ChatActiveEnums.ONLINE
     })
+
+    /**
+     * 通过房间ID获取会话信息
+     * @param roomId
+     */
+    const getSession = (roomId: number) => {
+        return sessionInfo.value.sessions.filter(
+            (session) => session.roomId == roomId
+        )[0]
+    }
 
     /**
      *  获取当前会话信息
@@ -145,7 +157,7 @@ export const useSessionStore = defineStore("session", () => {
             roomId
         })
         if (result.data) {
-            getSessionInfo.value.unreadCount = 0
+            getSession(roomId).unreadCount = 0
         }
     }
 
@@ -216,6 +228,17 @@ export const useSessionStore = defineStore("session", () => {
             listSessionPage.value.cursor = result.data.cursor
         }
     }
+
+    eventBus.on(WsEventEnum.SEND_MESSAGE, ({ message }) => {
+        // 更新当前会话的最新消息信息
+        const index = sessionInfo.value.sessions.findIndex(
+            (session) => session.roomId === sessionInfo.value.chattingId
+        )
+        const session = sessionInfo.value.sessions[index]
+        session.activeTime = message.message.sendTime
+        sessionInfo.value.sessions.splice(index, 1)
+        sessionInfo.value.sessions.unshift(session)
+    })
 
     return {
         sessionInfo,

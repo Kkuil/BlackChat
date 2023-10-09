@@ -1,5 +1,7 @@
 package com.kkuil.blackchat.dao;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
@@ -9,6 +11,7 @@ import com.kkuil.blackchat.mapper.ContactMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,5 +48,17 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
      */
     public Contact getByRoomId(Long uid, Long roomId) {
         return this.lambdaQuery().eq(Contact::getUid, uid).eq(Contact::getRoomId, roomId).one();
+    }
+
+    /**
+     * 更新会话最新消息
+     *
+     * @param roomId     房间ID
+     * @param createTime 最新时间
+     */
+    public void updateReadTime(Long roomId, Date createTime) {
+        LambdaUpdateWrapper<Contact> updateWrapper = new UpdateWrapper<Contact>().lambda().eq(Contact::getRoomId, roomId)
+                .set(Contact::getReadTime, createTime);
+        this.update(updateWrapper);
     }
 }

@@ -12,6 +12,7 @@ import com.kkuil.blackchat.core.contact.domain.vo.request.ChatReadMessageReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
 import com.kkuil.blackchat.dao.ContactDAO;
 import com.kkuil.blackchat.dao.MessageDAO;
+import com.kkuil.blackchat.dao.RoomDAO;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.bo.room.FriendBaseInfo;
 import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
@@ -56,6 +57,9 @@ public class ContactServiceImpl implements ContactService {
 
     @Resource
     private ContactDAO contactDao;
+
+    @Resource
+    private RoomDAO roomDao;
 
     /**
      * 获取会话列表
@@ -154,7 +158,7 @@ public class ContactServiceImpl implements ContactService {
             return true;
         } else {
             Contact contact = contactDao.getByRoomId(uid, roomId);
-                if (!ObjectUtil.isNull(contact)) {
+            if (!ObjectUtil.isNull(contact)) {
                 Contact update = new Contact();
                 update.setId(contact.getId());
                 update.setReadTime(new Date());

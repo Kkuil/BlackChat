@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.event;
 
+import com.kkuil.blackchat.domain.entity.Message;
 import lombok.Getter;
 import org.springframework.context.ApplicationEvent;
 
@@ -10,10 +11,10 @@ import org.springframework.context.ApplicationEvent;
  */
 @Getter
 public class MessageSendEvent extends ApplicationEvent {
-    private final Long msgId;
+    private final Message message;
 
-    public MessageSendEvent(Object source, Long msgId) {
+    public MessageSendEvent(Object source, Message message) {
         super(source);
-        this.msgId = msgId;
+        this.message = message;
     }
 }

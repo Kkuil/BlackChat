@@ -38,7 +38,7 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
                 .status(MessageStatusEnum.NORMAL.getStatus())
                 .build();
         this.save(message);
-        return message;
+        return this.getById(message.getId());
     }
 
     /**
