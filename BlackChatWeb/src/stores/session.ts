@@ -3,8 +3,8 @@ import { defineStore } from "pinia"
 import { listMember, listSession } from "@/api/list"
 import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
 import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
-import { useUserStore } from "@/stores/user"
 import { updateUserInfoCache } from "@/utils/userCache"
+import { pushReadMessage } from "@/api/contact"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
@@ -23,8 +23,6 @@ export type Session = {
     activeTime: string
     unreadCount: number
 }
-
-const userStore = useUserStore()
 
 export const useSessionStore = defineStore("session", () => {
     const sessionInfo = ref<TSessionInfo>({
@@ -57,34 +55,47 @@ export const useSessionStore = defineStore("session", () => {
     })
 
     /**
+     * 获取当前未读总数
+     */
+    const getUnreadTotalCount = computed(() => {
+        return sessionInfo.value.sessions.reduce((total, session) => {
+            return total + session.unreadCount
+        }, 0)
+    })
+
+    /**
      * 切换会话
      * @param id 会话ID
      */
     const switchSession = (id: string) => {
-        sessionInfo.value.memberList = []
-        listMemberPage.value.cursor = null
-        listMemberPage.value.isLast = false
-        listMemberPage.value.activeStatus = ChatActiveEnums.ONLINE
         sessionInfo.value.chattingId = parseInt(id)
-        initSessionMemberList(sessionInfo.value.memberList)
+        initSessionMemberList()
+
+        // 用户阅读信息上报
+        if (getSessionInfo.value.unreadCount > 0) {
+            readMessage(sessionInfo.value.chattingId)
+        }
     }
 
     /**
      * 初始化成员列表信息
      */
-    const initSessionMemberList = (memberList: UserInfo[]) => {
-        console.log("init: ", memberList)
-        sessionInfo.value.memberList = memberList
+    const initSessionMemberList = () => {
+        listMemberPage.value = {
+            pageSize: 20,
+            cursor: null,
+            isLast: false,
+            activeStatus: ChatActiveEnums.ONLINE
+        }
+        sessionInfo.value.memberList = []
     }
 
     /**     成员     **/
-
     /**
      * 增加成员信息
      * @param memberList 成员信息
      */
     const updateAddSessionMemberList = (memberList: UserInfo[]) => {
-        console.log("update: ", memberList)
         sessionInfo.value.memberList.push(...memberList)
     }
 
@@ -125,9 +136,23 @@ export const useSessionStore = defineStore("session", () => {
         }
     }
 
+    /**
+     * 用户阅读信息上报
+     * @param roomId
+     */
+    const readMessage = async (roomId: number) => {
+        const result = await pushReadMessage({
+            roomId
+        })
+        if (result.data) {
+            getSessionInfo.value.unreadCount = 0
+        }
+    }
+
     watch(
         () => sessionInfo.value.chattingId,
-        async () => {
+        async (chattingId) => {
+            // 获取群成员列表信息
             if (getSessionInfo.value.type == RoomTypeEnum.GROUP) {
                 await getMemberList()
             }
@@ -144,12 +169,25 @@ export const useSessionStore = defineStore("session", () => {
     })
 
     /**
+     * 重置游标信息
+     */
+    const resetSessionPage = () => {
+        listSessionPage.value = {
+            pageSize: 10,
+            cursor: null,
+            isLast: false
+        }
+    }
+
+    /**
      * 初始化会话列表信息
      * @param list 会话列表
      */
     const initSessionList = (list: Session<any, any>[]) => {
         sessionInfo.value.sessions = list
-        sessionInfo.value.chattingId = list[0].roomId
+        if (sessionInfo.value.chattingId < 0) {
+            sessionInfo.value.chattingId = list[0].roomId
+        }
     }
 
     /**
@@ -179,21 +217,15 @@ export const useSessionStore = defineStore("session", () => {
         }
     }
 
-    getSessionList()
-
-    watch(
-        () => userStore.userInfo.uid,
-        async () => {
-            await getSessionList()
-        }
-    )
-
     return {
         sessionInfo,
         listSessionPage,
+        resetSessionPage,
         listMemberPage,
         getSessionInfo,
+        getUnreadTotalCount,
         getSessionList,
+        readMessage,
         switchSession,
         getMemberList
     }

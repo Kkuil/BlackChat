@@ -1,4 +1,7 @@
 export enum WsEventEnum {
+    // 连接成功
+    CONN_SUCCESS = "conn_success",
+
     // 刷新登录二维码
     REFRESH_QR_CODE = "refresh_qr_code",
 

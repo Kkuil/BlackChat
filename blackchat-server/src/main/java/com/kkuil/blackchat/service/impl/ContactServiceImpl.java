@@ -1,11 +1,14 @@
 package com.kkuil.blackchat.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import com.kkuil.blackchat.cache.*;
+import com.kkuil.blackchat.constant.UserConst;
 import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.chat.domain.vo.message.handlers.factory.MessageHandlerFactory;
 import com.kkuil.blackchat.core.contact.domain.adapter.ContactAdapter;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
+import com.kkuil.blackchat.core.contact.domain.vo.request.ChatReadMessageReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
 import com.kkuil.blackchat.dao.ContactDAO;
 import com.kkuil.blackchat.dao.MessageDAO;
@@ -14,6 +17,7 @@ import com.kkuil.blackchat.domain.bo.room.FriendBaseInfo;
 import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
 import com.kkuil.blackchat.domain.bo.room.RoomBaseInfo;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
+import com.kkuil.blackchat.domain.entity.Contact;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
@@ -69,7 +73,9 @@ public class ContactServiceImpl implements ContactService {
             Long roomId = contact.getRoomId();
 
             chatContactCursorResp.setRoomId(roomId);
-            chatContactCursorResp.setActiveTime(Optional.ofNullable(contact.getActiveTime()).orElse(new Date()));
+            if (!UserConst.TEMP_USER_UID.equals(uid)) {
+                chatContactCursorResp.setActiveTime(Optional.ofNullable(contact.getActiveTime()).orElse(new Date()));
+            }
 
             // 通过房间ID获取房间信息
             RoomBaseInfo roomBaseInfo = roomCache.getRoomBaseInfoById(roomId);
@@ -131,5 +137,36 @@ public class ContactServiceImpl implements ContactService {
         }).toList();
 
         return ContactAdapter.buildContactCursorPage(list, cursorPage);
+    }
+
+    /**
+     * 用户阅读信息上报
+     *
+     * @param uid     用户ID
+     * @param request 上报信息
+     * @return 是否已上报
+     */
+    @Override
+    public boolean readMessage(Long uid, ChatReadMessageReq request) {
+        Long roomId = request.getRoomId();
+        // 临时用户不进行上报
+        if (UserConst.TEMP_USER_UID.equals(uid)) {
+            return true;
+        } else {
+            Contact contact = contactDao.getByRoomId(uid, roomId);
+                if (!ObjectUtil.isNull(contact)) {
+                Contact update = new Contact();
+                update.setId(contact.getId());
+                update.setReadTime(new Date());
+                contactDao.updateById(update);
+            } else {
+                Contact insert = new Contact();
+                insert.setUid(uid);
+                insert.setRoomId(roomId);
+                insert.setReadTime(new Date());
+                contactDao.save(insert);
+            }
+        }
+        return true;
     }
 }

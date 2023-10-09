@@ -85,7 +85,10 @@ class Websocket {
         switch (params.type) {
             // 连接成功
             case WsResponseTypeEnum.CONN_SUCCESS: {
+                // 保存临时token
                 localStorage.setItem(TOKEN_KEY_IN_LOC, params.data)
+                // 发布连接成功事件
+                eventBus.emit(WsEventEnum.CONN_SUCCESS)
                 break
             }
             // 收到消息

@@ -10,13 +10,12 @@ const props = defineProps<{
 
 const showContent = computed(() => {
     const urlContentMap = props.body.urlContentMap
-    console.log("urlContentMap", urlContentMap)
     let content = props.body.content
     if (urlContentMap) {
         for (const address in urlContentMap) {
             const card = `<div>
                             <span>${address}</span>
-                            <a class="flex px-[10px] py-[15px] w-full h-[60px] rounded-[10px] bg-third my-[3px] cursor-pointer hover:shadow-[#fff]" href="${address}" target="_blank">
+                            <a class="flex px-[10px] py-[15px] w-full h-[60px] rounded-[10px] bg-primary my-[3px] cursor-pointer hover:shadow-[#fff]" href="${address}" target="_blank">
                                 <img
                                     src="${urlContentMap[address].image}"
                                     alt="${urlContentMap[address].title}"

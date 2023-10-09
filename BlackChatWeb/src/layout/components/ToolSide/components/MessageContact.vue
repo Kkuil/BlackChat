@@ -2,9 +2,11 @@
 import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { useUserStore } from "@/stores/user"
+import { useSessionStore } from "@/stores/session"
 
 const $route = useRoute()
 const userStore = useUserStore()
+const sessionStore = useSessionStore()
 
 /**
  * 当前选中的tab
@@ -21,14 +23,20 @@ const switchTab = (tab: string) => {
 </script>
 
 <template>
-    <RouterLink
-        class="w-[50px] h-[50px] py-[5px] rounded-[8px] cursor-pointer hover:bg-secondary flex-center mt-[10px] transition-[background-color]"
-        :class="selected === 'chat' ? 'selected' : ''"
-        @click="switchTab('chat')"
-        to="/chat"
+    <el-badge
+        :value="sessionStore.getUnreadTotalCount"
+        :hidden="!sessionStore.getUnreadTotalCount"
+        :max="99"
     >
-        <i class="iconfont icon-message text-[28px]"></i>
-    </RouterLink>
+        <RouterLink
+            class="w-[50px] h-[50px] py-[5px] rounded-[8px] cursor-pointer hover:bg-secondary flex-center mt-[10px] transition-[background-color]"
+            :class="selected === 'chat' ? 'selected' : ''"
+            @click="switchTab('chat')"
+            to="/chat"
+        >
+            <i class="iconfont icon-message text-[28px]"></i>
+        </RouterLink>
+    </el-badge>
     <RouterLink
         class="w-[50px] h-[50px] py-[5px] rounded-[8px] cursor-pointer hover:bg-secondary flex-center mt-[10px] transition-[background-color]"
         :class="selected === 'contact' ? 'selected' : ''"

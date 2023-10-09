@@ -89,7 +89,7 @@ const logout = () => {
     pushMessageToMainThread(logoutMessage)
     // 3. 关闭弹框
     onClose()
-    window.open()
+    location.reload()
 }
 </script>
 

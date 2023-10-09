@@ -5,7 +5,6 @@ import cn.hutool.json.JSONUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.kkuil.blackchat.constant.RedisKeyConst;
-import com.kkuil.blackchat.constant.UserConst;
 import com.kkuil.blackchat.core.websocket.domain.enums.WsResponseTypeEnum;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.dao.UserRoleDAO;
@@ -42,7 +41,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import static com.kkuil.blackchat.constant.RedisKeyConst.LOGIN_CODE;
-import static com.kkuil.blackchat.constant.UserConst.TEMP_TOKEN;
+import static com.kkuil.blackchat.constant.UserConst.TEMP_USER_UID;
 import static com.kkuil.blackchat.core.websocket.domain.enums.WsResponseTypeEnum.CONN_SUCCESS;
 
 /**
@@ -82,7 +81,7 @@ public class WebSocketServiceImpl implements WebSocketService {
     /**
      * 设置每个账户的最大登录数
      */
-    public static final Integer MAX_CONCURRENT_LONGIN = 0;
+    public static final Integer MAX_CONCURRENT_LONGIN = 3;
 
     @Resource
     private WxMpService wxMpService;
@@ -106,7 +105,8 @@ public class WebSocketServiceImpl implements WebSocketService {
     public void connect(Channel channel) {
         CHANNEL_CONN_MAP.put(channel, new WsConnInfoDTO());
         WsBaseResp<String> wsBaseResp = new WsBaseResp<>();
-        wsBaseResp.setType(CONN_SUCCESS.getType()).setData(TEMP_TOKEN);
+        String token = loginService.login(TEMP_USER_UID);
+        wsBaseResp.setType(CONN_SUCCESS.getType()).setData(token);
         sendMsgToOne(channel, wsBaseResp);
         log.info("CHANNEL_CONN_MAP: {}", CHANNEL_CONN_MAP);
     }
@@ -142,7 +142,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         // 这里必须使用add，不然不支持单账户多端登录
         // 这里可以限制登录限制
         CopyOnWriteArrayList<Channel> channels = UID_CHANNEL_MAP.get(uid);
-        if (UserConst.TEMP_USER_UID.equals(uid) || channels.size() < MAX_CONCURRENT_LONGIN) {
+        if (TEMP_USER_UID.equals(uid) || channels.size() < MAX_CONCURRENT_LONGIN) {
             channels.add(channel);
         } else {
             WsBaseResp<Void> wsBaseResp = new WsBaseResp<>();

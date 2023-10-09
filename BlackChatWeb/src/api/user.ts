@@ -34,6 +34,7 @@ export const updateUsername = (
 export const listBatchCache = (
     uidList: number[]
 ): Promise<ApiResult<UserBaseInfo[]>> => {
+    console.log("uidList", uidList)
     return request({
         url: "/public/user/batch-cache",
         method: "GET",

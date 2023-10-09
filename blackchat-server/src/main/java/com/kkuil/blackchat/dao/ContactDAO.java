@@ -36,4 +36,14 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
         return contactWithActiveMsgCursorPageBaseResp;
     }
 
+    /**
+     * 通过用户ID和房间ID获取会话信息
+     *
+     * @param uid    用户ID
+     * @param roomId 房间ID
+     * @return 会话信息
+     */
+    public Contact getByRoomId(Long uid, Long roomId) {
+        return this.lambdaQuery().eq(Contact::getUid, uid).eq(Contact::getRoomId, roomId).one();
+    }
 }

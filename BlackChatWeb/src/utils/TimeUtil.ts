@@ -11,6 +11,9 @@ const YESTERDAY = 86400000
 const THE_DAY_BEFORE_YESTERDAY = 172800000
 
 export function formatTimestamp(date: Date): string {
+    if (!date) {
+        return ""
+    }
     // 1. 获取当前时间戳
     const cur_timestamp = Date.now()
     const date_timestamp = date.getTime()

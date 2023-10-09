@@ -178,11 +178,16 @@ export const useMessageStore = defineStore("message", () => {
             }
             listPage.value.isLast = result.data.isLast
             listPage.value.cursor = result.data.cursor
+            console.log("result.data.list", result.data.list)
             refreshCache(result.data.list)
         }
     }
 
-    const refreshCache = (
+    /**
+     * 刷新缓存
+     * @param list 刷新ID列表
+     */
+    const refreshCache = async (
         list: ChatMessageResp.ChatMessageBaseResp<any, any>[]
     ) => {
         const needGetLUidList = []
@@ -191,7 +196,9 @@ export const useMessageStore = defineStore("message", () => {
                 needGetLUidList.push(message.fromUser.uid)
             }
         })
-        updateByUidList(needGetLUidList)
+        if (needGetLUidList.length) {
+            await updateByUidList(needGetLUidList)
+        }
     }
 
     watch(

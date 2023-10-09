@@ -13,9 +13,27 @@ import java.util.Map;
  */
 public class JwtUtil {
     /**
+     * 生成token
+     *
      * @param data Map<String, Object>
      * @return String
-     * @description 生成token
+     */
+    public static String create(Map<String, Object> data, String secret) {
+        try {
+            return Jwts.builder()
+                    .signWith(SignatureAlgorithm.HS256, secret)
+                    .setClaims(data)
+                    .compact();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 生成token
+     *
+     * @param data Map<String, Object>
+     * @return String
      */
     public static String create(Map<String, Object> data, String secret, long ttl) {
         try {

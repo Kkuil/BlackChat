@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import ChatItem from "@/layout/components/chat/ChatList/components/ChatItem.vue"
 import { useSessionStore } from "@/stores/session"
+import eventBus from "@/utils/eventBus"
+import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
+import { watch } from "vue"
+import { useUserStore } from "@/stores/user"
 
 const sessionStore = useSessionStore()
+const userStore = useUserStore()
 
 /**
  * 切换会话
@@ -14,6 +19,21 @@ const switchSession = (e: Event & { target: { dataset: { id: string } } }) => {
     if (!id || id == sessionStore.sessionInfo.chattingId) return
     sessionStore.switchSession(id)
 }
+
+eventBus.on(WsEventEnum.CONN_SUCCESS, () => {
+    sessionStore.getSessionList()
+})
+
+watch(
+    () => userStore.userInfo.uid,
+    () => {
+        sessionStore.resetSessionPage()
+        sessionStore.getSessionList()
+    },
+    {
+        immediate: true
+    }
+)
 </script>
 
 <template>

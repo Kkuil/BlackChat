@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.service;
 
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
+import com.kkuil.blackchat.core.contact.domain.vo.request.ChatReadMessageReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 
@@ -19,4 +20,13 @@ public interface ContactService {
      * @return 会话列表
      */
     CursorPageBaseResp<ChatContactCursorResp> listContact(Long uid, ChatContactCursorReq request);
+
+    /**
+     * 用户阅读信息上报
+     *
+     * @param uid     用户ID
+     * @param request 上报信息
+     * @return 是否已上报
+     */
+    boolean readMessage(Long uid, ChatReadMessageReq request);
 }

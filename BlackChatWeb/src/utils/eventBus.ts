@@ -4,6 +4,8 @@ import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseType
 import { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp"
 
 type Events = {
+    // 连接成功
+    conn_success: void
     // 刷新二维码事件
     refresh_qr_code: void
     // 获取二维码事件

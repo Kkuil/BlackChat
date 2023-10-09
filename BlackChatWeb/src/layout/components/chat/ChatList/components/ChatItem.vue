@@ -10,7 +10,11 @@ defineProps<{
 
 <template>
     <div class="w-full h-[65px] flex items-center px-[10px]">
-        <el-badge :value="session.unreadCount" :max="99">
+        <el-badge
+            :value="session.unreadCount"
+            :hidden="!session.unreadCount"
+            :max="99"
+        >
             <el-avatar :src="session.avatar">
                 <el-icon :size="25">
                     <Avatar />
@@ -26,9 +30,13 @@ defineProps<{
             </div>
         </div>
         <div
-            class="last-opt-time hidden xl:block w-[20%] flex-center text-[8px] text-[#777] whitespace-nowrap"
+            class="last-opt-time xl:flex justify-end hidden w-[20%] flex-center text-[8px] text-[#777] whitespace-nowrap"
         >
-            {{ formatTimestamp(new Date(session.activeTime)) }}
+            {{
+                session.activeTime
+                    ? formatTimestamp(new Date(session.activeTime))
+                    : ""
+            }}
         </div>
     </div>
 </template>

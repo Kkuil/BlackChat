@@ -41,8 +41,4 @@ public class UserConst {
      */
     public static final Long TEMP_USER_UID = 0L;
 
-    /**
-     * 临时用户token
-     */
-    public static final String TEMP_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1aWQiOjAsImV4cCI6MTY5NjcwNjQxOH0.0fWDYBvLhLmTXEo3dqgOVsUVuStuz0aTjrHTusVCmFw";
 }
