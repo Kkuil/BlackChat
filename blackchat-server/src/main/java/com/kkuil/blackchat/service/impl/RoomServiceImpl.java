@@ -1,9 +1,6 @@
 package com.kkuil.blackchat.service.impl;
 
-import com.kkuil.blackchat.dao.GroupMemberDAO;
-import com.kkuil.blackchat.dao.RoomDAO;
-import com.kkuil.blackchat.dao.RoomFriendDAO;
-import com.kkuil.blackchat.dao.RoomGroupDAO;
+import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.RoomService;
@@ -25,9 +22,6 @@ public class RoomServiceImpl implements RoomService {
 
     @Resource
     private RoomFriendDAO roomFriendDao;
-
-    @Resource
-    private RoomGroupDAO roomGroupDao;
 
     @Resource
     private GroupMemberDAO groupMemberDao;
@@ -84,7 +78,6 @@ public class RoomServiceImpl implements RoomService {
         // 2. 检查该房间内是否有该用户
         if (room.isRoomFriend()) {
             // 2.1 单聊检查
-            AssertUtil.isTrue(uids.length < 3, ChatErrorEnum.PEOPLE_COUNT_NOT_MATCH.getMsg());
             Boolean hasUser;
             if (uids.length == 1) {
                 hasUser = roomFriendDao.isFriend(roomId, uids[0]);

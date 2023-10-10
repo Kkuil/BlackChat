@@ -1,9 +1,10 @@
 package com.kkuil.blackchat.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkuil.blackchat.domain.entity.Contact;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.mapper.RoomMapper;
 import org.springframework.stereotype.Service;
@@ -30,5 +31,15 @@ public class RoomDAO extends ServiceImpl<RoomMapper, Room> {
                 .set(Room::getActiveTime, activeTime)
                 .set(Room::getLastMsgId, lastMsgId);
         this.update(updateWrapper);
+    }
+
+    /**
+     * 删除房间
+     * @param id 房间ID
+     */
+    public void deleteById(Long id) {
+        LambdaQueryWrapper<Room> wrapper= new QueryWrapper<Room>().lambda()
+                .eq(Room::getId, id);
+        this.remove(wrapper);
     }
 }

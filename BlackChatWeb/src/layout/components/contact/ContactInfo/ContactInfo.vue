@@ -1,43 +1,62 @@
 <script setup lang="ts">
-defineProps<{
-    user: Partial<{
-        id: string
-        name: string
-        avatar: string
-    }>
+import FriendInfo = Store.FriendInfo
+import { Avatar } from "@element-plus/icons-vue"
+import { useFriendStore } from "@/stores/friend"
+import { ElMessageBox } from "element-plus"
+
+const friendStore = useFriendStore()
+
+const props = defineProps<{
+    user: Partial<FriendInfo>
 }>()
+
+/**
+ * 删除好友
+ */
+const delFriend = () => {
+    ElMessageBox.confirm(
+        "确定删除该好友吗？删除后，相关聊天记录将无法恢复。",
+        "删除好友",
+        {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消"
+        }
+    ).then(() => {
+        friendStore.deleteFriend(props.user.uid as number)
+    })
+}
 </script>
 
 <template>
     <div class="contact-info w-full h-full px-[30px] bg-primary">
         <div class="flex user-info">
-            <el-avatar :src="user.avatar" :size="85" />
+            <el-avatar :src="user.avatar" :size="85">
+                <el-icon :size="60">
+                    <Avatar />
+                </el-icon>
+            </el-avatar>
             <div class="h-full info ml-[10px] font-sans">
                 <h1 class="text-[17px] text-[#f5f5f5] mb-[5px]">
                     用户名：{{ user.name }}
                 </h1>
                 <h2 class="text-[14px] text-[#666] mb-[5px]">
-                    uid: {{ user.id }}
+                    uid: {{ user.uid }}
                 </h2>
                 <h1 class="text-[14px] text-[#666] mb-[5px]">
-                    地区：{{ user.name }}
+                    地区：{{ user.place ?? "未知" }}
                 </h1>
             </div>
-            <div
-                class="ml-auto flex flex-col items-center justify-between operation"
-            >
+            <div class="ml-auto flex justify-around flex-col operation">
                 <el-button size="small" type="primary" class="w-[100px]">
                     发消息
                 </el-button>
-                <el-button size="small" type="danger" class="w-[100px] m-0">
-                    删除
-                </el-button>
                 <el-button
                     size="small"
-                    type="text"
-                    class="bg-secondary w-[100px] m-0"
+                    type="danger"
+                    class="w-[100px] m-0"
+                    @click="delFriend"
                 >
-                    拉黑
+                    删除
                 </el-button>
             </div>
         </div>

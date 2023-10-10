@@ -40,7 +40,7 @@ declare namespace GlobalTypes {
     }
     // 用户基本信息
     type UserBaseInfo = {
-        id: number
+        uid: number
         name: string
         avatar: string
     }

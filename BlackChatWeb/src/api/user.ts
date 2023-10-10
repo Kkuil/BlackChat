@@ -39,7 +39,25 @@ export const listBatchCache = (
         url: "/public/user/batch-cache",
         method: "GET",
         params: {
-            uidList
+            uidList: uidList.join(",")
+        }
+    })
+}
+
+/**
+ * 删除好友
+ * @param friendId 好友ID
+ */
+export const delFriend = (friendId: number): Promise<ApiResult<boolean>> => {
+    return request({
+        url: "/friend/del",
+        method: "DELETE",
+        params: {
+            friendId
+        },
+        headers: {
+            [TOKEN_KEY_IN_HEADER]:
+                TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""
         }
     })
 }

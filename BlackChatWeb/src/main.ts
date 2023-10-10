@@ -15,7 +15,6 @@ import Observe from "@/directives/observe"
 import clickOutside from "@/directives/click-outside"
 import ContextMenu from "@imengyu/vue3-context-menu"
 
-createApp(App)
 const app = createApp(App)
 
 app.use(ContextMenu)

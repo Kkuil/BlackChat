@@ -143,4 +143,21 @@ public class UserCache {
         });
         return userInfoCaches;
     }
+
+    /**
+     * 是否存在用户
+     *
+     * @param list 用户ID列表
+     * @return 是否存在
+     */
+    public Boolean isExistUsers(List<Long> list) {
+        boolean isExist = true;
+        for (Long uid : list) {
+            UserBaseInfo userBaseInfo = getBaseUserInfoByUid(uid);
+            if (ObjectUtil.isNull(userBaseInfo)) {
+                isExist = false;
+            }
+        }
+        return isExist;
+    }
 }

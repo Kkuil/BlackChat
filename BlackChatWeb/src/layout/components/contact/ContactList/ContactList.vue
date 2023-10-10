@@ -40,13 +40,11 @@ watch(
         <el-tabs :model-value="activeTab" class="h-[94%]">
             <el-tab-pane label="朋友" name="friend">
                 <BlackSortedList
-                    title="朋友"
                     class="h-full"
                     :list="friendStore.friends"
                     @change="onChange"
                 ></BlackSortedList>
             </el-tab-pane>
-            <el-tab-pane label="群聊" name="group">群聊</el-tab-pane>
         </el-tabs>
     </div>
 </template>

@@ -1,25 +1,32 @@
 <script setup lang="ts">
-import { ref } from "vue"
+import { onBeforeMount, ref } from "vue"
 import ContactList from "@/layout/components/contact/ContactList/ContactList.vue"
 import SvgIcon from "@/components/SvgIcon/SvgIcon.vue"
 import ContactInfo from "@/layout/components/contact/ContactInfo/ContactInfo.vue"
+import { useUserStore } from "@/stores/user"
+import { useRouter } from "vue-router"
+import { ElMessage } from "element-plus"
+import { useFriendStore } from "@/stores/friend"
+import FriendInfo = Store.FriendInfo
 
-const checkingUserInfo = ref<
-    Partial<{
-        id: string
-        name: string
-        avatar: string
-    }>
->({})
+const userStore = useUserStore()
+const friendStore = useFriendStore()
 
-const onChange = (id: string) => {
-    console.log(id)
-    checkingUserInfo.value = {
-        id: "123",
-        name: "KKuil",
-        avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
-    }
+const $router = useRouter()
+
+const checkingUserInfo = ref<Partial<FriendInfo>>({})
+
+const onChange = (uid: string) => {
+    const detail = friendStore.getDetailByUid(Number(uid))
+    checkingUserInfo.value = detail
 }
+
+onBeforeMount(() => {
+    if (!userStore.isLogin || userStore.isTempUser) {
+        ElMessage.error("请先登录")
+        $router.back()
+    }
+})
 </script>
 
 <template>
@@ -27,7 +34,7 @@ const onChange = (id: string) => {
     <div
         class="flex-[1/2] flex-center sm:flex sm:flex-[76%] md:flex-[71%] xl:flex-[69%]"
     >
-        <ContactInfo v-if="checkingUserInfo.id" :user="checkingUserInfo" />
+        <ContactInfo v-if="checkingUserInfo.uid" :user="checkingUserInfo" />
         <el-empty v-else description="<-- 找个人聊聊天吧~">
             <template #image>
                 <SvgIcon

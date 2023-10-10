@@ -12,6 +12,7 @@ import { listBatchCache } from "@/api/user";
  * @param list 用户列表
  */
 export function updateUserInfoCache(list: UserInfo[]) {
+    console.log("list:", list)
     const localUserInfo: Record<string, UserInfoCache> = JSON.parse(
         localStorage.getItem(USER_CACHE_LOC_KEY) ?? "{}"
     )
@@ -29,8 +30,8 @@ export function updateUserInfoCache(list: UserInfo[]) {
 
     // 判断缓存是否达到上限
     list.forEach((userInfo) => {
-        localUserInfo[userInfo.uid] = {
-            id: userInfo.uid,
+        localUserInfo[userInfo.id] = {
+            uid: userInfo.id,
             name: userInfo.name,
             avatar: userInfo.avatar,
             expireTime: Date.now() + USER_CACHE_EXPIRE_TIME

@@ -91,4 +91,14 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
         return this.updateById(user);
     }
 
+    /**
+     * 批量获取用户信息
+     *
+     * @param uidList 用户ID列表
+     * @return 用户信息列表
+     */
+    public List<User> getBath(List<Long> uidList) {
+        return this.lambdaQuery()
+                .in(User::getId, uidList).list();
+    }
 }

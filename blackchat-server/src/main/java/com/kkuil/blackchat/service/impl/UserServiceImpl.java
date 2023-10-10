@@ -7,12 +7,13 @@ import com.kkuil.blackchat.dao.UserBackpackDAO;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.entity.UserBackpack;
+import com.kkuil.blackchat.domain.enums.UserMessageEnum;
+import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.UserErrorEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.event.UserRegisterEvent;
 import com.kkuil.blackchat.service.UserService;
 import com.kkuil.blackchat.utils.AssertUtil;
-import com.kkuil.blackchat.utils.ResultUtil;
 import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -87,4 +88,5 @@ public class UserServiceImpl implements UserService {
     public List<UserInfoCache> getBatchUserInfoCache(List<Long> uidList) {
         return userCache.getBatch(uidList);
     }
+
 }

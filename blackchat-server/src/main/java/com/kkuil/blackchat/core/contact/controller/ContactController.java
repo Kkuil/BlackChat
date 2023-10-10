@@ -3,18 +3,15 @@ package com.kkuil.blackchat.core.contact.controller;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatReadMessageReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
-import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.service.ContactService;
-import com.kkuil.blackchat.service.UserFriendService;
 import com.kkuil.blackchat.utils.ResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * @Author Kkuil
@@ -26,9 +23,6 @@ import java.util.List;
 public class ContactController {
     @Resource
     private ContactService contactService;
-
-    @Resource
-    private UserFriendService userFriendService;
 
     /**
      * 获取会话列表

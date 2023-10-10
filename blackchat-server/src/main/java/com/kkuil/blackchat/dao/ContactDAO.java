@@ -1,9 +1,9 @@
 package com.kkuil.blackchat.dao;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
@@ -75,5 +75,16 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
                 .eq("room_id", groupId)
                 .eq("uid", uid);
         return this.remove(wrapper);
+    }
+
+    /**
+     * 删除会话
+     * @param roomId 房间ID
+     */
+    public void deleteByRoomId(Long roomId) {
+        LambdaQueryWrapper<Contact> wrapper = new QueryWrapper<Contact>()
+                .lambda()
+                .eq(Contact::getRoomId, roomId);
+        this.remove(wrapper);
     }
 }
