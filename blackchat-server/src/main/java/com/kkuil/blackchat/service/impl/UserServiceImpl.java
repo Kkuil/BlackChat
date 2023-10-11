@@ -1,14 +1,20 @@
 package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.user.domain.vo.request.AddFriendReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
+import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
+import com.kkuil.blackchat.dao.RoomFriendDAO;
+import com.kkuil.blackchat.dao.UserApplyDAO;
 import com.kkuil.blackchat.dao.UserBackpackDAO;
 import com.kkuil.blackchat.dao.UserDAO;
+import com.kkuil.blackchat.domain.common.page.PageReq;
+import com.kkuil.blackchat.domain.common.page.PageRes;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.entity.UserBackpack;
 import com.kkuil.blackchat.domain.enums.UserMessageEnum;
-import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.UserErrorEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.event.UserRegisterEvent;
@@ -19,6 +25,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserBackpackDAO userBackpackDao;
+
+    @Resource
+    private RoomFriendDAO roomFriendDao;
 
     /**
      * 注册
@@ -86,7 +96,28 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public List<UserInfoCache> getBatchUserInfoCache(List<Long> uidList) {
-        return userCache.getBatch(uidList);
+        return userCache.getBatchByUidList(uidList);
     }
 
+    /**
+     * 搜索用户
+     *
+     * @param name 用户名
+     * @return 用户列表
+     */
+    @Override
+    public PageRes<List<UserSearchRespVO>> search(Long uid, PageReq<String> pageReq) {
+        Page<User> page = userDao.getBatchByNameWithAmbigous(pageReq);
+        PageRes<List<UserSearchRespVO>> pageRes = new PageRes<>();
+        pageRes.setPageSize(pageReq.getPageSize());
+        pageRes.setCurrent(pageReq.getCurrent());
+
+        List<Long> uidList = page.getRecords().stream().map(User::getId).toList();
+        // 标记是否是好友
+        List<UserSearchRespVO> friend = roomFriendDao.isFriend(uid, uidList);
+
+        pageRes.setData(friend);
+        pageRes.setTotal(page.getTotal());
+        return pageRes;
+    }
 }

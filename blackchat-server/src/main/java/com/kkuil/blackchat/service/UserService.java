@@ -1,7 +1,11 @@
 package com.kkuil.blackchat.service;
 
+import com.kkuil.blackchat.core.user.domain.vo.request.AddFriendReq;
+import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
-import com.kkuil.blackchat.utils.ResultUtil;
+import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
+import com.kkuil.blackchat.domain.common.page.PageReq;
+import com.kkuil.blackchat.domain.common.page.PageRes;
 
 import java.util.List;
 
@@ -35,4 +39,13 @@ public interface UserService {
      * @return 用户缓存列表
      */
     List<UserInfoCache> getBatchUserInfoCache(List<Long> uidList);
+
+    /**
+     * 搜索用户
+     *
+     * @param uid     用户ID
+     * @param pageReq 分页信息
+     * @return 用户列表
+     */
+    PageRes<List<UserSearchRespVO>> search(Long uid, PageReq<String> pageReq);
 }

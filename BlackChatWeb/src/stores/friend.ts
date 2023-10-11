@@ -43,7 +43,6 @@ export const useFriendStore = defineStore("friend", {
             return this.friends.filter((item) => item.uid === uid)[0]
         },
         async deleteFriend(uid: number) {
-            console.log(123)
             const result = await delFriend(uid)
             if (result.data) {
                 ElMessage.success("删除成功")

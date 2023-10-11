@@ -17,8 +17,7 @@ const $router = useRouter()
 const checkingUserInfo = ref<Partial<FriendInfo>>({})
 
 const onChange = (uid: string) => {
-    const detail = friendStore.getDetailByUid(Number(uid))
-    checkingUserInfo.value = detail
+    checkingUserInfo.value = friendStore.getDetailByUid(Number(uid))
 }
 
 onBeforeMount(() => {

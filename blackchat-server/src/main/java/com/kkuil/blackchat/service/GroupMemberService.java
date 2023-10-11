@@ -1,7 +1,6 @@
 package com.kkuil.blackchat.service;
 
-import com.kkuil.blackchat.domain.entity.GroupMember;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 
 /**
  * @Author Kkuil
@@ -18,4 +17,13 @@ public interface GroupMemberService {
      * @return 是否退出
      */
     String exitGroup(Long uid, Long groupId);
+
+    /**
+     * 创建群聊
+     *
+     * @param uid     申请人ID
+     * @param uidList 邀请人ID
+     * @return 是否创建成功
+     */
+    String createGroup(Long uid, CreateGroupReq createGroupReq);
 }

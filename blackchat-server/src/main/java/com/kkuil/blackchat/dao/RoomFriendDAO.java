@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
 import com.kkuil.blackchat.domain.entity.RoomFriend;
 import com.kkuil.blackchat.mapper.RoomFriendMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -65,21 +68,42 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
      * @param uids 用户id
      * @return 是否是朋友关系
      */
-    public Boolean isFriend(Long... uids) {
-        Long uid1;
-        Long uid2;
-        if (uids[0] > uids[1]) {
-            uid1 = uids[1];
-            uid2 = uids[0];
+    public Boolean isFriend(List<Long> uids) {
+        String roomkey;
+        Long uid1 = uids.get(0);
+        Long uid2 = uids.get(1);
+        if (uid1 > uid2) {
+            roomkey = uid2 + "_" + uid1;
         } else {
-            uid1 = uids[0];
-            uid2 = uids[1];
+            roomkey = uid1 + "_" + uid2;
         }
         RoomFriend roomFriend = lambdaQuery()
-                .eq(RoomFriend::getUid1, uid1)
-                .eq(RoomFriend::getUid2, uid2)
+                .eq(RoomFriend::getRoomKey, roomkey)
                 .one();
         return ObjectUtil.isNotNull(roomFriend);
+    }
+
+    /**
+     * 判断用户是否是朋友关系
+     *
+     * @param uids 用户id
+     * @return 是否是朋友关系
+     */
+    public List<UserSearchRespVO> isFriend(Long uid, List<Long> uidList) {
+        List<UserSearchRespVO> list = new ArrayList<>();
+        Boolean isLogin = ObjectUtil.isNotNull(uid);
+        for (Long id : uidList) {
+            UserSearchRespVO userSearchRespVO = new UserSearchRespVO();
+            if (isLogin) {
+                Boolean isFriend = this.isFriend(Arrays.asList(uid, id));
+                userSearchRespVO.setUid(id);
+                userSearchRespVO.setIsFriend(isFriend);
+            } else {
+                userSearchRespVO.setIsFriend(false);
+            }
+            list.add(userSearchRespVO);
+        }
+        return list;
     }
 
     /**
@@ -134,9 +158,9 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
      * @param friendId 朋友ID
      * @return 是否删除成功
      */
-    public Boolean delFriend(Long uid, Long friendId) {
+    public Long delFriend(Long uid, Long friendId) {
         String roomKey;
-        if(uid < friendId) {
+        if (uid < friendId) {
             roomKey = uid + "_" + friendId;
         } else {
             roomKey = friendId + "_" + uid;
@@ -148,8 +172,6 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
         Long roomId = roomFriend.getRoomId();
         roomDao.deleteById(roomId);
 
-        // 删除会话
-        contactDao.deleteByRoomId(roomId);
-        return this.remove(wrapper);
+        return roomId;
     }
 }

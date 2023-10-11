@@ -1,18 +1,22 @@
 package com.kkuil.blackchat.service.impl;
 
-import com.kkuil.blackchat.dao.ContactDAO;
-import com.kkuil.blackchat.dao.GroupMemberDAO;
-import com.kkuil.blackchat.dao.MessageDAO;
-import com.kkuil.blackchat.dao.RoomDAO;
+import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
+import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
+import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.ChatMessageEnum;
+import com.kkuil.blackchat.domain.enums.UserMessageEnum;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
+import com.kkuil.blackchat.domain.enums.error.UserErrorEnum;
 import com.kkuil.blackchat.service.GroupMemberService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * @Author Kkuil
@@ -33,6 +37,15 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
     @Resource
     private RoomDAO roomDao;
+
+    @Resource
+    private UserCache userCache;
+
+    @Resource
+    private RoomFriendDAO roomFriendDao;
+
+    @Resource
+    private UserApplyDAO userApplyDao;
 
     /**
      * 退出群组
@@ -66,6 +79,37 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         AssertUtil.isTrue(isDelMsg, CommonErrorEnum.SYSTEM_ERROR.getMsg());
 
         return ChatMessageEnum.EXIT_GROUP_SUCCESS.getMsg();
+    }
+
+    /**
+     * 创建群聊
+     *
+     * @param uid     申请人ID
+     * @param uidList 邀请人ID
+     * @return 是否创建成功
+     */
+    @Override
+    public String createGroup(Long uid, CreateGroupReq createGroupReq) {
+        List<Long> uidList = createGroupReq.getUidList();
+        AssertUtil.isTrue(uidList.size() > 2, ChatErrorEnum.NOT_ALLOWED_COUNT_GROUP.getMsg());
+
+        String msg = createGroupReq.getMsg();
+
+        // 1. 判断用户是否存在
+        Boolean isExistUsers = userCache.isExistUsers(uidList);
+        AssertUtil.isTrue(isExistUsers, UserErrorEnum.USER_NOT_EXIST.getMsg());
+
+        // 2. 判断是否已经是好友关系
+        List<UserSearchRespVO> friend = roomFriendDao.isFriend(uid, uidList);
+        friend.forEach(user -> {
+            AssertUtil.isTrue(user.getIsFriend(), UserErrorEnum.NOT_FRIEND.getMsg());
+        });
+
+        // 3. 创建群聊
+        Boolean isAddFriend = userApplyDao.createGroup(uid, uidList, msg);
+        AssertUtil.isTrue(isAddFriend, UserErrorEnum.COMMIT_APPLY_FAIL.getMsg());
+
+        return UserMessageEnum.COMMIT_APPLY_SUCESS.getMsg();
     }
 
 }

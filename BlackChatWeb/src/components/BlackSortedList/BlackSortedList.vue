@@ -27,6 +27,7 @@ const props = defineProps({
 })
 
 const listRef = ref<HTMLDivElement>()
+const selectedId = ref<number>()
 
 /**
  * 计算字母数组
@@ -45,10 +46,10 @@ const computedLetters = computed(() => {
 const sortedList = computed(() => {
     const pyMap: Record<string, (FriendInfo & { pinyin: string })[]> = {}
     props.list?.forEach((item: FriendInfo & { pinyin: string }) => {
+        console.log(item.name)
         const pinyinA = pinyin(item.name, {
             style: pinyin.STYLE_NORMAL
         }).join("")
-        console.log(pinyinA)
         item["pinyin"] = pinyinA
         const firstLetter = pinyinA[0].toUpperCase()
         const regex = /[0-9]/
@@ -76,24 +77,7 @@ const sortedList = computed(() => {
 })
 
 /**
- * 重定向索引
- * @param letter
- */
-// const redirectToIndex = (letter: string) => {
-//     let height = 0
-//     for (let i = 97; i <= 122; i++) {
-//         height += 25 + 10
-//         const word = String.fromCharCode(i).toLowerCase()
-//         if (word === letter) {
-//             break
-//         }
-//         const itemHeight = (sortedList.value[word]?.length ?? 0) * (10 + 40)
-//         height += itemHeight
-//     }
-// }
-
-/**
- * 切换用户
+ * 查看
  * @param e
  */
 const check = (e: Event & { target: { dataset: { id: string } } }) => {
@@ -101,6 +85,7 @@ const check = (e: Event & { target: { dataset: { id: string } } }) => {
     if (id != null) {
         emits("change", id)
     }
+    selectedId.value = Number(id)
 }
 </script>
 
@@ -119,6 +104,7 @@ const check = (e: Event & { target: { dataset: { id: string } } }) => {
                     <ul class="inner-list" @click="check">
                         <li
                             class="inner-item"
+                            :class="selectedId === item.uid ? 'selected' : ''"
                             v-for="item in sortedList[letter]"
                             :key="item.uid"
                             :data-id="item.uid"
@@ -175,6 +161,10 @@ const check = (e: Event & { target: { dataset: { id: string } } }) => {
 
 .sorted-list {
     height: 100%;
+}
+
+.selected {
+    background: v-bind("bgSecondaryColor");
 }
 
 .body {

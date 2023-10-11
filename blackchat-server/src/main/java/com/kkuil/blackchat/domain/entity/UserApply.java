@@ -37,7 +37,7 @@ public class UserApply implements Serializable {
      * 接收人uid
      */
     @TableField(value = "target_id")
-    private Long target_id;
+    private Long targetId;
 
     /**
      * 申请信息
@@ -55,19 +55,19 @@ public class UserApply implements Serializable {
      * 阅读状态 1未读 2已读
      */
     @TableField(value = "read_status")
-    private Integer read_status;
+    private Integer readStatus;
 
     /**
      * 创建时间
      */
     @TableField(value = "create_time")
-    private Date create_time;
+    private Date createTime;
 
     /**
      * 修改时间
      */
     @TableField(value = "update_time")
-    private Date update_time;
+    private Date updateTime;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

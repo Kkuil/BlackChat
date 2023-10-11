@@ -1,15 +1,13 @@
 package com.kkuil.blackchat.core.contact.controller;
 
 import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
+import com.kkuil.blackchat.core.user.domain.vo.request.AddFriendReq;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.service.RoomFriendService;
 import com.kkuil.blackchat.utils.ResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -47,6 +45,19 @@ public class FriendController {
     public ResultUtil<Boolean> delFriend(Long friendId) {
         Long uid = RequestHolderDTO.get().getUid();
         return ResultUtil.success(roomFriendService.delFriend(uid, friendId), true);
+    }
+
+    /**
+     * 加好友
+     *
+     * @param repliedId 用户名
+     * @return 是否改名成功
+     */
+    @PostMapping("add-friend")
+    @Operation(summary = "加好友", description = "加好友")
+    public ResultUtil<Boolean> addFriend(@RequestBody AddFriendReq addFriendReq) {
+        Long uid = RequestHolderDTO.get().getUid();
+        return ResultUtil.success(roomFriendService.addFriend(uid, addFriendReq), true);
     }
 
 }

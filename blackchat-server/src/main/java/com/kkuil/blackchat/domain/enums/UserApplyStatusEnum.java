@@ -6,22 +6,22 @@ import lombok.Getter;
 /**
  * @Author Kkuil
  * @Date 2023/9/26
- * @Description 业务校验异常码
+ * @Description 用户申请状态枚举
  */
 @AllArgsConstructor
 @Getter
-public enum UserMessageEnum {
+public enum UserApplyStatusEnum {
     /**
      *
      */
-    DEL_FRIEND_SUCCESS(1001, "删除好友成功"),
-    COMMIT_APPLY_SUCESS(1002, "提交申请成功"),
+    APPLYING(1, "待审批"),
+    AGREED(2, "已同意"),
     ;
-    private final Integer code;
+    private final Integer status;
     private final String msg;
 
-    public Integer getCode() {
-        return code;
+    public Integer getStatus() {
+        return status;
     }
 
     public String getMsg() {

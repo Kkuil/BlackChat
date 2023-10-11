@@ -34,5 +34,7 @@ userStore.$subscribe((mutation, state) => {
 </script>
 
 <template>
-    <RouterView />
+    <KeepAlive>
+        <RouterView />
+    </KeepAlive>
 </template>

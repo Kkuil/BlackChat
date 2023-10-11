@@ -9,6 +9,8 @@ import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+
 /**
  * @Author Kkuil
  * @Date 2023/9/28 14:52
@@ -82,7 +84,7 @@ public class RoomServiceImpl implements RoomService {
             if (uids.length == 1) {
                 hasUser = roomFriendDao.isFriend(roomId, uids[0]);
             } else {
-                hasUser = roomFriendDao.isFriend(uids);
+                hasUser = roomFriendDao.isFriend(Arrays.asList(uids));
             }
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
         } else {

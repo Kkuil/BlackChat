@@ -24,6 +24,11 @@ declare namespace GlobalTypes {
         current: number | null
         data: T
     }
+    type PageResp<T> = {
+        pageSize: number
+        current: number | null
+        data: T
+    }
     // 用户信息格式
     type UserInfo = Partial<{
         uid: number

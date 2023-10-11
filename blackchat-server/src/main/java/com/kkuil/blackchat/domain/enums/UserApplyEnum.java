@@ -6,25 +6,25 @@ import lombok.Getter;
 /**
  * @Author Kkuil
  * @Date 2023/9/26
- * @Description 业务校验异常码
+ * @Description 用户申请类型枚举
  */
 @AllArgsConstructor
 @Getter
-public enum UserMessageEnum {
+public enum UserApplyEnum {
     /**
      *
      */
-    DEL_FRIEND_SUCCESS(1001, "删除好友成功"),
-    COMMIT_APPLY_SUCESS(1002, "提交申请成功"),
+    FRIEND(1, "好友"),
+    GROUP(2, "群聊"),
     ;
-    private final Integer code;
+    private final Integer type;
     private final String msg;
-
-    public Integer getCode() {
-        return code;
-    }
 
     public String getMsg() {
         return msg;
+    }
+
+    public Integer getType() {
+        return type;
     }
 }

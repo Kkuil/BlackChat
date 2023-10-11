@@ -11,9 +11,7 @@ const bodyRef = ref<HTMLDivElement>()
 const lastMessage: ChatMessageResp.ChatMessageBaseResp<SystemMessageBody, any> =
     {
         fromUser: {
-            uid: "10003",
-            name: "Kkuil",
-            avatar: "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJkQXoMolPPP0JVa8DF1kJ50nicQ1HJvYwXBoicBNVwlzlFNB23m0KCmd4AML7jE7icpwU7xCZJZ5pMA/132"
+            uid: "10003"
         },
         message: {
             id: 3170000,

@@ -4,7 +4,7 @@ import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useUserStore } from "@/stores/user"
 import { HOT_GROUP_ID } from "@/constant/global"
 import { Avatar } from "@element-plus/icons-vue"
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 import ContextMenuContainer from "@/components/ContextMenuContainer/ContextMenuContainer.vue"
 
 const sessionStore = useSessionStore()
@@ -21,6 +21,10 @@ const handleUserRightClick = (e: MouseEvent) => {
     menuOptions.value.y = y
     isShowMenu.value = true
 }
+
+onMounted(async () => {
+    await sessionStore.getMemberList()
+})
 </script>
 
 <template>
@@ -84,17 +88,17 @@ const handleUserRightClick = (e: MouseEvent) => {
                 </li>
             </TransitionGroup>
             <li
+                class="w-full flex-center"
+                v-if="!sessionStore.listMemberPage.isLast"
+                v-observe="sessionStore.getMemberList"
+            >
+                <i class="iconfont icon-loading animate-spin"></i>
+            </li>
+            <li
                 v-if="sessionStore.listSessionPage.isLast"
                 class="w-full flex-center text-[#5b6061] text-[12px]"
             >
                 暂无更多成员
-            </li>
-            <li
-                class="w-full flex-center"
-                v-observe="sessionStore.getMemberList"
-                v-if="!sessionStore.listMemberPage.isLast"
-            >
-                <i class="iconfont icon-loading animate-spin"></i>
             </li>
         </ul>
         <ContextMenuContainer

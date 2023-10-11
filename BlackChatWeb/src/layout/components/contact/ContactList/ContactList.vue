@@ -3,6 +3,8 @@ import BlackSortedList from "@/components/BlackSortedList/BlackSortedList.vue"
 import { ref, watch } from "vue"
 import { useUserStore } from "@/stores/user"
 import { useFriendStore } from "@/stores/friend"
+import AddFriendDialog from "@/components/AddFriendDialog/AddFriendDialog.vue"
+import CreateGroupDialog from "@/components/CreateGroupDialog/CreateGroupDialog.vue"
 
 const emits = defineEmits<{
     (e: "change", id: string): void
@@ -11,11 +13,31 @@ const emits = defineEmits<{
 const userStore = useUserStore()
 const friendStore = useFriendStore()
 
+// tab
+const activeTab = ref<string>("friend")
+// 展示添加朋友弹框
+const showAddFriend = ref<boolean>(false)
+// 展示创建群聊弹框
+const showCreateGroup = ref<boolean>(false)
+
+/**
+ * 添加朋友
+ */
+const addFriend = () => {
+    showAddFriend.value = true
+}
+
+/**
+ * 创建群聊
+ */
+const createGroup = () => {
+    showCreateGroup.value = true
+}
+
 const onChange = (id: string) => {
     emits("change", id)
 }
 
-const activeTab = ref<string>("friend")
 watch(
     () => userStore.userInfo,
     () => {
@@ -30,11 +52,19 @@ watch(
 <template>
     <div class="contact-list h-full flex flex-col">
         <div class="flex h-[6%]">
-            <ElButton class="add-group flex-1" type="primary">
+            <ElButton
+                class="add-group flex-1"
+                type="primary"
+                @click="createGroup"
+            >
                 创建群聊
             </ElButton>
-            <ElButton class="search-friend flex-1" type="primary">
-                添加朋友
+            <ElButton
+                class="search-friend flex-1"
+                type="primary"
+                @click="addFriend"
+            >
+                添加朋友(Ctrl+K)
             </ElButton>
         </div>
         <el-tabs :model-value="activeTab" class="h-[94%]">
@@ -46,6 +76,16 @@ watch(
                 ></BlackSortedList>
             </el-tab-pane>
         </el-tabs>
+        <el-dialog v-model="showAddFriend" :show-close="false" class="bg-third">
+            <AddFriendDialog />
+        </el-dialog>
+        <el-dialog
+            v-model="showCreateGroup"
+            :show-close="false"
+            class="bg-third flex-center"
+        >
+            <CreateGroupDialog />
+        </el-dialog>
     </div>
 </template>
 

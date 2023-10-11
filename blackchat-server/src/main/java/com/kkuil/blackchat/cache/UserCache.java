@@ -134,7 +134,7 @@ public class UserCache {
      * @param uidList 用户ID列表
      * @return 用户ID列表
      */
-    public List<UserInfoCache> getBatch(List<Long> uidList) {
+    public List<UserInfoCache> getBatchByUidList(List<Long> uidList) {
         List<UserInfoCache> userInfoCaches = new ArrayList<>();
         uidList.forEach(uid -> {
             UserBaseInfo baseInfo = this.getBaseUserInfoByUid(uid);

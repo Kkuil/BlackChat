@@ -3,6 +3,7 @@ package com.kkuil.blackchat.dao;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
@@ -94,7 +95,7 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
      * 删除某用户在某个会话中的消息记录
      *
      * @param roomId 房间ID
-     * @param uid 用户ID
+     * @param uid    用户ID
      * @return 是否删除
      */
     public Boolean delRecordBatch(Long roomId, Long uid) {
@@ -102,5 +103,16 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
                 .eq("room_id", roomId)
                 .eq("uid", uid);
         return this.remove(wrapper);
+    }
+
+    /**
+     * 删除聊天记录
+     *
+     * @param roomId 房间ID
+     */
+    public void deleteByRoomId(Long roomId) {
+        LambdaQueryChainWrapper<Message> wrapper = this.lambdaQuery()
+                .eq(Message::getRoomId, roomId);
+        this.remove(wrapper);
     }
 }

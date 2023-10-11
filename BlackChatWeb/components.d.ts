@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddFriendDialog: typeof import('./src/components/AddFriendDialog/AddFriendDialog.vue')['default']
     BlackCollapse: typeof import("./src/components/BlackCollapse/BlackCollapse.vue")["default"]
     BlackCollapseItem: typeof import("./src/components/BlackCollapse/BlackCollapseItem.vue")["default"]
     BlackEmojis: typeof import("./src/components/EmojiList/BlackEmojis.vue")["default"]
@@ -21,6 +22,7 @@ declare module 'vue' {
     ChatTextMessageItem: typeof import("src/components/ChatMessageItem/components/ChatCommonMessageItem.vue")["default"]
     ContextMenu: typeof import("src/components/ContextMenuContainer/ContextMenuContainer.vue")["default"]
     ContextMenuContainer: typeof import('./src/components/ContextMenuContainer/ContextMenuContainer.vue')['default']
+    CreateGroupDialog: typeof import('./src/components/CreateGroupDialog/CreateGroupDialog.vue')['default']
     DraggableResize: typeof import("./src/components/DraggableResize/DraggableResize.vue")["default"]
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElBadge: typeof import('element-plus/es')['ElBadge']
@@ -37,6 +39,7 @@ declare module 'vue' {
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTransfer: typeof import('element-plus/es')['ElTransfer']
     ElUpload: typeof import('element-plus/es')['ElUpload']
     EmojiList: typeof import('./src/components/EmojiList/EmojiList.vue')['default']
     FileContent: typeof import('./src/components/ChatMessageItem/components/FileContent/FileContent.vue')['default']

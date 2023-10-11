@@ -1,10 +1,16 @@
 package com.kkuil.blackchat.dao;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
+import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
+import com.kkuil.blackchat.domain.common.page.PageReq;
+import com.kkuil.blackchat.domain.common.page.PageRes;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.enums.YesOrNoEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
@@ -100,5 +106,20 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
     public List<User> getBath(List<Long> uidList) {
         return this.lambdaQuery()
                 .in(User::getId, uidList).list();
+    }
+
+    /**
+     * 通过用户名获取数据，模糊查询
+     *
+     * @param name 用户名
+     * @return 数据
+     */
+    public Page<User> getBatchByNameWithAmbigous(PageReq<String> pageReq) {
+        Page<User> userPage = new Page<>(pageReq.getCurrent(), pageReq.getPageSize(), true);
+        Page<User> page = this.lambdaQuery()
+                .like(StrUtil.isNotEmpty(pageReq.getData()), User::getName, pageReq.getData())
+                .select(User::getId)
+                .page(userPage);
+        return page;
     }
 }

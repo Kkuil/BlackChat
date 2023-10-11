@@ -4,11 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kkuil.blackchat.mapper.ContactMapper">
     <select id="getCursorPage" resultType="com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg">
-        SELECT c.uid,
-               c.room_id,
-               c.read_time,
-               r.active_time,
-               r.last_msg_id
+        SELECT c.uid AS uid,
+               c.room_id AS roomId,
+               c.read_time AS readTime,
+               r.active_time AS activeTime,
+               r.last_msg_id AS lastMsgId
         FROM contact AS c
                  JOIN room AS r
                       ON c.room_id = r.id

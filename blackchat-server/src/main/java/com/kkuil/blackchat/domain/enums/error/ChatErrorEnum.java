@@ -26,7 +26,8 @@ public enum ChatErrorEnum implements ErrorEnum {
     NO_AUTH(1008, "暂无此权限"),
     NOT_GROUP(1009, "该房间不是群聊"),
     TEMP_USER_NOT_ALLOWED(1010, "临时用户无法执行该操作，请先登录吧~"),
-    NOT_ALLOWED_TO_EXIT_ALL_GROUP(1010, "无法退出全员群~"),
+    NOT_ALLOWED_TO_EXIT_ALL_GROUP(1011, "无法退出全员群~"),
+    NOT_ALLOWED_COUNT_GROUP(1012, "群聊人数不匹配~"),
     ;
 
     private final Integer code;

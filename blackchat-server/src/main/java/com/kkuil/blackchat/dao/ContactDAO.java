@@ -35,7 +35,7 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
     public CursorPageBaseResp<ContactWithActiveMsg> getCursorPage(Long uid, ChatContactCursorReq request) {
         List<ContactWithActiveMsg> list = contactMapper.getCursorPage(uid, request);
         CursorPageBaseResp<ContactWithActiveMsg> contactWithActiveMsgCursorPageBaseResp = new CursorPageBaseResp<>();
-        contactWithActiveMsgCursorPageBaseResp.setCursor(String.valueOf(list.get(list.size() - 1).getActiveTime().getTime()));
+        contactWithActiveMsgCursorPageBaseResp.setCursor(String.valueOf(list.get(list.size() - 1).getReadTime().getTime()));
         contactWithActiveMsgCursorPageBaseResp.setList(list);
         contactWithActiveMsgCursorPageBaseResp.setIsLast(request.getPageSize() > list.size());
         return contactWithActiveMsgCursorPageBaseResp;

@@ -83,7 +83,7 @@ onUnmounted(() => {
 <template>
     <el-dialog
         v-model="visible"
-        width="30%"
+        width="auto"
         align-center
         @close="onClose"
         class="rounded-[15px] shadow-md"
@@ -94,7 +94,7 @@ onUnmounted(() => {
         <template #default>
             <div class="w-full flex-center">
                 <div
-                    class="w-[350px] h-[350px] bg-[#f5f5f5] flex-center"
+                    class="bg-[#f5f5f5] flex-center"
                     v-loading="!qrCodeWithLogin"
                 >
                     <QrCode
@@ -102,7 +102,7 @@ onUnmounted(() => {
                         v-if="qrCodeWithLogin"
                         :value="qrCodeWithLogin"
                         :size="328"
-                        :margin="5"
+                        :margin="3"
                     />
                 </div>
             </div>

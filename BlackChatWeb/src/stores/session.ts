@@ -97,6 +97,7 @@ export const useSessionStore = defineStore("session", () => {
      * 获取成员列表
      */
     const getMemberList = async () => {
+        console.log(123)
         if (listMemberPage.value.isLast) {
             return
         }

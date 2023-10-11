@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.service;
 
 import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
+import com.kkuil.blackchat.core.user.domain.vo.request.AddFriendReq;
 
 import java.util.List;
 
@@ -27,4 +28,15 @@ public interface RoomFriendService {
      * @return 是否删除成功
      */
     String delFriend(Long uid, Long friendId);
+
+
+    /**
+     * 加好友
+     *
+     * @param uid       用户ID
+     * @param repliedId 被申请人ID
+     * @param msg       申请备注
+     * @return 是否添加成功
+     */
+    String addFriend(Long uid, AddFriendReq addFriendReq);
 }
