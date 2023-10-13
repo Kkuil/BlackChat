@@ -1,4 +1,4 @@
 export enum MailOperationStatusEnum {
-    AGREE = 1,
-    REFUSE = 2
+    AGREE = 2,
+    REFUSE = 3
 }

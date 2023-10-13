@@ -8,6 +8,7 @@ BlackChat是一个黑色主题的IM即时聊天Web应用，结合了即时聊天
 ## 技术栈
 
 - 💚 Spring Boot 3.x：使用最新版本的Spring Boot进行开发。
+- 🧰 RocketMQ：使用RocketMQ进行消息推送。
 - 📝 MyBatis：使用MyBatis进行数据库操作。
 - 📦 MyBatis Plus：使用MyBatis Plus提供更多便捷的数据库操作功能。
 - 🧰 Lombok：使用Lombok简化Java代码的编写。
@@ -20,6 +21,7 @@ BlackChat是一个黑色主题的IM即时聊天Web应用，结合了即时聊天
 - 📚 Jackson：使用Jackson进行JSON数据的序列化和反序列化。
 
 ![spring-boot](https://img.shields.io/badge/spring--boot-3.x-brightgreen)
+![RocketMQ](https://img.shields.io/badge/lombok-1.18.22-pink)
 ![mybatis](https://img.shields.io/badge/mybatis-3.5.6-lightblue)
 ![mybatis-plus](https://img.shields.io/badge/mybatis--plus-3.4.5-green)
 ![lombok](https://img.shields.io/badge/lombok-1.18.22-pink)
@@ -30,72 +32,19 @@ BlackChat是一个黑色主题的IM即时聊天Web应用，结合了即时聊天
 ![hutool](https://img.shields.io/badge/hutool--all-5.7.9-blueviolet)
 ![knife4j](https://img.shields.io/badge/knife4j-3.0.2-brightgreen)
 
-## 开发环境要求
+## 项目基本功能
 
-- 📌 JDK：请确保你的JDK版本在11以上。
-- 📌 Maven：请确保你的Maven版本在3.6以上。
+### 1. 多类型消息支持
+- 文本
+- 图片
+- 视频
+- 音频
+- 文件
 
-## 初始化项目
+![img.png](img.png)
 
-克隆或下载该项目后，进入项目根目录，执行以下命令来安装依赖：
+### 2. 加好友，加群
+![img_1.png](img_1.png)
 
-## 目录树形结构
-
-```
-├── src/                           # 源代码目录
-│   ├── main/                      # 主目录
-│   │   ├── java/                  # Java代码目录
-│   │   │   ├── config/            # 配置类
-│   │   │   ├── controller/        # 控制器类
-│   │   │   ├── entity/            # 数据库实体类
-│   │   │   ├── mapper/            # MyBatis映射接口
-│   │   │   ├── service/           # 服务类
-│   │   │   ├── util/              # 工具类
-│   │   │   ├── Application.java   # Spring Boot应用入口
-│   │   ├── resources/             # 资源文件目录
-│   │   │   ├── application.yml    # 应用配置文件
-│   │   ├── test/                   # 测试目录
-│   │   │   ├── java/               # Java测试代码目录
-├── .gitignore                     # Git忽略文件配置
-├── pom.xml                        # Maven配置文件
-├── .editorconfig                  # 编辑器配置
-├── .gitignore                     # Git忽略文件配置
-└── spring-boot-template.iml       # IntelliJ IDEA项目文件
-```
-
-## 使用流程
-todo 
-
-## 开发注意事项
-
-- 确保你的项目使用了 Spring Boot 3.x 版本。
-- 在开发过程中，推荐使用 IntelliJ IDEA 编辑器，并安装相关插件，例如 Lombok 插件，以提升开发效率。
-- 遵循 Git 的代码提交规范，使用语义化的提交信息，方便版本管理和发布。
-
-## 使用方法
-todo
-
-## 贡献
-
-欢迎贡献代码，提出问题和建议。请在提交代码前确保通过了代码检查。
-
-## 许可证
-
-本项目基于 MIT 许可证开源。
-
-## 鸣谢
-
-感谢以下开源项目的贡献：
-
-- [Spring Boot](https://spring.io/projects/spring-boot)
-- [MyBatis](https://mybatis.org/mybatis-3/)
-- [MyBatis Plus](https://mybatis.plus/)
-- [Lombok](https://projectlombok.org/)
-- [Jasypt](https://github.com/ulisesbocchio/jasypt-spring-boot)
-- [Slf4j](http://www.slf4j.org/)
-- [AOP](https://docs.spring.io/spring-framework/docs/current/spring-framework-reference/core.html#aop)
-- [Jackson](https://github.com/FasterXML/jackson)
-- [Hutool](https://hutool.cn/)
-- [Knife4j](https://doc.xiaominfo.com/)
-
----
+### 3. 用户邮箱
+![img_2.png](img_2.png)

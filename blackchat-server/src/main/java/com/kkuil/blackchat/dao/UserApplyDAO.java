@@ -102,7 +102,7 @@ public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
         Page<UserApply> userApplyPage = new Page<>(pageReq.getCurrent(), pageReq.getPageSize(), true);
         Page<UserApply> page = this.lambdaQuery()
                 .eq(UserApply::getTargetId, uid)
-                .eq(UserApply::getStatus, Optional.of(Integer.parseInt(pageReq.getData())).orElse(UserApplyStatusEnum.APPLYING.getStatus()))
+                .eq(UserApply::getReadStatus, Optional.of(Integer.parseInt(pageReq.getData())).orElse(ReadStatusEnum.UNREAD.getStatus()))
                 .page(userApplyPage);
         PageRes<UserApply> pageRes = new PageRes<>();
         pageRes.setTotal(page.getTotal())
