@@ -1,8 +1,8 @@
 @font-face {
     font-family: "iconfont"; /* Project id 4263035 */
-    src: url('//at.alicdn.com/t/c/font_4263035_ebeaej6md7q.woff2?t=1696950295339') format('woff2'),
-    url('//at.alicdn.com/t/c/font_4263035_ebeaej6md7q.woff?t=1696950295339') format('woff'),
-    url('//at.alicdn.com/t/c/font_4263035_ebeaej6md7q.ttf?t=1696950295339') format('truetype');
+    src: url('//at.alicdn.com/t/c/font_4263035_7dy5d9nj0f7.woff2?t=1697115712914') format('woff2'),
+    url('//at.alicdn.com/t/c/font_4263035_7dy5d9nj0f7.woff?t=1697115712914') format('woff'),
+    url('//at.alicdn.com/t/c/font_4263035_7dy5d9nj0f7.ttf?t=1697115712914') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-email:before {
+    content: "\ea95";
 }
 
 .icon-search:before {

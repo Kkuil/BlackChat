@@ -1,13 +1,17 @@
 package com.kkuil.blackchat.dao;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.constant.RedisKeyConst;
 import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
+import com.kkuil.blackchat.domain.bo.room.FriendBaseInfo;
 import com.kkuil.blackchat.domain.entity.RoomFriend;
 import com.kkuil.blackchat.mapper.RoomFriendMapper;
+import com.kkuil.blackchat.utils.RedisUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -141,7 +145,8 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
         return this.lambdaQuery()
                 .eq(RoomFriend::getUid1, uid)
                 .or()
-                .eq(RoomFriend::getUid2, uid).list().stream()
+                .eq(RoomFriend::getUid2, uid).list()
+                .stream()
                 .map(roomFriend -> {
                     if (roomFriend.getUid1().equals(uid)) {
                         return roomFriend.getUid2();
@@ -171,6 +176,8 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
         RoomFriend roomFriend = this.getOne(wrapper);
         Long roomId = roomFriend.getRoomId();
         roomDao.deleteById(roomId);
+
+        // TODO 同步删除缓存
 
         return roomId;
     }

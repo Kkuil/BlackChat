@@ -28,7 +28,7 @@ public class RoomFriendCache {
      * @return 单聊信息
      */
     public FriendBaseInfo getBaseInfoById(Long roomId) {
-        String key = RedisKeyConst.getKey(RedisKeyConst.GROUP_INFO_STRING, roomId);
+        String key = RedisKeyConst.getKey(RedisKeyConst.FRIEND_INFO_STRING, roomId);
         FriendBaseInfo baseInfo = RedisUtil.get(key, FriendBaseInfo.class);
 
         if (ObjectUtil.isNotNull(baseInfo)) {

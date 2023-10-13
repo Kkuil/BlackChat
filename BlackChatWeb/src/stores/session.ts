@@ -9,12 +9,14 @@ import eventBus from "@/utils/eventBus"
 import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import { exitGroup } from "@/api/group"
 import { ElMessage } from "element-plus"
+import { useUserStore } from "@/stores/user"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
     chattingId: number
     sessions: (Session & { totalCount: number })[]
     memberList: UserInfo[]
+    totalCount: number
 }
 
 export type Session = {
@@ -28,11 +30,14 @@ export type Session = {
     unreadCount: number
 }
 
+const userStore = useUserStore()
+
 export const useSessionStore = defineStore("session", () => {
     const sessionInfo = ref<TSessionInfo>({
         chattingId: -99,
         sessions: [],
-        memberList: []
+        memberList: [],
+        totalCount: 0
     })
 
     const listMemberPage = ref<
@@ -61,35 +66,47 @@ export const useSessionStore = defineStore("session", () => {
      * 切换会话
      * @param id 会话ID
      */
-    const switchSession = (id: string) => {
+    const switchSession = async (id: string) => {
         sessionInfo.value.chattingId = parseInt(id)
-        initSessionMemberList()
+        resetMemberList()
+        // 获取群成员列表信息
+        if (getSessionInfo.value.type == RoomTypeEnum.GROUP) {
+            await getMemberList()
+        }
 
         // 用户阅读信息上报
         if (getSessionInfo.value.unreadCount > 0) {
-            readMessage(sessionInfo.value.chattingId)
+            await readMessage(sessionInfo.value.chattingId)
         }
     }
 
+    /**     成员     **/
     /**
-     * 初始化成员列表信息
+     * 重置游标信息
      */
-    const initSessionMemberList = () => {
+    const resetMemberList = () => {
         listMemberPage.value = {
             pageSize: 20,
             cursor: null,
             isLast: false,
             activeStatus: ChatActiveEnums.ONLINE
         }
-        sessionInfo.value.memberList = []
     }
 
-    /**     成员     **/
+    /**
+     * 初始化成员列表信息
+     */
+    const initSessionMemberList = (memberList: UserInfo[]) => {
+        console.log("initSessionMemberList: ", memberList)
+        sessionInfo.value.memberList = memberList
+    }
+
     /**
      * 增加成员信息
      * @param memberList 成员信息
      */
     const updateAddSessionMemberList = (memberList: UserInfo[]) => {
+        console.log("updateAddSessionMemberList: ", memberList)
         sessionInfo.value.memberList.push(...memberList)
     }
 
@@ -97,10 +114,6 @@ export const useSessionStore = defineStore("session", () => {
      * 获取成员列表
      */
     const getMemberList = async () => {
-        console.log(123)
-        if (listMemberPage.value.isLast) {
-            return
-        }
         const result = await listMember({
             pageSize: listMemberPage.value.pageSize,
             cursor: listMemberPage.value.cursor,
@@ -117,8 +130,7 @@ export const useSessionStore = defineStore("session", () => {
             listMemberPage.value.isLast = result.data.isLast
             listMemberPage.value.activeStatus =
                 result.data.extraInfo.activeStatus
-            getSessionInfo.value.totalCount =
-                result.data.extraInfo.totalCount || 0
+            sessionInfo.value.totalCount = result.data.extraInfo.totalCount
             const list = result.data.list.map((member) => {
                 const user: UserInfo = {
                     uid: member.uid,
@@ -158,7 +170,7 @@ export const useSessionStore = defineStore("session", () => {
      */
     const resetSessionPage = () => {
         listSessionPage.value = {
-            pageSize: 10,
+            pageSize: 15,
             cursor: null,
             isLast: false
         }
@@ -201,6 +213,18 @@ export const useSessionStore = defineStore("session", () => {
             listSessionPage.value.cursor = result.data.cursor
         }
     }
+
+    watch(
+        () => userStore.userInfo,
+        async (newState, oldState) => {
+            console.log("newState: ", newState)
+            console.log("oldState: ", oldState)
+            if (!oldState.uid) {
+                resetSessionPage()
+                await getSessionList()
+            }
+        }
+    )
 
     /**
      * 退出群聊
@@ -245,16 +269,6 @@ export const useSessionStore = defineStore("session", () => {
         return getSessionInfo.value.type === RoomTypeEnum.GROUP
     })
 
-    watch(
-        () => sessionInfo.value.chattingId,
-        async () => {
-            // 获取群成员列表信息
-            if (getSessionInfo.value.type == RoomTypeEnum.GROUP) {
-                await getMemberList()
-            }
-        }
-    )
-
     eventBus.on(WsEventEnum.SEND_MESSAGE, ({ message }) => {
         // 更新当前会话的最新消息信息
         const index = sessionInfo.value.sessions.findIndex(
@@ -264,6 +278,12 @@ export const useSessionStore = defineStore("session", () => {
         session.activeTime = message.message.sendTime
         sessionInfo.value.sessions.splice(index, 1)
         sessionInfo.value.sessions.unshift(session)
+    })
+
+    eventBus.on(WsEventEnum.CONN_SUCCESS, () => {
+        if (!sessionStore.sessionInfo.sessions.length) {
+            sessionStore.getSessionList()
+        }
     })
 
     return {

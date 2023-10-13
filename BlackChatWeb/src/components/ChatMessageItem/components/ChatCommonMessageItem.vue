@@ -118,18 +118,18 @@ const handleUserRightClick = (e: MouseEvent, list: string[]) => {
             />
             <div
                 v-if="message?.message?.reply"
-                class="flex-center justify-between max-w-[75%] p-[2px] text-[#f5f5f5] text-[13px] mt-[5px] bg-[#777] rounded-[4px] cursor-pointer transition-[background-color] hover:bg-opacity-[80%]"
+                class="px-[5px] flex items-end justify-between max-w-[75%] p-[2px] text-[#f5f5f5] text-[13px] mt-[5px] bg-[#777] rounded-[4px] cursor-pointer transition-[background-color] hover:bg-opacity-[80%]"
                 title="回到原文"
             >
+                <i
+                    class="iconfont icon-return-message mr-[5px] text-[12px]"
+                ></i>
                 <div
                     class="w-full whitespace-nowrap overflow-ellipsis overflow-hidden"
                 >
                     {{ message?.message?.reply.name }}:
                     {{ message?.message?.reply.body }}
                 </div>
-                <i
-                    class="iconfont icon-return-message ml-[10px] text-[12px]"
-                ></i>
             </div>
             <ContextMenuContainer
                 v-model:show="isShowMenu"

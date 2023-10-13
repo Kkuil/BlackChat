@@ -53,9 +53,9 @@ public class ChatController {
      */
     @GetMapping("/message/list")
     @Operation(summary = "消息列表", description = "消息列表")
-    public ResultUtil<CursorPageBaseResp<ChatMessageResp>> listMessage(@Valid ChatMessageCursorReq request) {
+    public ResultUtil<CursorPageBaseResp<ChatMessageResp, String>> listMessage(@Valid ChatMessageCursorReq request) {
         Long uid = RequestHolderDTO.get().getUid();
-        CursorPageBaseResp<ChatMessageResp> messageList = chatService.listMessage(uid, request);
+        CursorPageBaseResp<ChatMessageResp, String> messageList = chatService.listMessage(uid, request);
         return ResultUtil.success(messageList);
     }
 
@@ -66,9 +66,9 @@ public class ChatController {
      * @return 列表
      */
     @GetMapping("member/list")
-    public ResultUtil<CursorPageBaseResp<ChatMemberResp>> listMember(@Valid ChatMemberCursorReq chatMemberCursorReq) {
+    public ResultUtil<CursorPageBaseResp<ChatMemberResp, String>> listMember(@Valid ChatMemberCursorReq chatMemberCursorReq) {
         Long uid = RequestHolderDTO.get().getUid();
-        CursorPageBaseResp<ChatMemberResp> chatMemberRespCursorPageBaseResp = chatService.listMember(uid, chatMemberCursorReq);
+        CursorPageBaseResp<ChatMemberResp, String> chatMemberRespCursorPageBaseResp = chatService.listMember(uid, chatMemberCursorReq);
         return ResultUtil.success(chatMemberRespCursorPageBaseResp);
     }
 }

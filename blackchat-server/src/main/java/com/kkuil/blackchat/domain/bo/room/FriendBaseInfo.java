@@ -2,6 +2,8 @@ package com.kkuil.blackchat.domain.bo.room;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @Author Kkuil
  * @Date 2023/10/5 19:07

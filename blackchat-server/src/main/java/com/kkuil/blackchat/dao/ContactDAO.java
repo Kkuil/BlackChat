@@ -1,5 +1,8 @@
 package com.kkuil.blackchat.dao;
 
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -32,10 +35,13 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
      *
      * @return 数据
      */
-    public CursorPageBaseResp<ContactWithActiveMsg> getCursorPage(Long uid, ChatContactCursorReq request) {
-        List<ContactWithActiveMsg> list = contactMapper.getCursorPage(uid, request);
-        CursorPageBaseResp<ContactWithActiveMsg> contactWithActiveMsgCursorPageBaseResp = new CursorPageBaseResp<>();
-        contactWithActiveMsgCursorPageBaseResp.setCursor(String.valueOf(list.get(list.size() - 1).getReadTime().getTime()));
+    public CursorPageBaseResp<ContactWithActiveMsg, String> getCursorPage(Long uid, ChatContactCursorReq request) {
+        DateTime cursor = ObjectUtil.isNotNull(request.getCursor()) ? DateUtil.date(Long.parseLong(request.getCursor())) : null;
+        List<ContactWithActiveMsg> list = contactMapper.getCursorPage(uid, request, cursor);
+        CursorPageBaseResp<ContactWithActiveMsg, String> contactWithActiveMsgCursorPageBaseResp = new CursorPageBaseResp<>();
+        if (list.size() > 0) {
+            contactWithActiveMsgCursorPageBaseResp.setCursor(String.valueOf(list.get(list.size() - 1).getActiveTime().getTime()));
+        }
         contactWithActiveMsgCursorPageBaseResp.setList(list);
         contactWithActiveMsgCursorPageBaseResp.setIsLast(request.getPageSize() > list.size());
         return contactWithActiveMsgCursorPageBaseResp;
@@ -79,6 +85,7 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
 
     /**
      * 删除会话
+     *
      * @param roomId 房间ID
      */
     public void deleteByRoomId(Long roomId) {

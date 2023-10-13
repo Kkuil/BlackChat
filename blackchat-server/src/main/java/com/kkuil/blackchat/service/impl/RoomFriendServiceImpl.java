@@ -126,7 +126,7 @@ public class RoomFriendServiceImpl implements RoomFriendService {
         AssertUtil.isFalse(isFriend, UserErrorEnum.ALREADY_FRIEND.getMsg());
 
         // 2. 判断是否已经是提交过了好友申请
-        Boolean isApplying = userApplyDao.isApplying(uid, repliedId);
+        Boolean isApplying = userApplyDao.isApplyingFriend(uid, repliedId);
         AssertUtil.isFalse(isApplying, UserErrorEnum.REPEAT_APPLY.getMsg());
 
         // 3. 添加好友

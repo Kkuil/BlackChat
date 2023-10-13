@@ -13,8 +13,8 @@
                  JOIN room AS r
                       ON c.room_id = r.id
         WHERE uid = #{uid}
-        <if test="request.cursor">
-            AND r.active_time > #{request.cursor}
+        <if test="cursor != null">
+            AND r.active_time > #{cursor}
         </if>
         ORDER BY r.active_time DESC
         LIMIT 0, #{request.pageSize}

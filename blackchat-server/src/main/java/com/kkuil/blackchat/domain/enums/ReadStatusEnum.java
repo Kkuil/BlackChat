@@ -15,7 +15,7 @@ public enum ReadStatusEnum {
      *
      */
     UNREAD(1, "未读"),
-    READED(2, "已读"),
+    READ(2, "已读"),
     ;
     private final Integer status;
     private final String msg;

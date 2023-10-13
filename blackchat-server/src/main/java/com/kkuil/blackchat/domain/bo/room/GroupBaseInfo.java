@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author Kkuil
@@ -27,6 +28,11 @@ public class GroupBaseInfo {
      * 群头像
      */
     private String avatar;
+
+    /**
+     * 群成员
+     */
+    private List<Long> memberList;
 
     /**
      * 额外信息（根据不同类型房间有不同存储的东西）

@@ -4,6 +4,7 @@ import com.kkuil.blackchat.domain.vo.request.CursorPageBaseReq;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * @Author Kkuil
@@ -13,6 +14,6 @@ import javax.validation.constraints.NotNull;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-public class ChatContactCursorReq extends CursorPageBaseReq {
+public class ChatContactCursorReq extends CursorPageBaseReq<String> {
 
 }

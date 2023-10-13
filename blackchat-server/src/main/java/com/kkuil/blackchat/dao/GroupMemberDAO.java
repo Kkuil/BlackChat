@@ -1,17 +1,22 @@
 package com.kkuil.blackchat.dao;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.BooleanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkuil.blackchat.cache.GroupCache;
+import com.kkuil.blackchat.cache.RoomGroupCache;
+import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.core.contact.domain.enums.GroupRoleEnum;
+import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
 import com.kkuil.blackchat.domain.entity.GroupMember;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.mapper.GroupMemberMapper;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
+import com.kkuil.blackchat.utils.RedisUtil;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -38,7 +43,7 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
 
     @Resource
     @Lazy
-    private GroupCache groupCache;
+    private RoomGroupCache roomGroupCache;
 
     /**
      * 判断某名用户在某个房间内是否有指定权限
@@ -87,10 +92,10 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      */
     public Boolean isGroupShip(Long roomId, Long... uids) {
         // 1. 通过ID查询房间内的所有成员ID
-        List uidList = groupCache.getGroupUidByRoomId(roomId);
+        List<Long> uidList = roomGroupCache.getGroupUidByRoomId(roomId);
         // 2. 判断每个成员是否在这个集合中
         for (Long uid : uids) {
-            boolean contains = uidList.contains(Integer.parseInt(uid.toString()));
+            boolean contains = uidList.contains(uid);
             AssertUtil.isTrue(contains, ChatErrorEnum.NOT_IN_GROUP.getMsg());
         }
         return true;
@@ -153,9 +158,30 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @return 是否退出
      */
     public Boolean exitGroup(Long groupId, Long uid) {
+        // 删库
         QueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>()
                 .eq("room_id", groupId)
                 .eq("uid", uid);
+
+        // 更新缓存
+        String key = RedisKeyConst.getKey(RedisKeyConst.GROUP_INFO_STRING, groupId);
+        GroupBaseInfo groupBaseInfo = RedisUtil.get(key, GroupBaseInfo.class);
+        List<Long> list = groupBaseInfo.getMemberList().stream().filter(id -> BooleanUtil.isFalse(id.equals(uid))).toList();
+        groupBaseInfo.setMemberList(list);
+        RedisUtil.set(key, groupBaseInfo);
         return this.remove(wrapper);
+    }
+
+    /**
+     * 获取用户建群数量
+     *
+     * @param uid 用户ID
+     * @return 建群数量
+     */
+    public Integer getCreateGroupCountByUid(Long uid) {
+        return Math.toIntExact(this.lambdaQuery()
+                .eq(GroupMember::getUid, uid)
+                .eq(GroupMember::getRole, GroupRoleEnum.MASTER.getId())
+                .count());
     }
 }

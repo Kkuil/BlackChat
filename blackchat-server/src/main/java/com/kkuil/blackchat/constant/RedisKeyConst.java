@@ -48,14 +48,14 @@ public class RedisKeyConst {
     public static final String ROOM_INFO_STRING = "roomInfo:roomId_%d";
 
     /**
+     * 好友详情
+     */
+    public static final String FRIEND_INFO_STRING = "friendInfo:roomId_%d";
+
+    /**
      * 群组详情
      */
     public static final String GROUP_INFO_STRING = "groupInfo:roomId_%d";
-
-    /**
-     * 群组成員uid
-     */
-    public static final String GROUP_UID_STRING = "group:uid_%s";
 
     /**
      * 用户token存放

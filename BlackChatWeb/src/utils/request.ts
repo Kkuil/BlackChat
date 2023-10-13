@@ -10,7 +10,6 @@ console.log(BASE_URL, BASE_TIMEOUT, BASE_PREFIX)
 
 const request = axios.create({
     baseURL: BASE_PREFIX,
-    // baseURL: BASE_URL + BASE_PREFIX,
     timeout: BASE_TIMEOUT
 })
 

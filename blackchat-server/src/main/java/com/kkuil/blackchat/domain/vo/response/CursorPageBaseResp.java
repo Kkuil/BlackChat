@@ -19,12 +19,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class CursorPageBaseResp<T> {
+public class CursorPageBaseResp<T, C> {
 
     /**
      * 游标（下次翻页带上这参数）
      */
-    private String cursor;
+    private C cursor;
 
     /**
      * 是否最后一页
@@ -41,8 +41,8 @@ public class CursorPageBaseResp<T> {
      */
     private Object extraInfo;
 
-    public static <T> CursorPageBaseResp<T> init(CursorPageBaseResp<?> cursorPage, List<T> list) {
-        CursorPageBaseResp<T> cursorPageBaseResp = new CursorPageBaseResp<>();
+    public static <T, C> CursorPageBaseResp<T, C> init(CursorPageBaseResp<?, C> cursorPage, List<T> list) {
+        CursorPageBaseResp<T, C> cursorPageBaseResp = new CursorPageBaseResp<>();
         cursorPageBaseResp.setIsLast(cursorPage.getIsLast());
         cursorPageBaseResp.setList(list);
         cursorPageBaseResp.setCursor(cursorPage.getCursor());
@@ -54,8 +54,8 @@ public class CursorPageBaseResp<T> {
         return CollectionUtil.isEmpty(list);
     }
 
-    public static <T> CursorPageBaseResp<T> empty() {
-        CursorPageBaseResp<T> cursorPageBaseResp = new CursorPageBaseResp<T>();
+    public static <T, C> CursorPageBaseResp<T, C> empty() {
+        CursorPageBaseResp<T, C> cursorPageBaseResp = new CursorPageBaseResp<T, C>();
         cursorPageBaseResp.setIsLast(true);
         cursorPageBaseResp.setList(new ArrayList<T>());
         return cursorPageBaseResp;

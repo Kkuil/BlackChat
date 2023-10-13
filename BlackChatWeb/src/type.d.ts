@@ -27,7 +27,8 @@ declare namespace GlobalTypes {
     type PageResp<T> = {
         pageSize: number
         current: number | null
-        data: T
+        total: number
+        data: T[]
     }
     // 用户信息格式
     type UserInfo = Partial<{
@@ -36,13 +37,6 @@ declare namespace GlobalTypes {
         avatar: string
         activeStatus: number
     }>
-    // 基本消息格式
-    type Message = {
-        id: number
-        content: string
-        sendTime: number
-        sender: UserInfo
-    }
     // 用户基本信息
     type UserBaseInfo = {
         uid: number

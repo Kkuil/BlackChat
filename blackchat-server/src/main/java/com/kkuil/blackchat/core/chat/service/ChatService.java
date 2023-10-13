@@ -39,7 +39,7 @@ public interface ChatService {
      * @param chatMemberCursorReq 成员请求信息
      * @return 成员信息
      */
-    CursorPageBaseResp<ChatMemberResp> listMember(Long uid, ChatMemberCursorReq chatMemberCursorReq);
+    CursorPageBaseResp<ChatMemberResp, String> listMember(Long uid, ChatMemberCursorReq chatMemberCursorReq);
 
     /**
      * 获取消息列表
@@ -48,5 +48,5 @@ public interface ChatService {
      * @param uid                  用户ID
      * @return 响应参数
      */
-    CursorPageBaseResp<ChatMessageResp> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq);
+    CursorPageBaseResp<ChatMessageResp, String> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq);
 }

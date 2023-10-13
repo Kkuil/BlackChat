@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class ChatMessageCursorReq extends CursorPageBaseReq {
+public class ChatMessageCursorReq extends CursorPageBaseReq<String> {
 
     /**
      * 房间ID

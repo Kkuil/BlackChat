@@ -1,16 +1,12 @@
 package com.kkuil.blackchat.dao;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.UserCache;
-import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
-import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
 import com.kkuil.blackchat.domain.common.page.PageReq;
-import com.kkuil.blackchat.domain.common.page.PageRes;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.enums.YesOrNoEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
@@ -21,6 +17,7 @@ import com.kkuil.blackchat.core.chat.domain.vo.request.member.ChatMemberCursorRe
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -68,7 +65,7 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
      * @param request 游标请求
      * @return 数据
      */
-    public CursorPageBaseResp<User> getCursorPage(List<Long> uidList, ChatMemberCursorReq request) {
+    public CursorPageBaseResp<User, String> getCursorPage(List<Long> uidList, ChatMemberCursorReq request) {
         return CursorUtil.getCursorPageByMysql(this, request, wrapper -> {
             wrapper.eq(User::getActiveStatus, request.getActiveStatus());
             wrapper.in(CollectionUtil.isNotEmpty(uidList), User::getId, uidList);
@@ -104,8 +101,13 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
      * @return 用户信息列表
      */
     public List<User> getBath(List<Long> uidList) {
-        return this.lambdaQuery()
-                .in(User::getId, uidList).list();
+        if (CollectionUtil.isNotEmpty(uidList)) {
+            return this.lambdaQuery()
+                    .in(User::getId, uidList)
+                    .list();
+        } else {
+            return new ArrayList<>();
+        }
     }
 
     /**
@@ -114,12 +116,11 @@ public class UserDAO extends ServiceImpl<UserMapper, User> {
      * @param name 用户名
      * @return 数据
      */
-    public Page<User> getBatchByNameWithAmbigous(PageReq<String> pageReq) {
+    public Page<User> getBatchByNameWithAmbiguous(PageReq<String> pageReq) {
         Page<User> userPage = new Page<>(pageReq.getCurrent(), pageReq.getPageSize(), true);
-        Page<User> page = this.lambdaQuery()
+        return this.lambdaQuery()
                 .like(StrUtil.isNotEmpty(pageReq.getData()), User::getName, pageReq.getData())
                 .select(User::getId)
                 .page(userPage);
-        return page;
     }
 }

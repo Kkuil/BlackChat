@@ -48,7 +48,7 @@ export const useMessageStore = defineStore("message", () => {
     >({
         pageSize: 15,
         cursor: null,
-        isLast: false
+        isLast: true
     })
 
     /**
@@ -117,7 +117,7 @@ export const useMessageStore = defineStore("message", () => {
         listPage.value = {
             pageSize: 15,
             cursor: null,
-            isLast: false
+            isLast: true
         }
     }
 

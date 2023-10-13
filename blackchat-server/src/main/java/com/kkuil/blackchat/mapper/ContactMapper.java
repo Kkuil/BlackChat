@@ -1,10 +1,10 @@
 package com.kkuil.blackchat.mapper;
 
+import cn.hutool.core.date.DateTime;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.entity.Contact;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -22,7 +22,8 @@ public interface ContactMapper extends BaseMapper<Contact> {
      *
      * @param uid     用户ID
      * @param request 信息
+     * @param cursor  游标
      * @return 会话列表
      */
-    List<ContactWithActiveMsg> getCursorPage(Long uid, ChatContactCursorReq request);
+    List<ContactWithActiveMsg> getCursorPage(Long uid, ChatContactCursorReq request, DateTime cursor);
 }

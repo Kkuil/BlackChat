@@ -18,8 +18,6 @@ export function formatTimestamp(date: Date): string {
     const cur_timestamp = Date.now()
     const date_timestamp = date.getTime()
 
-    console.log(cur_timestamp, date)
-
     // 2. 计算时间差
     const diff = cur_timestamp - date_timestamp
     if (diff < THREE_SECONDS) {

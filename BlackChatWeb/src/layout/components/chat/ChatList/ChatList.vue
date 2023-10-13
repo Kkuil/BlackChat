@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import ChatItem from "@/layout/components/chat/ChatList/components/ChatItem.vue"
 import { useSessionStore } from "@/stores/session"
-import eventBus from "@/utils/eventBus"
-import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
-import { watch } from "vue"
-import { useUserStore } from "@/stores/user"
+import { onMounted } from "vue"
 
 const sessionStore = useSessionStore()
-const userStore = useUserStore()
 
 /**
  * 切换会话
@@ -15,25 +11,13 @@ const userStore = useUserStore()
  */
 const switchSession = (e: Event & { target: { dataset: { id: string } } }) => {
     const id = e.target.dataset.id
-    console.log(id, sessionStore.sessionInfo.chattingId)
     if (!id || id == sessionStore.sessionInfo.chattingId) return
     sessionStore.switchSession(id)
 }
 
-eventBus.on(WsEventEnum.CONN_SUCCESS, () => {
+onMounted(() => {
     sessionStore.getSessionList()
 })
-
-watch(
-    () => userStore.userInfo.uid,
-    () => {
-        sessionStore.resetSessionPage()
-        sessionStore.getSessionList()
-    },
-    {
-        immediate: true
-    }
-)
 </script>
 
 <template>
@@ -53,6 +37,17 @@ watch(
                 :session="session"
                 class="mb-[10px] pointer-events-none"
             />
+        </div>
+        <div
+            class="flex-center text-[#fff]"
+            v-if="!sessionStore.listSessionPage.isLast"
+        >
+            <i
+                class="iconfont icon-loading animate-spin"
+                v-observe="sessionStore.getSessionList"
+            >
+            </i>
+            <span class="text-[13px]">会话列表加载中</span>
         </div>
     </div>
 </template>

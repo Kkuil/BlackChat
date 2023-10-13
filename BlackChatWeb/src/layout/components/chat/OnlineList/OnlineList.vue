@@ -4,27 +4,10 @@ import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useUserStore } from "@/stores/user"
 import { HOT_GROUP_ID } from "@/constant/global"
 import { Avatar } from "@element-plus/icons-vue"
-import { onMounted, ref } from "vue"
-import ContextMenuContainer from "@/components/ContextMenuContainer/ContextMenuContainer.vue"
 
 const sessionStore = useSessionStore()
 
 const userStore = useUserStore()
-const USER_ITEMS = ["aite", "add-friend"]
-const menuOptions = ref({ x: 0, y: 0 })
-const isShowMenu = ref<boolean>(false)
-
-/** 右键菜单 */
-const handleUserRightClick = (e: MouseEvent) => {
-    const { x, y } = e
-    menuOptions.value.x = x
-    menuOptions.value.y = y
-    isShowMenu.value = true
-}
-
-onMounted(async () => {
-    await sessionStore.getMemberList()
-})
 </script>
 
 <template>
@@ -49,13 +32,9 @@ onMounted(async () => {
             后再进行查看吧
         </div>
         <h1 class="online-count flex items-center h-[30px] text-[14px]">
-            总人数：{{ sessionStore.getSessionInfo.totalCount }}
+            总人数：{{ sessionStore.sessionInfo.totalCount }}
         </h1>
-        <ul
-            class="list flex-1 overflow-y-auto overflow-x-hidden"
-            v-infinite-scroll="sessionStore.getMemberList"
-            v-if="sessionStore.getSessionInfo.totalCount"
-        >
+        <ul class="list flex-1 overflow-y-auto overflow-x-hidden">
             <TransitionGroup
                 v-show="sessionStore.sessionInfo.memberList.length"
                 tag="ul"
@@ -66,7 +45,6 @@ onMounted(async () => {
                     class="item flex items-center py-[7px] cursor-pointer mb-[5px] hover:bg-[#263242] rounded-[5px] px-[7px]"
                     v-for="member in sessionStore.sessionInfo.memberList"
                     :key="member.uid"
-                    @contextmenu.prevent.stop="handleUserRightClick"
                 >
                     <el-badge
                         is-dot
@@ -88,25 +66,13 @@ onMounted(async () => {
                 </li>
             </TransitionGroup>
             <li
-                class="w-full flex-center"
+                class="w-full flex-center text-[#fff]"
                 v-if="!sessionStore.listMemberPage.isLast"
                 v-observe="sessionStore.getMemberList"
             >
                 <i class="iconfont icon-loading animate-spin"></i>
             </li>
-            <li
-                v-if="sessionStore.listSessionPage.isLast"
-                class="w-full flex-center text-[#5b6061] text-[12px]"
-            >
-                暂无更多成员
-            </li>
         </ul>
-        <ContextMenuContainer
-            v-model:show="isShowMenu"
-            :message="message"
-            :options="menuOptions"
-            :items="USER_ITEMS"
-        />
     </div>
 </template>
 

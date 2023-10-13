@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { PROJECT_URL } from "@/constant/global"
+import ReceiveMessage from "@/layout/components/ToolSide/components/ReceiveMessage.vue"
 </script>
 
 <template>
     <div
         class="w-full h-full flex flex-row sm:flex-col items-center justify-end"
     >
+        <ReceiveMessage />
         <a
             class="item flex-center flex-col cursor-pointer"
             :href="PROJECT_URL"
@@ -19,7 +21,7 @@ import { PROJECT_URL } from "@/constant/global"
     </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .item {
     &:hover {
         .desc {
@@ -27,5 +29,21 @@ import { PROJECT_URL } from "@/constant/global"
             color: #0094ff !important;
         }
     }
+}
+
+.el-drawer {
+    background-color: #272e3d;
+
+    .el-drawer__header {
+        margin-bottom: 10px;
+    }
+
+    .el-drawer__body {
+        padding-top: 0;
+    }
+}
+
+.el-tabs__item {
+    color: #fff;
 }
 </style>

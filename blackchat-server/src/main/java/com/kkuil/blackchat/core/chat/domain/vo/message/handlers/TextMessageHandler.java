@@ -20,6 +20,7 @@ import com.kkuil.blackchat.core.chat.domain.vo.request.message.body.TextMessageR
 import com.kkuil.blackchat.core.chat.domain.vo.response.message.body.TextMessageRespBody;
 import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
+import com.kkuil.blackchat.utils.sensitive.SensitiveWordBs;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,8 @@ import java.util.*;
  */
 @Service
 public class TextMessageHandler extends AbstractMessageHandler<TextMessageRespBody> {
+
+    public static final SensitiveWordBs SENSITIVE_WORD_BS = SensitiveWordBs.newInstance();
 
     @Resource
     private MessageDAO messageDao;
@@ -72,6 +75,9 @@ public class TextMessageHandler extends AbstractMessageHandler<TextMessageRespBo
         Object body = chatMessageReq.getBody();
         Long roomId = chatMessageReq.getRoomId();
         TextMessageReqBody textMessage = BeanUtil.toBean(body, TextMessageReqBody.class);
+        // 1.1 检查敏感词
+        String content = textMessage.getContent();
+        AssertUtil.isFalse(SENSITIVE_WORD_BS.hasSensitiveWord(content), ChatErrorEnum.SENSITIVE_WORD.getMsg());
         // 2. 检查艾特消息
         List<Long> atUidList = textMessage.getAtUidList();
         boolean isAtUidListNotEmpty = CollectionUtil.isNotEmpty(atUidList);

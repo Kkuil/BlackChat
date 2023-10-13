@@ -3,12 +3,15 @@ import FriendInfo = Store.FriendInfo
 import { Avatar } from "@element-plus/icons-vue"
 import { useFriendStore } from "@/stores/friend"
 import { ElMessageBox } from "element-plus"
+import { useRouter } from "vue-router"
 
 const friendStore = useFriendStore()
 
 const props = defineProps<{
     user: Partial<FriendInfo>
 }>()
+
+const $router = useRouter()
 
 /**
  * 删除好友
@@ -23,6 +26,15 @@ const delFriend = () => {
         }
     ).then(() => {
         friendStore.deleteFriend(props.user.uid as number)
+    })
+}
+
+/**
+ * 发消息
+ */
+const returnSendMsg = () => {
+    $router.push({
+        path: "/chat"
     })
 }
 </script>
@@ -47,7 +59,12 @@ const delFriend = () => {
                 </h1>
             </div>
             <div class="ml-auto flex justify-around flex-col operation">
-                <el-button size="small" type="primary" class="w-[100px]">
+                <el-button
+                    size="small"
+                    type="primary"
+                    class="w-[100px]"
+                    @click="returnSendMsg"
+                >
                     发消息
                 </el-button>
                 <el-button

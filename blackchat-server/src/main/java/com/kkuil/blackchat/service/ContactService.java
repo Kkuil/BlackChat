@@ -22,7 +22,7 @@ public interface ContactService {
      * @param request 请求
      * @return 会话列表
      */
-    CursorPageBaseResp<ChatContactCursorResp> listContact(Long uid, ChatContactCursorReq request);
+    CursorPageBaseResp<ChatContactCursorResp, String> listContact(Long uid, ChatContactCursorReq request);
 
     /**
      * 用户阅读信息上报

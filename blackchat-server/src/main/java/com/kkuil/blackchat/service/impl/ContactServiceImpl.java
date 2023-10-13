@@ -14,6 +14,7 @@ import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.dao.ContactDAO;
 import com.kkuil.blackchat.dao.MessageDAO;
 import com.kkuil.blackchat.dao.RoomDAO;
+import com.kkuil.blackchat.dao.RoomFriendDAO;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.bo.room.FriendBaseInfo;
 import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
@@ -59,9 +60,6 @@ public class ContactServiceImpl implements ContactService {
     @Resource
     private ContactDAO contactDao;
 
-    @Resource
-    private RoomDAO roomDao;
-
     /**
      * 获取会话列表
      *
@@ -70,8 +68,8 @@ public class ContactServiceImpl implements ContactService {
      * @return 会话列表
      */
     @Override
-    public CursorPageBaseResp<ChatContactCursorResp> listContact(Long uid, ChatContactCursorReq request) {
-        CursorPageBaseResp<ContactWithActiveMsg> cursorPage = contactDao.getCursorPage(uid, request);
+    public CursorPageBaseResp<ChatContactCursorResp, String> listContact(Long uid, ChatContactCursorReq request) {
+        CursorPageBaseResp<ContactWithActiveMsg, String> cursorPage = contactDao.getCursorPage(uid, request);
 
         List<ChatContactCursorResp> list = cursorPage.getList().stream().map(contact -> {
             ChatContactCursorResp chatContactCursorResp = new ChatContactCursorResp();

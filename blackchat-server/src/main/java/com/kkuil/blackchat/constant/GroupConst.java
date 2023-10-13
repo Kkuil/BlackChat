@@ -5,11 +5,11 @@ package com.kkuil.blackchat.constant;
  * @Date 2023/10/5 9:24
  * @Description 房间常量
  */
-public class RoomConst {
+public class GroupConst {
 
     /**
-     * 大房间标志
+     * 建群上限
      */
-    public static final Long HOT_ROOM_ID = 1L;
+    public static final Integer MAX_CREATE_GROUP_COUNT = 10;
 
 }

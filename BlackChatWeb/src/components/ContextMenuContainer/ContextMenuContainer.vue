@@ -8,6 +8,9 @@ import { useUserStore } from "@/stores/user"
 import { useMessageStore } from "@/stores/message"
 import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
 import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
+import { ref } from "vue"
+import { addFriend } from "@/api/user"
+import { ElMessage } from "element-plus"
 
 const props = defineProps<{
     // 消息体
@@ -22,6 +25,8 @@ const userStore = useUserStore()
 const messageStore = useMessageStore()
 const isCurrentUser = props?.message?.fromUser?.uid == userStore.userInfo.uid
 
+const applyComment = ref<string>("")
+
 /**
  * 增加艾特
  */
@@ -32,8 +37,19 @@ const onAite = () => {
     })
 }
 
-const onAddFriend = () => {
-    console.log(props?.message?.fromUser?.uid)
+// 添加朋友操作
+const addFriendHandler = async () => {
+    if (applyComment.value.trim().length <= 0) {
+        return ElMessage.error("申请备注不能为空")
+    }
+    const result = await addFriend({
+        repliedId: props.message.fromUser.uid as number,
+        msg: applyComment.value
+    })
+    if (result.data) {
+        ElMessage.success(result.message)
+        applyComment.value = ""
+    }
 }
 
 const onRecall = () => {}
@@ -80,19 +96,45 @@ const getMessageShowInReply = (message: ChatMessageResp.Message<any, any>) => {
                 <i class="iconfont icon-aite"></i>
             </template>
         </ContextMenuItem>
-        <ContextMenuItem
-            v-if="
-                userStore.isLogin &&
-                !isCurrentUser &&
-                items.indexOf('add-friend') >= 0
-            "
-            label="加好友"
-            @click="onAddFriend"
+        <el-popover
+            title="申请备注"
+            placement="right"
+            :width="200"
+            trigger="click"
         >
-            <template #icon>
-                <i class="iconfont icon-plus"></i>
+            <template #reference>
+                <ContextMenuItem
+                    v-if="
+                        userStore.isLogin &&
+                        !isCurrentUser &&
+                        items.indexOf('add-friend') >= 0
+                    "
+                    label="加好友"
+                >
+                    <template #icon>
+                        <i class="iconfont icon-plus"></i>
+                    </template>
+                </ContextMenuItem>
             </template>
-        </ContextMenuItem>
+            <template #default>
+                <el-input
+                    v-model="applyComment"
+                    placeholder="请输入申请备注"
+                    :max="200"
+                    size="small"
+                    class="text-[#000]"
+                />
+                <div class="operation mt-[5px]">
+                    <el-button
+                        type="primary"
+                        size="small"
+                        @click="addFriendHandler"
+                    >
+                        确定
+                    </el-button>
+                </div>
+            </template>
+        </el-popover>
         <ContextMenuItem
             v-if="isCurrentUser && items.indexOf('recall') >= 0"
             label="撤回消息"

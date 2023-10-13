@@ -3,6 +3,8 @@ package com.kkuil.blackchat.domain.common.page;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.List;
+
 /**
  * @param <DataType>
  * @Description 分页响应返回的数据
@@ -30,5 +32,5 @@ public class PageRes<DataType> {
     /**
      * 数据
      */
-    private DataType data;
+    private List<DataType> data;
 }

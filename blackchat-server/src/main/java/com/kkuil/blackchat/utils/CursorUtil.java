@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
  */
 public class CursorUtil {
 
-    public static <T> CursorPageBaseResp<Pair<T, Double>> getCursorPageByRedis(
-            CursorPageBaseReq cursorPageBaseReq,
+    public static <T> CursorPageBaseResp<Pair<T, Double>, String> getCursorPageByRedis(
+            CursorPageBaseReq<String> cursorPageBaseReq,
             String redisKey,
             Function<String, T> typeConvert
     ) {
@@ -51,9 +51,9 @@ public class CursorUtil {
         return new CursorPageBaseResp<>(cursor, isLast, result, null);
     }
 
-    public static <T> CursorPageBaseResp<T> getCursorPageByMysql(
+    public static <T, C> CursorPageBaseResp<T, String> getCursorPageByMysql(
             IService<T> mapper,
-            CursorPageBaseReq request,
+            CursorPageBaseReq<String> request,
             Consumer<LambdaQueryWrapper<T>> initWrapper,
             SFunction<T, ?> cursorColumn
     ) {

@@ -32,7 +32,7 @@ public class ContactController {
      */
     @GetMapping("list")
     @Operation(summary = "获取会话列表", description = "获取会话列表")
-    public ResultUtil<CursorPageBaseResp<ChatContactCursorResp>> listContact(@Valid ChatContactCursorReq request) {
+    public ResultUtil<CursorPageBaseResp<ChatContactCursorResp, String>> listContact(@Valid ChatContactCursorReq request) {
         Long uid = RequestHolderDTO.get().getUid();
         return ResultUtil.success(contactService.listContact(uid, request));
     }

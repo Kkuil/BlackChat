@@ -4,10 +4,14 @@ import {
     TOKEN_KEY_IN_LOC,
     TOKEN_PREFIX
 } from "@/constant/auth"
+import { ToolSide } from "@/layout/components/ToolSide/components/type.d.ts"
+import { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp"
+import { ReadStatusEnum } from "@/enums/ReadStatusEnum"
 import ApiResult = GlobalTypes.ApiResult
 import UserInfo = GlobalTypes.UserInfo;
 import LimitPage = GlobalTypes.LimitPage;
 import CursorPageResp = GlobalTypes.CursorPageResp;
+import PageResp = GlobalTypes.PageResp;
 
 /**
  * 获取成员列表
@@ -109,6 +113,23 @@ export const listFriend = (): Promise<ApiResult<Store.FriendInfo[]>> => {
     return request({
         url: "/friend/list",
         method: "GET",
+        headers: {
+            [TOKEN_KEY_IN_HEADER]:
+                TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""
+        }
+    })
+}
+
+/**
+ * 获取收件箱列表
+ */
+export const listReceiveMessage = (
+    params: LimitPage<ReadStatusEnum>
+): Promise<ApiResult<PageResp<ToolSide.ReceiveMessageResp>>> => {
+    return request({
+        url: "/mail/list",
+        method: "GET",
+        params,
         headers: {
             [TOKEN_KEY_IN_HEADER]:
                 TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""

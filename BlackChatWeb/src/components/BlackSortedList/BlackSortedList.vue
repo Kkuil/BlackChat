@@ -125,7 +125,7 @@ const check = (e: Event & { target: { dataset: { id: string } } }) => {
                     </ul>
                 </div>
             </div>
-            <el-empty v-else description="暂无数据">
+            <el-empty v-else class="empty" description="暂无数据">
                 <template #image>
                     <el-icon>
                         <i class="iconfont icon-empty"></i>
@@ -165,6 +165,14 @@ const check = (e: Event & { target: { dataset: { id: string } } }) => {
 
 .selected {
     background: v-bind("bgSecondaryColor");
+}
+
+.empty {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .body {

@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.core.chat.service.impl;
 
 import com.kkuil.blackchat.cache.GroupCache;
+import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.dto.IpDetail;
@@ -62,7 +63,7 @@ public class ChatServiceImpl implements ChatService {
     private RoomDAO roomDao;
 
     @Resource
-    private GroupCache groupCache;
+    private RoomGroupCache roomGroupCache;
 
     @Resource
     private UserDAO userDao;
@@ -127,7 +128,7 @@ public class ChatServiceImpl implements ChatService {
      * @return 成员信息
      */
     @Override
-    public CursorPageBaseResp<ChatMemberResp> listMember(Long uid, ChatMemberCursorReq chatMemberCursorReq) {
+    public CursorPageBaseResp<ChatMemberResp, String> listMember(Long uid, ChatMemberCursorReq chatMemberCursorReq) {
         Long roomId = chatMemberCursorReq.getRoomId();
         // 0. 检查房间号是否存在
         Room room = roomDao.getById(roomId);
@@ -138,14 +139,14 @@ public class ChatServiceImpl implements ChatService {
         if (room.isHotRoom()) {
             uidList = null;
         } else {
-            uidList = groupCache.getGroupUidByRoomId(roomId);
+            uidList = roomGroupCache.getGroupUidByRoomId(roomId);
             // 1. 检查用户是否在房间内(用户不在房间内，不让获取群列表)
             Boolean isMember = roomService.checkRoomMembership(roomId, uid);
             AssertUtil.isTrue(isMember, ChatErrorEnum.NOT_IN_GROUP.getMsg());
         }
 
         // 3. 获取数据
-        CursorPageBaseResp<User> userCursorPageBaseResp;
+        CursorPageBaseResp<User, String> userCursorPageBaseResp;
         Integer activeStatus = chatMemberCursorReq.getActiveStatus();
         Integer pageSize = chatMemberCursorReq.getPageSize();
 
@@ -160,7 +161,7 @@ public class ChatServiceImpl implements ChatService {
                 int remainCount = chatMemberCursorReq.getPageSize() - size;
                 chatMemberCursorReq.setPageSize(remainCount);
                 chatMemberCursorReq.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
-                CursorPageBaseResp<User> cursorPage = userDao.getCursorPage(uidList, chatMemberCursorReq);
+                CursorPageBaseResp<User, String> cursorPage = userDao.getCursorPage(uidList, chatMemberCursorReq);
                 userCursorPageBaseResp.getList().addAll(cursorPage.getList());
                 userCursorPageBaseResp.setCursor(cursorPage.getCursor());
                 chatMemberExtraResp.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
@@ -203,7 +204,7 @@ public class ChatServiceImpl implements ChatService {
      * @return 响应参数
      */
     @Override
-    public CursorPageBaseResp<ChatMessageResp> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq) {
+    public CursorPageBaseResp<ChatMessageResp, String> listMessage(Long uid, ChatMessageCursorReq chatMessageCursorReq) {
         Long roomId = chatMessageCursorReq.getRoomId();
         // 0. 检查房间号是否存在
         Room room = roomDao.getById(roomId);
@@ -217,7 +218,7 @@ public class ChatServiceImpl implements ChatService {
         }
 
         // 2. 获取群消息
-        CursorPageBaseResp<Message> messageCursorPageBaseResp = messageDao.getCursorPage(chatMessageCursorReq);
+        CursorPageBaseResp<Message, String> messageCursorPageBaseResp = messageDao.getCursorPage(chatMessageCursorReq);
 
         // 3. 构建消息
         List<ChatMessageResp> list = messageCursorPageBaseResp.getList().stream()

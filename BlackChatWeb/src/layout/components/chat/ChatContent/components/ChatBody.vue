@@ -26,11 +26,17 @@ const lastMessage: ChatMessageResp.ChatMessageBaseResp<SystemMessageBody, any> =
 
 <template>
     <div class="h-full bg-secondary overflow-x-hidden" ref="bodyRef">
-        <span
-            v-observe="messageStore.getMessageList"
+        <div
+            class="flex-center text-[#fff]"
             v-if="!messageStore.listPage.isLast"
         >
-        </span>
+            <i
+                class="iconfont icon-loading animate-spin"
+                v-observe="messageStore.getMessageList"
+            >
+            </i>
+            <span class="text-[13px] ml-[5px]">消息列表加载中</span>
+        </div>
         <ChatMessageItemStrategy
             v-if="messageStore.listPage.isLast"
             :message="lastMessage"

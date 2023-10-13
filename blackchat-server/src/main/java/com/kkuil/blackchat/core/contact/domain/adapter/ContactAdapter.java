@@ -20,8 +20,8 @@ public class ContactAdapter {
      * @param cursorPage 游标对象
      * @return 返回响应
      */
-    public static CursorPageBaseResp<ChatContactCursorResp> buildContactCursorPage(List<ChatContactCursorResp> list, CursorPageBaseResp<ContactWithActiveMsg> cursorPage) {
-        CursorPageBaseResp<ChatContactCursorResp> chatMemberRespCursorPageBaseResp = new CursorPageBaseResp<>();
+    public static CursorPageBaseResp<ChatContactCursorResp, String> buildContactCursorPage(List<ChatContactCursorResp> list, CursorPageBaseResp<ContactWithActiveMsg, String> cursorPage) {
+        CursorPageBaseResp<ChatContactCursorResp, String> chatMemberRespCursorPageBaseResp = new CursorPageBaseResp<>();
         chatMemberRespCursorPageBaseResp.setCursor(cursorPage.getCursor());
         chatMemberRespCursorPageBaseResp.setIsLast(cursorPage.getIsLast());
         chatMemberRespCursorPageBaseResp.setList(list);

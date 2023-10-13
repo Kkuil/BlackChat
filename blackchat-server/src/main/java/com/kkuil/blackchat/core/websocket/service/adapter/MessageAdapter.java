@@ -20,8 +20,8 @@ public class MessageAdapter {
      * @param list                      列表
      * @return 对象
      */
-    public static CursorPageBaseResp<ChatMessageResp> buildChatMessageRespList(CursorPageBaseResp<Message> messageCursorPageBaseResp, List<ChatMessageResp> list) {
-        CursorPageBaseResp<ChatMessageResp> cursorPageBaseResp = new CursorPageBaseResp<>();
+    public static CursorPageBaseResp<ChatMessageResp, String> buildChatMessageRespList(CursorPageBaseResp<Message, String> messageCursorPageBaseResp, List<ChatMessageResp> list) {
+        CursorPageBaseResp<ChatMessageResp, String> cursorPageBaseResp = new CursorPageBaseResp<>();
         cursorPageBaseResp.setList(list);
         cursorPageBaseResp.setCursor(messageCursorPageBaseResp.getCursor());
         cursorPageBaseResp.setIsLast(messageCursorPageBaseResp.getIsLast());

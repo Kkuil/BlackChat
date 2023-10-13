@@ -1,5 +1,4 @@
 import { Ref } from "vue"
-import _ from "lodash"
 
 const elMapCb = new WeakMap()
 
@@ -8,7 +7,7 @@ const ob: IntersectionObserver = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             const cb = elMapCb.get(entry.target)
             if (cb instanceof Function) {
-                _.throttle(cb, 500)()
+                cb()
             }
         }
     }

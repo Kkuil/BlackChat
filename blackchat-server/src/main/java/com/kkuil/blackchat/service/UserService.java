@@ -47,5 +47,5 @@ public interface UserService {
      * @param pageReq 分页信息
      * @return 用户列表
      */
-    PageRes<List<UserSearchRespVO>> search(Long uid, PageReq<String> pageReq);
+    PageRes<UserSearchRespVO> search(Long uid, PageReq<String> pageReq);
 }

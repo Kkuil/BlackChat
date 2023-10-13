@@ -70,7 +70,7 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
      * @param request 消息请求
      * @return 消息列表
      */
-    public CursorPageBaseResp<Message> getCursorPage(ChatMessageCursorReq request) {
+    public CursorPageBaseResp<Message, String> getCursorPage(ChatMessageCursorReq request) {
         return CursorUtil.getCursorPageByMysql(this, request, wrapper -> {
             wrapper.eq(Message::getStatus, MessageStatusEnum.NORMAL.getStatus());
             wrapper.eq(Message::getRoomId, request.getRoomId());

@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.service.impl;
 
 import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.constant.GroupConst;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
 import com.kkuil.blackchat.dao.*;
@@ -105,7 +106,11 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             AssertUtil.isTrue(user.getIsFriend(), UserErrorEnum.NOT_FRIEND.getMsg());
         });
 
-        // 3. 创建群聊
+        // 3. 判断是否已经达到建群上限
+        Integer count = groupMemberDao.getCreateGroupCountByUid(uid);
+        AssertUtil.isTrue(count < GroupConst.MAX_CREATE_GROUP_COUNT, ChatErrorEnum.CREATE_GROUP_MAX_COUNT.getMsg());
+
+        // 4. 创建群聊
         Boolean isAddFriend = userApplyDao.createGroup(uid, uidList, msg);
         AssertUtil.isTrue(isAddFriend, UserErrorEnum.COMMIT_APPLY_FAIL.getMsg());
 

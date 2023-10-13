@@ -51,7 +51,7 @@ public class UserCommonController {
     @GetMapping("search")
     @FrequencyControl(prefixKey = "search", target = FrequencyControl.Target.IP, time = 10, unit = TimeUnit.SECONDS, count = 5)
     @Operation(summary = "搜索用户", description = "搜索用户")
-    public ResultUtil<PageRes<List<UserSearchRespVO>>> search(PageReq<String> pageReq) {
+    public ResultUtil<PageRes<UserSearchRespVO>> search(PageReq<String> pageReq) {
         Long uid = RequestHolderDTO.get().getUid();
         return ResultUtil.success(userService.search(uid, pageReq));
     }

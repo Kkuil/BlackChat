@@ -36,8 +36,8 @@ public class GroupController {
     /**
      * 创建群聊
      *
-     * @param uidList uid列表
-     * @return 是否请求成功
+     * @param createGroupReq 请求信息
+     * @return 是否创建成功
      */
     @PostMapping("create-group")
     @Operation(summary = "创建群聊", description = "创建群聊")

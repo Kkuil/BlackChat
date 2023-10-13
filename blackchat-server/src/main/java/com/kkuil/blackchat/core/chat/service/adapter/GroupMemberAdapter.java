@@ -20,8 +20,8 @@ public class GroupMemberAdapter {
      * @param groupMemberCursorPageBaseResp 群成员列表
      * @return 最终信息
      */
-    public static CursorPageBaseResp<ChatMemberResp> buildChatMemberCursorPage(List<ChatMemberResp> list, CursorPageBaseResp<User> groupMemberCursorPageBaseResp) {
-        CursorPageBaseResp<ChatMemberResp> chatMemberRespCursorPageBaseResp = new CursorPageBaseResp<>();
+    public static CursorPageBaseResp<ChatMemberResp, String> buildChatMemberCursorPage(List<ChatMemberResp> list, CursorPageBaseResp<User, String> groupMemberCursorPageBaseResp) {
+        CursorPageBaseResp<ChatMemberResp, String> chatMemberRespCursorPageBaseResp = new CursorPageBaseResp<>();
         chatMemberRespCursorPageBaseResp.setCursor(groupMemberCursorPageBaseResp.getCursor());
         chatMemberRespCursorPageBaseResp.setIsLast(groupMemberCursorPageBaseResp.getIsLast());
         chatMemberRespCursorPageBaseResp.setList(list);
