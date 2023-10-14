@@ -57,7 +57,7 @@ public class FriendController {
     @Operation(summary = "加好友", description = "加好友")
     public ResultUtil<Boolean> addFriend(@RequestBody AddFriendReq addFriendReq) {
         Long uid = RequestHolderDTO.get().getUid();
-        return ResultUtil.success(roomFriendService.addFriend(uid, addFriendReq), true);
+        return ResultUtil.success(roomFriendService.applyAddFriend(uid, addFriendReq), true);
     }
 
 }

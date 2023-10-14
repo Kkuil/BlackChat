@@ -13,11 +13,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FriendResp {
-
     /**
      * 用户ID
      */
     private Long uid;
+
+    /**
+     * 房间ID
+     */
+    private Long roomId;
 
     /**
      * 用户地区

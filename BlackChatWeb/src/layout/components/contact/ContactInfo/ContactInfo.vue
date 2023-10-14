@@ -4,6 +4,7 @@ import { Avatar } from "@element-plus/icons-vue"
 import { useFriendStore } from "@/stores/friend"
 import { ElMessageBox } from "element-plus"
 import { useRouter } from "vue-router"
+import { useSessionStore } from "@/stores/session"
 
 const friendStore = useFriendStore()
 
@@ -12,6 +13,8 @@ const props = defineProps<{
 }>()
 
 const $router = useRouter()
+
+const sessionStore = useSessionStore()
 
 /**
  * 删除好友
@@ -36,6 +39,7 @@ const returnSendMsg = () => {
     $router.push({
         path: "/chat"
     })
+    sessionStore.switchSession(props.user.roomId as string)
 }
 </script>
 

@@ -39,6 +39,19 @@ public class ContactController {
     }
 
     /**
+     * 获取会话信息
+     *
+     * @param roomId 房间ID
+     * @return 会话列表
+     */
+    @GetMapping
+    @Operation(summary = "获取会话信息", description = "获取会话信息")
+    public ResultUtil<ChatContactCursorResp> getContact(Long roomId) {
+        Long uid = RequestHolderDTO.get().getUid();
+        return ResultUtil.success(contactService.getContact(uid, roomId));
+    }
+
+    /**
      * 用户已读上报
      *
      * @param request 用户上报信息

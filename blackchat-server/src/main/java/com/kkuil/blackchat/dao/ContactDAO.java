@@ -1,14 +1,12 @@
 package com.kkuil.blackchat.dao;
 
-import cn.hutool.core.date.DateTime;
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
+import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.entity.Contact;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
@@ -51,7 +49,7 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
      * @param roomId 房间ID
      * @return 会话信息
      */
-    public Contact getByRoomId(Long uid, Long roomId) {
+    public Contact getByUidRoomId(Long uid, Long roomId) {
         return this.lambdaQuery().eq(Contact::getUid, uid).eq(Contact::getRoomId, roomId).one();
     }
 
@@ -99,12 +97,14 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
      *
      * @param uid    用户ID
      * @param roomId 房间ID
+     * @return contact 会话信息
      */
-    public void createContact(Long uid, Long roomId, Date readTime) {
+    public Contact createContact(Long uid, Long roomId, Date readTime) {
         Contact contact = new Contact();
         contact.setUid(uid);
         contact.setRoomId(roomId);
         contact.setReadTime(readTime);
         this.save(contact);
+        return contact;
     }
 }

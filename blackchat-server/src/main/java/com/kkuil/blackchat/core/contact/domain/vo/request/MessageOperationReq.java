@@ -21,7 +21,7 @@ public class MessageOperationReq {
     private Long id;
 
     /**
-     * 操作类型
+     * 操作类型 2同意 3拒绝
      */
     @NotNull(message = "操作类型不能为空")
     private Integer status;

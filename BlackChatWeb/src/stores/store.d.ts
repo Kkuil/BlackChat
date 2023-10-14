@@ -17,6 +17,7 @@ declare namespace Store {
     }
     type FriendInfo = {
         uid: number
+        roomId: number
         name: string
         avatar: string
         place: string

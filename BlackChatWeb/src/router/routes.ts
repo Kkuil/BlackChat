@@ -20,7 +20,7 @@ export const routes: RouteRecordRaw[] = [
                 name: "contact",
                 path: "/contact",
                 component: () =>
-                    import("@/views/BlackChatHome/ContactView/ContactView.vue")
+                    import("@/views/BlackChatHome/SessionView/SessionView.vue")
             }
         ]
     },

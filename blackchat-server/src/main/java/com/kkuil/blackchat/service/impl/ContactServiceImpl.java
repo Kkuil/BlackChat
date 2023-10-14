@@ -10,11 +10,8 @@ import com.kkuil.blackchat.core.contact.domain.adapter.ContactAdapter;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatReadMessageReq;
 import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
-import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.dao.ContactDAO;
 import com.kkuil.blackchat.dao.MessageDAO;
-import com.kkuil.blackchat.dao.RoomDAO;
-import com.kkuil.blackchat.dao.RoomFriendDAO;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.bo.room.FriendBaseInfo;
 import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
@@ -25,6 +22,7 @@ import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
+import com.kkuil.blackchat.mapper.ContactMapper;
 import com.kkuil.blackchat.service.ContactService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
@@ -60,6 +58,9 @@ public class ContactServiceImpl implements ContactService {
     @Resource
     private ContactDAO contactDao;
 
+    @Resource
+    private ContactMapper contactMapper;
+
     /**
      * 获取会话列表
      *
@@ -72,71 +73,7 @@ public class ContactServiceImpl implements ContactService {
         CursorPageBaseResp<ContactWithActiveMsg, Date> cursorPage = contactDao.getCursorPage(uid, request);
 
         List<ChatContactCursorResp> list = cursorPage.getList().stream().map(contact -> {
-            ChatContactCursorResp chatContactCursorResp = new ChatContactCursorResp();
-            Long roomId = contact.getRoomId();
-
-            chatContactCursorResp.setRoomId(roomId);
-            if (!UserConst.TEMP_USER_UID.equals(uid)) {
-                chatContactCursorResp.setActiveTime(Optional.ofNullable(contact.getActiveTime()).orElse(new Date()));
-            }
-
-            // 通过房间ID获取房间信息
-            RoomBaseInfo roomBaseInfo = roomCache.getRoomBaseInfoById(roomId);
-            chatContactCursorResp.setType(roomBaseInfo.getType());
-            chatContactCursorResp.setHotFlag(roomBaseInfo.getHotFlag());
-
-            Long lastMsgId = contact.getLastMsgId();
-            if (lastMsgId != null) {
-                Message message = messageDao.getById(lastMsgId);
-                AssertUtil.isNotEmpty(message, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
-
-                Long fromUid = message.getFromUid();
-                UserBaseInfo baseInfo = userCache.getBaseUserInfoByUid(fromUid);
-                String showInContactMessage = MessageHandlerFactory.getStrategyNoNull(message.getType()).showInContactMessage(message);
-                chatContactCursorResp.setText(baseInfo.getName() + ": " + showInContactMessage);
-            } else {
-                // 1. 判断有没有最新消息
-                chatContactCursorResp.setText("暂无消息");
-            }
-
-            if (RoomTypeEnum.GROUP.getType().equals(roomBaseInfo.getType())) {
-                // 群聊
-                GroupBaseInfo groupBaseInfo = roomGroupCache.getBaseInfoById(roomId);
-                AssertUtil.isNotEmpty(groupBaseInfo, CommonErrorEnum.SYSTEM_ERROR.getMsg());
-
-                // 设房间名
-                String name = groupBaseInfo.getName();
-                if (StrUtil.isEmpty(name)) {
-                    chatContactCursorResp.setName("没有名字的房间");
-                } else {
-                    chatContactCursorResp.setName(name);
-                }
-
-                // 房间头像
-                chatContactCursorResp.setAvatar(groupBaseInfo.getAvatar());
-
-            } else {
-                // 单聊
-                FriendBaseInfo roomFriendBaseInfo = roomFriendCache.getBaseInfoById(roomId);
-                AssertUtil.isNotEmpty(roomFriendBaseInfo, CommonErrorEnum.SYSTEM_ERROR.getMsg());
-
-                Long uid1 = roomFriendBaseInfo.getUid1();
-                Long uid2 = roomFriendBaseInfo.getUid2();
-                if (uid.equals(uid1)) {
-                    UserBaseInfo userBaseInfo = userCache.getBaseUserInfoByUid(uid2);
-                    chatContactCursorResp.setName(userBaseInfo.getName());
-                    chatContactCursorResp.setAvatar(userBaseInfo.getAvatar());
-                } else if (uid.equals(uid2)) {
-                    UserBaseInfo userBaseInfo = userCache.getBaseUserInfoByUid(uid1);
-                    chatContactCursorResp.setName(userBaseInfo.getName());
-                    chatContactCursorResp.setAvatar(userBaseInfo.getAvatar());
-                }
-            }
-
-            Integer count = messageDao.getUnReadCountByReadTime(roomId, contact.getReadTime());
-            chatContactCursorResp.setUnreadCount(count);
-
-            return chatContactCursorResp;
+            return this.buildChatContactResp(uid, contact);
         }).toList();
 
         return ContactAdapter.buildContactCursorPage(list, cursorPage);
@@ -156,7 +93,7 @@ public class ContactServiceImpl implements ContactService {
         if (UserConst.TEMP_USER_UID.equals(uid)) {
             return true;
         } else {
-            Contact contact = contactDao.getByRoomId(uid, roomId);
+            Contact contact = contactDao.getByUidRoomId(uid, roomId);
             if (!ObjectUtil.isNull(contact)) {
                 Contact update = new Contact();
                 update.setId(contact.getId());
@@ -171,5 +108,105 @@ public class ContactServiceImpl implements ContactService {
             }
         }
         return true;
+    }
+
+    /**
+     * 获取会话信息
+     *
+     * @param uid    用户ID
+     * @param roomId 房间ID
+     * @return 会话信息
+     */
+    @Override
+    public ChatContactCursorResp getContact(Long uid, Long roomId) {
+        // 1. 判断房间是否存在
+        RoomBaseInfo roomBaseInfo = roomCache.getRoomBaseInfoById(roomId);
+        AssertUtil.isNotEmpty(roomBaseInfo, ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
+
+        // 2. 获取会话信息
+        Contact contact = contactDao.getByUidRoomId(uid, roomId);
+        if (ObjectUtil.isNull(contact)) {
+            // 2.1 创建会话
+            contact = contactDao.createContact(uid, roomId, new Date());
+        }
+
+        // 3. 构造响应体
+        ContactWithActiveMsg contactWithActiveMsg = contactMapper.getContactWithActiveMsg(uid, contact.getId());
+        return this.buildChatContactResp(uid, contactWithActiveMsg);
+    }
+
+    /**
+     * 构建响应体
+     *
+     * @param uid     用户ID
+     * @param contact 会话信息
+     * @return 响应体
+     */
+    public ChatContactCursorResp buildChatContactResp(Long uid, ContactWithActiveMsg contact) {
+        ChatContactCursorResp chatContactCursorResp = new ChatContactCursorResp();
+        Long roomId = contact.getRoomId();
+
+        chatContactCursorResp.setRoomId(roomId);
+        if (!UserConst.TEMP_USER_UID.equals(uid)) {
+            chatContactCursorResp.setActiveTime(Optional.ofNullable(contact.getActiveTime()).orElse(new Date()));
+        }
+
+        // 通过房间ID获取房间信息
+        RoomBaseInfo roomBaseInfo = roomCache.getRoomBaseInfoById(roomId);
+        chatContactCursorResp.setType(roomBaseInfo.getType());
+        chatContactCursorResp.setHotFlag(roomBaseInfo.getHotFlag());
+
+        Long lastMsgId = contact.getLastMsgId();
+        if (lastMsgId != null) {
+            Message message = messageDao.getById(lastMsgId);
+            AssertUtil.isNotEmpty(message, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
+
+            Long fromUid = message.getFromUid();
+            UserBaseInfo baseInfo = userCache.getBaseUserInfoByUid(fromUid);
+            String showInContactMessage = MessageHandlerFactory.getStrategyNoNull(message.getType()).showInContactMessage(message);
+            chatContactCursorResp.setText(baseInfo.getName() + ": " + showInContactMessage);
+        } else {
+            // 1. 判断有没有最新消息
+            chatContactCursorResp.setText("暂无消息");
+        }
+
+        if (RoomTypeEnum.GROUP.getType().equals(roomBaseInfo.getType())) {
+            // 群聊
+            GroupBaseInfo groupBaseInfo = roomGroupCache.getBaseInfoById(roomId);
+            AssertUtil.isNotEmpty(groupBaseInfo, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+
+            // 设房间名
+            String name = groupBaseInfo.getName();
+            if (StrUtil.isEmpty(name)) {
+                chatContactCursorResp.setName("没有名字的房间");
+            } else {
+                chatContactCursorResp.setName(name);
+            }
+
+            // 房间头像
+            chatContactCursorResp.setAvatar(groupBaseInfo.getAvatar());
+
+        } else {
+            // 单聊
+            FriendBaseInfo roomFriendBaseInfo = roomFriendCache.getBaseInfoById(roomId);
+            AssertUtil.isNotEmpty(roomFriendBaseInfo, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+
+            Long uid1 = roomFriendBaseInfo.getUid1();
+            Long uid2 = roomFriendBaseInfo.getUid2();
+            if (uid.equals(uid1)) {
+                UserBaseInfo userBaseInfo = userCache.getBaseUserInfoByUid(uid2);
+                chatContactCursorResp.setName(userBaseInfo.getName());
+                chatContactCursorResp.setAvatar(userBaseInfo.getAvatar());
+            } else if (uid.equals(uid2)) {
+                UserBaseInfo userBaseInfo = userCache.getBaseUserInfoByUid(uid1);
+                chatContactCursorResp.setName(userBaseInfo.getName());
+                chatContactCursorResp.setAvatar(userBaseInfo.getAvatar());
+            }
+        }
+
+        Integer count = messageDao.getUnReadCountByReadTime(roomId, contact.getReadTime());
+        chatContactCursorResp.setUnreadCount(count);
+
+        return chatContactCursorResp;
     }
 }

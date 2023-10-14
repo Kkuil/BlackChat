@@ -51,11 +51,12 @@ public class RoomDAO extends ServiceImpl<RoomMapper, Room> {
     /**
      * 创建房间
      *
+     * @param roomTypeEnum 房间类型
      * @return room 房间
      */
-    public Room createRoom() {
+    public Room createRoom(RoomTypeEnum roomTypeEnum) {
         Room room = new Room();
-        room.setType(RoomTypeEnum.GROUP.getType());
+        room.setType(roomTypeEnum.getType());
         room.setHotFlag(HotFlagEnum.NOT.getType());
         this.save(room);
         return room;

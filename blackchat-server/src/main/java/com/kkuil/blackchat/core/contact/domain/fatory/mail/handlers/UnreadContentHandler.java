@@ -1,4 +1,4 @@
-package com.kkuil.blackchat.core.contact.domain.fatory.handlers;
+package com.kkuil.blackchat.core.contact.domain.fatory.mail.handlers;
 
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;

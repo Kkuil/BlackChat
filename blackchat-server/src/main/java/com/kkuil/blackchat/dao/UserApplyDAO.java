@@ -3,8 +3,8 @@ package com.kkuil.blackchat.dao;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.UserCache;
-import com.kkuil.blackchat.core.contact.domain.fatory.MailContentReadStatusFactory;
-import com.kkuil.blackchat.core.contact.domain.fatory.handlers.AbstractReadStatusContentHandler;
+import com.kkuil.blackchat.core.contact.domain.fatory.mail.MailContentReadStatusFactory;
+import com.kkuil.blackchat.core.contact.domain.fatory.mail.handlers.AbstractReadStatusContentHandler;
 import com.kkuil.blackchat.core.contact.domain.vo.response.MessageResp;
 import com.kkuil.blackchat.domain.common.page.PageReq;
 import com.kkuil.blackchat.domain.common.page.PageRes;
@@ -153,11 +153,11 @@ public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
      * @param id  消息ID
      * @return 是否存在
      */
-    public Boolean isExist(Long uid, Long id) {
+    public UserApply isExist(Long uid, Long id) {
         return this.lambdaQuery()
                 .eq(UserApply::getTargetId, uid)
                 .eq(UserApply::getId, Optional.of(id).orElse(-99L))
-                .exists();
+                .one();
     }
 
     /**

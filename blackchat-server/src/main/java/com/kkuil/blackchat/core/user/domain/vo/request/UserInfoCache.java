@@ -23,5 +23,4 @@ public class UserInfoCache {
      * 用户头像
      */
     private String avatar;
-
 }

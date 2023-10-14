@@ -20,4 +20,18 @@
         ORDER BY r.active_time DESC
         LIMIT 0, #{request.pageSize}
     </select>
+
+    <select id="getContactWithActiveMsg"
+            resultType="com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg">
+        SELECT
+        c.uid AS uid,
+        c.room_id AS roomId,
+        c.read_time AS readTime,
+        r.active_time AS activeTime,
+        r.last_msg_id AS lastMsgId
+        FROM contact AS c
+        JOIN room AS r
+        ON c.room_id = r.id
+        WHERE c.uid = #{uid} AND c.id = #{contactId};
+    </select>
 </mapper>

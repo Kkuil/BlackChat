@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.core.contact.domain.enums.FriendStatusEnum;
 import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
 import com.kkuil.blackchat.domain.bo.room.FriendBaseInfo;
 import com.kkuil.blackchat.domain.entity.RoomFriend;
@@ -30,9 +31,6 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
 
     @Resource
     private RoomDAO roomDao;
-
-    @Resource
-    private ContactDAO contactDao;
 
     /**
      * 判断房间内是否有该用户
@@ -73,16 +71,16 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
      * @return 是否是朋友关系
      */
     public Boolean isFriend(List<Long> uids) {
-        String roomkey;
+        String roomKey;
         Long uid1 = uids.get(0);
         Long uid2 = uids.get(1);
         if (uid1 > uid2) {
-            roomkey = uid2 + "_" + uid1;
+            roomKey = uid2 + "_" + uid1;
         } else {
-            roomkey = uid1 + "_" + uid2;
+            roomKey = uid1 + "_" + uid2;
         }
         RoomFriend roomFriend = lambdaQuery()
-                .eq(RoomFriend::getRoomKey, roomkey)
+                .eq(RoomFriend::getRoomKey, roomKey)
                 .one();
         return ObjectUtil.isNotNull(roomFriend);
     }
@@ -164,12 +162,7 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
      * @return 是否删除成功
      */
     public Long delFriend(Long uid, Long friendId) {
-        String roomKey;
-        if (uid < friendId) {
-            roomKey = uid + "_" + friendId;
-        } else {
-            roomKey = friendId + "_" + uid;
-        }
+        String roomKey = this.getRoomKey(uid, friendId);
         LambdaQueryWrapper<RoomFriend> wrapper = new QueryWrapper<RoomFriend>().lambda()
                 .eq(RoomFriend::getRoomKey, roomKey);
         // 删除房间
@@ -180,5 +173,64 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
         // TODO 同步删除缓存
 
         return roomId;
+    }
+
+    /**
+     * 建立好友关系
+     *
+     * @param roomId   房间ID
+     * @param uid      用户1ID
+     * @param targetId 用户2ID
+     */
+    public void addFriend(Long roomId, Long uid, Long targetId) {
+        String roomKey = this.getRoomKey(uid, targetId);
+        Long uid1;
+        Long uid2;
+        if (uid < targetId) {
+            uid1 = uid;
+            uid2 = targetId;
+        } else {
+            uid1 = targetId;
+            uid2 = uid;
+        }
+        RoomFriend roomFriend = new RoomFriend();
+        roomFriend.setRoomId(roomId);
+        roomFriend.setUid1(uid1);
+        roomFriend.setUid2(uid2);
+        roomFriend.setRoomKey(roomKey);
+        roomFriend.setStatus(FriendStatusEnum.NORMAL.getCode());
+        this.save(roomFriend);
+    }
+
+    /**
+     * 通过用户ID获取房间ID
+     *
+     * @param uid1 用户1ID
+     * @param uid2 用户2ID
+     * @return 房间ID
+     */
+    public Long getRoomIdByUid(Long uid1, Long uid2) {
+        String roomKey = this.getRoomKey(uid1, uid2);
+        RoomFriend roomFriend = this.lambdaQuery()
+                .eq(RoomFriend::getRoomKey, roomKey)
+                .one();
+        return roomFriend.getRoomId();
+    }
+
+    /**
+     * 获取房间Key
+     *
+     * @param uid1 用户1ID
+     * @param uid2 用户2ID
+     * @return 房间Key
+     */
+    public String getRoomKey(Long uid1, Long uid2) {
+        String roomKey;
+        if (uid1 < uid2) {
+            roomKey = uid1 + "_" + uid2;
+        } else {
+            roomKey = uid2 + "_" + uid1;
+        }
+        return roomKey;
     }
 }

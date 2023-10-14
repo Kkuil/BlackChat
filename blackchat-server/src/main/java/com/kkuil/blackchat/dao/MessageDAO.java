@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.constant.MessageConst;
 import com.kkuil.blackchat.core.chat.domain.enums.MessageTypeEnum;
+import com.kkuil.blackchat.core.user.domain.vo.request.UserInfoCache;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.RoleEnum;
@@ -16,9 +18,12 @@ import com.kkuil.blackchat.utils.CursorUtil;
 import com.kkuil.blackchat.core.chat.domain.enums.MessageStatusEnum;
 import com.kkuil.blackchat.core.chat.domain.vo.request.message.ChatMessageCursorReq;
 import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @Author Kkuil
@@ -28,7 +33,18 @@ import java.util.Date;
 @Service
 public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
 
+    /**
+     * 首条建群消息模板字符串
+     */
     public static final String FIRST_MESSAGE_FOR_CREATE_GROUP = "欢迎来到%s，开始愉快的聊天吧~";
+
+    /**
+     * 首条加好友消息模板字符串
+     */
+    public static final String FIRST_MESSAGE_FOR_ADD_FRIEND = "%s,%s你们已经是好友了，开始聊天吧~";
+
+    @Resource
+    private UserCache userCache;
 
     /**
      * 通过用户ID和chatMessageReq保存消息
@@ -175,6 +191,26 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
         message.setRoomId(roomId);
         message.setFromUid(uid);
         message.setContent(String.format(FIRST_MESSAGE_FOR_CREATE_GROUP, groupName));
+        message.setStatus(MessageStatusEnum.NORMAL.getStatus());
+        message.setType(MessageTypeEnum.TEXT.getType());
+        this.save(message);
+        return message;
+    }
+
+    /**
+     * 创建首条建立好友关系消息
+     *
+     * @param roomId   房间ID
+     * @param uid      用户ID
+     * @param targetId 目标用户ID
+     * @return 消息对象
+     */
+    public Message createFristAddFriendMessage(Long roomId, Long uid, Long targetId) {
+        Message message = new Message();
+        message.setRoomId(roomId);
+        message.setFromUid(targetId);
+        List<UserInfoCache> userList = userCache.getBatchByUidList(Arrays.asList(uid, targetId));
+        message.setContent(String.format(FIRST_MESSAGE_FOR_ADD_FRIEND, userList.get(0).getName(), userList.get(1).getName()));
         message.setStatus(MessageStatusEnum.NORMAL.getStatus());
         message.setType(MessageTypeEnum.TEXT.getType());
         this.save(message);

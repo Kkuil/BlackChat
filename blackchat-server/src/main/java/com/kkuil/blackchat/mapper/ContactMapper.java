@@ -25,4 +25,13 @@ public interface ContactMapper extends BaseMapper<Contact> {
      * @return 会话列表
      */
     List<ContactWithActiveMsg> getCursorPage(Long uid, ChatContactCursorReq request);
+
+    /**
+     * 构建响应体
+     *
+     * @param uid     用户ID
+     * @param contactId 会话ID
+     * @return 响应体
+     */
+    ContactWithActiveMsg getContactWithActiveMsg(Long uid, Long contactId);
 }

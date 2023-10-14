@@ -6,6 +6,7 @@ import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.entity.Room;
+import com.kkuil.blackchat.domain.entity.UserApply;
 import com.kkuil.blackchat.domain.enums.ChatMessageEnum;
 import com.kkuil.blackchat.domain.enums.UserMessageEnum;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
@@ -126,6 +127,16 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         roomService.createGroup(uid, createGroupReq.getGroupName());
 
         return UserMessageEnum.COMMIT_APPLY_SUCESS.getMsg();
+    }
+
+    /**
+     * 同意加群
+     *
+     * @param userApply 用户申请记录
+     */
+    @Override
+    public void agreeAddGroup(UserApply userApply) {
+
     }
 
 }

@@ -7,6 +7,7 @@ import {
 import { ToolSide } from "@/layout/components/ToolSide/components/type.d.ts"
 import { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp"
 import { ReadStatusEnum } from "@/enums/ReadStatusEnum"
+import type { Session } from "@/stores/session"
 import ApiResult = GlobalTypes.ApiResult
 import UserInfo = GlobalTypes.UserInfo;
 import LimitPage = GlobalTypes.LimitPage;
@@ -94,7 +95,7 @@ export const listBadge = (
  */
 export const listSession = (
     params: GlobalTypes.CursorPageReq
-): Promise<ApiResult<CursorPageResp<Contact>>> => {
+): Promise<ApiResult<CursorPageResp<Session & { totalCount: number }>>> => {
     return request({
         url: "/contact/list",
         method: "GET",

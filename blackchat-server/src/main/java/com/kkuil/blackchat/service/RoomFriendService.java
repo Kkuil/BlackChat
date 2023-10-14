@@ -2,6 +2,7 @@ package com.kkuil.blackchat.service;
 
 import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.core.user.domain.vo.request.AddFriendReq;
+import com.kkuil.blackchat.domain.entity.UserApply;
 
 import java.util.List;
 
@@ -33,10 +34,16 @@ public interface RoomFriendService {
     /**
      * 加好友
      *
-     * @param uid       用户ID
-     * @param repliedId 被申请人ID
-     * @param msg       申请备注
+     * @param uid          用户ID
+     * @param addFriendReq AddFriendReq
      * @return 是否添加成功
      */
-    String addFriend(Long uid, AddFriendReq addFriendReq);
+    String applyAddFriend(Long uid, AddFriendReq addFriendReq);
+
+    /**
+     * 同意加好友
+     *
+     * @param userApply 好友申请记录
+     */
+    void agreeAddFriend(UserApply userApply);
 }

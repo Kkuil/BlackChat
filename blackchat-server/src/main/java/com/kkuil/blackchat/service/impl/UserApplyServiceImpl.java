@@ -6,12 +6,17 @@ import com.kkuil.blackchat.dao.UserApplyDAO;
 import com.kkuil.blackchat.domain.common.page.PageReq;
 import com.kkuil.blackchat.domain.common.page.PageRes;
 import com.kkuil.blackchat.domain.entity.UserApply;
+import com.kkuil.blackchat.domain.enums.UserApplyEnum;
+import com.kkuil.blackchat.domain.enums.UserApplyStatusEnum;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
+import com.kkuil.blackchat.service.GroupMemberService;
+import com.kkuil.blackchat.service.RoomFriendService;
 import com.kkuil.blackchat.service.UserApplyService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author Kkuil
@@ -23,6 +28,12 @@ public class UserApplyServiceImpl implements UserApplyService {
 
     @Resource
     private UserApplyDAO userApplyDao;
+
+    @Resource
+    private RoomFriendService roomFriendService;
+
+    @Resource
+    private GroupMemberService groupMemberService;
 
     /**
      * 获取用户收件箱列表
@@ -45,23 +56,49 @@ public class UserApplyServiceImpl implements UserApplyService {
      * @return 是否操作成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Boolean operation(Long uid, MessageOperationReq messageOperationReq) {
         Long id = messageOperationReq.getId();
 
         // 1. 判断消息是否存在且是否是该用户的
-        Boolean isExist = userApplyDao.isExist(uid, id);
-        AssertUtil.isTrue(isExist, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
+        UserApply userApply = userApplyDao.isExist(uid, id);
+        AssertUtil.isNotEmpty(userApply, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
 
         // 2. 判断消息是否已被操作
         Boolean isOperated = userApplyDao.isOperated(uid, id);
         AssertUtil.isFalse(isOperated, ChatErrorEnum.REPEAT_OPERATED.getMsg());
 
         // 3. 操作消息
-        Boolean isOperatedSuccess = userApplyDao.operate(id, messageOperationReq.getStatus());
-        AssertUtil.isTrue(isOperatedSuccess, CommonErrorEnum.SYSTEM_ERROR.getMsg());
-
-        // 4. TODO 创建房间和会话
-
+        this.operate(userApply, messageOperationReq.getStatus());
         return true;
+    }
+
+    /**
+     * 操作消息
+     *
+     * @param id     消息ID
+     * @param status 操作类型
+     */
+    private void operate(UserApply userApply, Integer status) {
+        // 1. 判断操作状态
+        if (UserApplyStatusEnum.AGREED.getStatus().equals(status)) {
+            Integer type = userApply.getType();
+            switch (type) {
+                case 1 -> {
+                    // 加好友
+                    roomFriendService.agreeAddFriend(userApply);
+                }
+                case 2 -> {
+                    // 加群
+                    groupMemberService.agreeAddGroup(userApply);
+                }
+                default -> {
+                    throw new RuntimeException("未知的消息类型");
+                }
+            }
+        }
+
+        Boolean isOperatedSuccess = userApplyDao.operate(userApply.getId(), status);
+        AssertUtil.isTrue(isOperatedSuccess, CommonErrorEnum.SYSTEM_ERROR.getMsg());
     }
 }

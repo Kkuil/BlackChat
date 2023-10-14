@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.service.impl;
 
 import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
+import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.contact.domain.bo.GroupMemberBaseInfo;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.entity.Message;
@@ -120,7 +121,7 @@ public class RoomServiceImpl implements RoomService {
     @Transactional(rollbackFor = Exception.class)
     public void createGroup(Long uid, String groupName) {
         // 1. 创建房间（room）
-        Room room = roomDao.createRoom();
+        Room room = roomDao.createRoom(RoomTypeEnum.GROUP);
         Long roomId = room.getId();
 
         // 2. 创建首条消息（message）

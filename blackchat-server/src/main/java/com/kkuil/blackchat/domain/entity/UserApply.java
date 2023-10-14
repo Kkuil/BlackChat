@@ -46,7 +46,7 @@ public class UserApply implements Serializable {
     private String msg;
 
     /**
-     * 申请状态 1待审批 2同意
+     * 申请状态 1待审批 2同意 3拒绝
      */
     @TableField(value = "status")
     private Integer status;

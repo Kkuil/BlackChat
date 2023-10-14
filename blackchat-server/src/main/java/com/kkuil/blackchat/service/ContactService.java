@@ -33,4 +33,13 @@ public interface ContactService {
      * @return 是否已上报
      */
     boolean readMessage(Long uid, ChatReadMessageReq request);
+
+    /**
+     * 获取会话信息
+     *
+     * @param uid    用户ID
+     * @param roomId 房间ID
+     * @return 会话信息
+     */
+    ChatContactCursorResp getContact(Long uid, Long roomId);
 }

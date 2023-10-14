@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.service;
 
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
+import com.kkuil.blackchat.domain.entity.UserApply;
 
 /**
  * @Author Kkuil
@@ -26,4 +27,11 @@ public interface GroupMemberService {
      * @return 是否创建成功
      */
     String createGroup(Long uid, CreateGroupReq createGroupReq);
+
+    /**
+     * 同意加群
+     *
+     * @param userApply 用户申请记录
+     */
+    void agreeAddGroup(UserApply userApply);
 }

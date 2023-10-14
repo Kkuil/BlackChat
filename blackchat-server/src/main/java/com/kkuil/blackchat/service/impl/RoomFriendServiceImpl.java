@@ -2,18 +2,24 @@ package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.core.user.domain.vo.request.AddFriendReq;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.dto.IpDetail;
 import com.kkuil.blackchat.domain.dto.IpInfo;
+import com.kkuil.blackchat.domain.entity.Message;
+import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.entity.User;
+import com.kkuil.blackchat.domain.entity.UserApply;
 import com.kkuil.blackchat.domain.enums.UserMessageEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.UserErrorEnum;
+import com.kkuil.blackchat.event.MessageSendEvent;
 import com.kkuil.blackchat.service.RoomFriendService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,6 +54,12 @@ public class RoomFriendServiceImpl implements RoomFriendService {
     @Resource
     private UserApplyDAO userApplyDao;
 
+    @Resource
+    private RoomDAO roomDao;
+
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
+
     /**
      * 获取朋友列表
      *
@@ -62,6 +74,9 @@ public class RoomFriendServiceImpl implements RoomFriendService {
         return userList.stream().map(user -> {
             FriendResp friendResp = new FriendResp();
             friendResp.setUid(user.getId());
+
+            Long roomId = roomFriendDao.getRoomIdByUid(uid, user.getId());
+            friendResp.setRoomId(roomId);
 
             IpInfo ipInfo = Optional.ofNullable(user.getIpInfo()).orElse(new IpInfo());
             if (ObjectUtil.isNull(ipInfo)) {
@@ -113,12 +128,12 @@ public class RoomFriendServiceImpl implements RoomFriendService {
      * @return 是否添加成功
      */
     @Override
-    public String addFriend(Long uid, AddFriendReq addFriendReq) {
+    public String applyAddFriend(Long uid, AddFriendReq addFriendReq) {
         Long repliedId = addFriendReq.getRepliedId();
         String msg = addFriendReq.getMsg();
 
         // 1. 判断用户是否存在
-        Boolean isExistUsers = userCache.isExistUsers(Arrays.asList(repliedId));
+        Boolean isExistUsers = userCache.isExistUsers(Collections.singletonList(repliedId));
         AssertUtil.isTrue(isExistUsers, UserErrorEnum.USER_NOT_EXIST.getMsg());
 
         // 2. 判断是否已经是好友关系
@@ -134,5 +149,36 @@ public class RoomFriendServiceImpl implements RoomFriendService {
         AssertUtil.isTrue(isAddFriend, UserErrorEnum.COMMIT_APPLY_FAIL.getMsg());
 
         return UserMessageEnum.COMMIT_APPLY_SUCESS.getMsg();
+    }
+
+    /**
+     * 同意加好友
+     *
+     * @param userApply 好友申请记录
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void agreeAddFriend(UserApply userApply) {
+        // 1. 创建房间（room）
+        Room room = roomDao.createRoom(RoomTypeEnum.FRIEND);
+        Long roomId = room.getId();
+
+        // 2. 生成好友欢迎消息（message）
+        Long uid = userApply.getUid();
+        Long targetId = userApply.getTargetId();
+        Message message = messageDao.createFristAddFriendMessage(roomId, uid, targetId);
+
+        // 2.1 补充房间的最新消息
+        roomDao.updateRoomNewestMsg(roomId, message.getCreateTime(), message.getId());
+
+        // 3. 创建会话并更新最新消息（contact）
+        contactDao.createContact(uid, roomId, message.getCreateTime());
+        contactDao.createContact(targetId, roomId, message.getCreateTime());
+
+        // 4. 创建好友关系
+        roomFriendDao.addFriend(roomId, uid, targetId);
+
+        // 5. 发布消息事件
+        applicationEventPublisher.publishEvent(new MessageSendEvent(this, message));
     }
 }

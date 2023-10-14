@@ -1,6 +1,6 @@
-package com.kkuil.blackchat.core.contact.domain.fatory.handlers;
+package com.kkuil.blackchat.core.contact.domain.fatory.mail.handlers;
 
-import com.kkuil.blackchat.core.contact.domain.fatory.MailContentReadStatusFactory;
+import com.kkuil.blackchat.core.contact.domain.fatory.mail.MailContentReadStatusFactory;
 import com.kkuil.blackchat.domain.entity.UserApply;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;

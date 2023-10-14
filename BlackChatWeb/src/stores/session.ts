@@ -4,7 +4,7 @@ import { listMember, listSession } from "@/api/list"
 import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
 import { RoomTypeEnum } from "@/enums/RoomTypeEnum"
 import { updateUserInfoCache } from "@/utils/userCache"
-import { pushReadMessage } from "@/api/contact"
+import { getSessionByRoomId, pushReadMessage } from "@/api/session"
 import eventBus from "@/utils/eventBus"
 import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import { exitGroup } from "@/api/group"
@@ -67,7 +67,20 @@ export const useSessionStore = defineStore("session", () => {
      * @param id 会话ID
      */
     const switchSession = async (id: string) => {
-        sessionInfo.value.chattingId = parseInt(id)
+        // 先判断当前列表中是否有该会话
+        const index = sessionInfo.value.sessions.findIndex(
+            (session) => session.roomId == id
+        )
+        if (index === -1) {
+            // 获取会话信息
+            const result = await getSessionByRoomId(id)
+            if (result.data) {
+                sessionInfo.value.chattingId = result.data.roomId
+                sessionInfo.value.sessions.unshift(result.data)
+            }
+        } else {
+            sessionInfo.value.chattingId = parseInt(id)
+        }
         resetMemberList()
         // 获取群成员列表信息
         if (getSessionInfo.value.type == RoomTypeEnum.GROUP) {

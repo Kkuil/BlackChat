@@ -1,6 +1,6 @@
-package com.kkuil.blackchat.core.contact.domain.fatory;
+package com.kkuil.blackchat.core.contact.domain.fatory.mail;
 
-import com.kkuil.blackchat.core.contact.domain.fatory.handlers.AbstractReadStatusContentHandler;
+import com.kkuil.blackchat.core.contact.domain.fatory.mail.handlers.AbstractReadStatusContentHandler;
 
 import java.util.HashMap;
 import java.util.Map;
