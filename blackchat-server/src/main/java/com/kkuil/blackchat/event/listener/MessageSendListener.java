@@ -56,9 +56,9 @@ public class MessageSendListener {
         // 更新每个房间的最新消息时间（active_time）和最新消息ID (last_msg_id)
         Message message = event.getMessage();
         Long roomId = message.getRoomId();
-        Date createTime = message.getCreateTime();
-        roomDao.updateRoomNewestMsg(roomId, createTime, message.getId());
-        contactDao.updateReadTime(roomId, createTime);
+        Date updateTime = message.getUpdateTime();
+        roomDao.updateRoomNewestMsg(roomId, updateTime, message.getId());
+        contactDao.updateReadTime(roomId, updateTime);
         log.info("消息发送成功，消息ID：{}", message.getId());
     }
 

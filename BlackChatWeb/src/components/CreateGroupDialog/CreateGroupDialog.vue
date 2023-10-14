@@ -10,6 +10,8 @@ const friendStore = useFriendStore()
 const selectedFriends = ref<number[]>([])
 // 创建群聊申请
 const applyComment = ref<string>("")
+// 群名
+const groupName = ref<string>("")
 
 /**
  * 创建群聊操作
@@ -20,7 +22,8 @@ const createGroupHandler = async () => {
     }
     const result = await createGroup({
         uidList: selectedFriends.value,
-        msg: applyComment.value
+        msg: applyComment.value,
+        groupName: groupName.value
     })
     if (result.data) {
         ElMessage.success(result.message)
@@ -58,6 +61,14 @@ const reset = () => {
                 <el-input
                     v-model="applyComment"
                     placeholder="请输入申请备注"
+                    :max="200"
+                    size="small"
+                    class="text-[#000]"
+                />
+                <h2 class="text-[13px] my-[3px]">群名</h2>
+                <el-input
+                    v-model="groupName"
+                    placeholder="请输入群名"
                     :max="200"
                     size="small"
                     class="text-[#000]"

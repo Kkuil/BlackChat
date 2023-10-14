@@ -108,8 +108,8 @@ public class RoomFriendServiceImpl implements RoomFriendService {
     /**
      * 加好友
      *
-     * @param uid       用户ID
-     * @param repliedId 被申请人ID
+     * @param uid          用户ID
+     * @param addFriendReq AddFriendReq
      * @return 是否添加成功
      */
     @Override

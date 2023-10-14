@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.constant.RedisKeyConst;
+import com.kkuil.blackchat.core.contact.domain.bo.GroupMemberBaseInfo;
 import com.kkuil.blackchat.core.contact.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
 import com.kkuil.blackchat.domain.entity.GroupMember;
@@ -20,7 +21,9 @@ import com.kkuil.blackchat.utils.RedisUtil;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -178,10 +181,29 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @param uid 用户ID
      * @return 建群数量
      */
-    public Integer getCreateGroupCountByUid(Long uid) {
-        return Math.toIntExact(this.lambdaQuery()
+    public Long getCreateGroupCountByUid(Long uid) {
+        return this.lambdaQuery()
                 .eq(GroupMember::getUid, uid)
                 .eq(GroupMember::getRole, GroupRoleEnum.MASTER.getId())
-                .count());
+                .count();
+    }
+
+    /**
+     * 将用户加入群
+     *
+     * @param roomId 房间ID
+     * @param list   成员列表
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void createGroup(Long roomId, List<GroupMemberBaseInfo> list) {
+        List<GroupMember> saveBatchList = new ArrayList<>();
+        list.forEach(groupMemberBaseInfo -> {
+            GroupMember groupMember = new GroupMember();
+            groupMember.setRoomId(roomId);
+            groupMember.setUid(groupMemberBaseInfo.getUid());
+            groupMember.setRole(groupMemberBaseInfo.getRole());
+            saveBatchList.add(groupMember);
+        });
+        this.saveBatch(saveBatchList);
     }
 }

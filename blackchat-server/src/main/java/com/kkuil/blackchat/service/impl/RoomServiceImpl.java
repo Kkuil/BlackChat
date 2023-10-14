@@ -1,6 +1,9 @@
 package com.kkuil.blackchat.service.impl;
 
+import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
+import com.kkuil.blackchat.core.contact.domain.bo.GroupMemberBaseInfo;
 import com.kkuil.blackchat.dao.*;
+import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.service.RoomService;
@@ -8,8 +11,11 @@ import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @Author Kkuil
@@ -24,6 +30,15 @@ public class RoomServiceImpl implements RoomService {
 
     @Resource
     private RoomFriendDAO roomFriendDao;
+
+    @Resource
+    private ContactDAO contactDao;
+
+    @Resource
+    private MessageDAO messageDao;
+
+    @Resource
+    private RoomGroupDAO roomGroupDao;
 
     @Resource
     private GroupMemberDAO groupMemberDao;
@@ -93,6 +108,36 @@ public class RoomServiceImpl implements RoomService {
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_IN_GROUP.getMsg());
         }
         return true;
+    }
+
+    /**
+     * 创建群聊
+     *
+     * @param uid       用户ID
+     * @param groupName 群名
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void createGroup(Long uid, String groupName) {
+        // 1. 创建房间（room）
+        Room room = roomDao.createRoom();
+        Long roomId = room.getId();
+
+        // 2. 创建首条消息（message）
+        Message message = messageDao.createFristCreateGroupMessage(uid, roomId, groupName);
+
+        // 2.1 补充房间的最新消息
+        roomDao.updateRoomNewestMsg(roomId, message.getCreateTime(), message.getId());
+
+        // 3. 将群主加入房间，并设置为群主（group_member）
+        List<GroupMemberBaseInfo> list = Collections.singletonList(new GroupMemberBaseInfo(uid, GroupRoleEnum.LEADER.getType()));
+        groupMemberDao.createGroup(roomId, list);
+
+        // 4. 设置群名等信息（room_group）
+        roomGroupDao.createGroup(roomId, groupName);
+
+        // 5. 给群主创建会话（contact）
+        contactDao.createContact(uid, roomId, message.getCreateTime());
     }
 
 }

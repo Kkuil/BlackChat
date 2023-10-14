@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import SystemMessageBody = ChatMessageResp.SystemMessageBody
+import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
 
 defineProps<{
     message: ChatMessageResp.ChatMessageBaseResp<SystemMessageBody, any>
@@ -7,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="system flex-center text-[#777] text-xs">
+    <div class="w-full my-[10px] system flex-center text-[#777] text-xs">
         {{ message.message.body.content }}
     </div>
 </template>

@@ -26,4 +26,11 @@ public interface RoomService {
      */
     Boolean checkRoomMembership(Long roomId, Long... uids);
 
+    /**
+     * 创建群聊
+     *
+     * @param uid       用户ID
+     * @param groupName 群名
+     */
+    void createGroup(Long uid, String groupName);
 }

@@ -50,7 +50,7 @@ public class FriendController {
     /**
      * 加好友
      *
-     * @param repliedId 用户名
+     * @param addFriendReq AddFriendReq
      * @return 是否改名成功
      */
     @PostMapping("add-friend")

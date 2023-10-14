@@ -21,8 +21,8 @@ public interface GroupMemberService {
     /**
      * 创建群聊
      *
-     * @param uid     申请人ID
-     * @param uidList 邀请人ID
+     * @param uid            申请人ID
+     * @param createGroupReq CreateGroupReq
      * @return 是否创建成功
      */
     String createGroup(Long uid, CreateGroupReq createGroupReq);

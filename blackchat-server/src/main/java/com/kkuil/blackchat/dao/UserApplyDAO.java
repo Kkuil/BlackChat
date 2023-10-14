@@ -55,7 +55,7 @@ public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
      * @param uidList 被邀请人
      * @return 是否创建成功
      */
-    public Boolean createGroup(Long uid, List<Long> uidList, String msg) {
+    public Boolean applyCreateGroup(Long uid, List<Long> uidList, String msg) {
         List<UserApply> applyList = new ArrayList<>();
         for (Long invitedId : uidList) {
             UserApply userApply = new UserApply();
@@ -182,15 +182,15 @@ public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
     /**
      * 操作消息
      *
-     * @param uid    用户ID
      * @param id     消息ID
      * @param status 操作类型
      * @return 是否操作成功
      */
-    public Boolean operate(Long uid, Long id, Integer status) {
+    public Boolean operate(Long id, Integer status) {
+        UserApply byId = this.getById(id);
         UserApply userApply = new UserApply();
         userApply.setId(id);
-        userApply.setUid(uid);
+        userApply.setUid(byId.getTargetId());
         userApply.setStatus(status);
         userApply.setReadStatus(ReadStatusEnum.READ.getStatus());
         return this.updateById(userApply);

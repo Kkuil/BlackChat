@@ -51,7 +51,7 @@ public class MessageSendConsumer implements RocketMQListener<MsgSendMessageDTO> 
         Message message = messageDao.getById(msgId);
         Long roomId = message.getRoomId();
         Room room = roomDao.getById(roomId);
-        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(msgId);
+        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(msgId, false);
         // 2. 判断是否是热点群聊
         if (room.isHotRoom()) {
             // 2.1 热点群聊

@@ -21,7 +21,7 @@ public enum GroupRoleEnum {
      */
     MASTER(1, "群主"),
     ADMIN(2, "管理员"),
-    MEMBER(2, "成员"),
+    MEMBER(3, "成员"),
     ;
 
     private final Integer id;

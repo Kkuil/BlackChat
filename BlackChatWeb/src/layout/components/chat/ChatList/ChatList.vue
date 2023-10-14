@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import ChatItem from "@/layout/components/chat/ChatList/components/ChatItem.vue"
 import { useSessionStore } from "@/stores/session"
-import { onMounted } from "vue"
 
 const sessionStore = useSessionStore()
 
@@ -14,14 +13,10 @@ const switchSession = (e: Event & { target: { dataset: { id: string } } }) => {
     if (!id || id == sessionStore.sessionInfo.chattingId) return
     sessionStore.switchSession(id)
 }
-
-onMounted(() => {
-    sessionStore.getSessionList()
-})
 </script>
 
 <template>
-    <div class="chat-list overflow-y-scroll pr-[10px]" @click="switchSession">
+    <div class="chat-list overflow-y-scroll" @click="switchSession">
         <div
             v-for="session in sessionStore.sessionInfo.sessions"
             :key="session.roomId"
@@ -47,7 +42,7 @@ onMounted(() => {
                 v-observe="sessionStore.getSessionList"
             >
             </i>
-            <span class="text-[13px]">会话列表加载中</span>
+            <span class="text-[13px] ml-[5px]">会话列表加载中</span>
         </div>
     </div>
 </template>

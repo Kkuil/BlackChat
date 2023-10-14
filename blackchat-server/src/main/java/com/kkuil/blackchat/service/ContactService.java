@@ -6,6 +6,7 @@ import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp
 import com.kkuil.blackchat.core.contact.domain.vo.response.FriendResp;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public interface ContactService {
      * @param request 请求
      * @return 会话列表
      */
-    CursorPageBaseResp<ChatContactCursorResp, String> listContact(Long uid, ChatContactCursorReq request);
+    CursorPageBaseResp<ChatContactCursorResp, Date> listContact(Long uid, ChatContactCursorReq request);
 
     /**
      * 用户阅读信息上报

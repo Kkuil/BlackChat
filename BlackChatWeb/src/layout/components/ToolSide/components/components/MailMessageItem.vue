@@ -5,11 +5,14 @@ import { MailOperationStatusEnum } from "@/enums/MailOperationStatusEnum"
 import { mailOperation } from "@/api/mail"
 import { ElMessage } from "element-plus"
 import { ReadStatusEnum } from "@/enums/ReadStatusEnum"
+import { useUserStore } from "@/stores/user"
 
 const props = defineProps<{
     message: ToolSide.ReceiveMessageResp
     type: ReadStatusEnum
 }>()
+
+const userStore = useUserStore()
 
 const operation = async (status: MailOperationStatusEnum) => {
     const result = await mailOperation({
@@ -27,8 +30,8 @@ const operation = async (status: MailOperationStatusEnum) => {
         class="item relative rounded-[10px] bg-[#fff] hover:bg-opacity-95 transition-[background] cursor-pointer h-[60px] flex items-center px-[15px]"
     >
         <el-avatar
-            :src="'src'"
-            :alt="'name'"
+            :src="userStore.getBaseInfoInCache(props.message.uid).avatar"
+            :alt="userStore.getBaseInfoInCache(props.message.uid).name"
             class="h-[45px] w-[45px] rounded-full"
         >
             <el-icon :size="25">
@@ -36,15 +39,19 @@ const operation = async (status: MailOperationStatusEnum) => {
             </el-icon>
         </el-avatar>
         <div
-            class="info flex-1 h-[75%] flex items-center justify-between ml-[10px]"
+            class="info w-[80%] h-[75%] flex items-center justify-between ml-[10px]"
         >
-            <div class="left h-full flex flex-col justify-between">
-                <h2 class="text-[14px]">Kkuil</h2>
-                <h4 class="text-[10px] text-[#777] whitespace-nowrap">
+            <div class="left w-[80%] h-full flex flex-col justify-between">
+                <h2 class="text-[14px]">{{ message.name }}</h2>
+                <h4
+                    class="text-[10px] text-[#777] whitespace-nowrap w-full overflow-hidden overflow-ellipsis"
+                >
                     备注:{{ message.msg }}
                 </h4>
             </div>
-            <div class="right text-[12px] whitespace-nowrap">
+            <div
+                class="w-[20%] line-clamp-1 overflow-x-hidden overflow-ellipsis right text-[12px] whitespace-nowrap"
+            >
                 {{ message.content }}
             </div>
             <div

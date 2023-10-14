@@ -4,6 +4,7 @@ import type { Store } from "@/stores/store"
 import { MessageResponseTypes } from "@/core/websocket/types/MessageResponseTypes"
 import { TEMP_USER_UID, TOKEN_KEY_IN_LOC } from "@/constant/auth"
 import { USER_CACHE_LOC_KEY } from "@/constant/userKeys"
+import { updateByUidList } from "@/utils/userCache"
 import UserInfoCache = GlobalTypes.UserInfoCache
 
 export const useUserStore = defineStore("user", () => {
@@ -18,6 +19,24 @@ export const useUserStore = defineStore("user", () => {
     const userInfoCache = ref<Record<string, UserInfoCache>>(
         JSON.parse(localStorage.getItem(USER_CACHE_LOC_KEY) ?? "{}")
     )
+
+    /**
+     * 获取基本信息
+     * @param uid 用户ID
+     */
+    const getBaseInfoInCache = (uid): UserInfoCache => {
+        // TODO 更新缓存
+        if (!userInfoCache.value[uid]) {
+            let data = {}
+            updateByUidList([uid]).then((users) => {
+                data = users[0]
+            })
+            // 刷新缓存
+            refreshCache()
+            return data
+        }
+        return userInfoCache.value[uid]
+    }
 
     /**
      * 登录成功保存信息
@@ -77,6 +96,7 @@ export const useUserStore = defineStore("user", () => {
         userInfoCache,
         loginSuccess,
         updateName,
+        getBaseInfoInCache,
         refreshCache,
         isTempUser,
         isLogin,

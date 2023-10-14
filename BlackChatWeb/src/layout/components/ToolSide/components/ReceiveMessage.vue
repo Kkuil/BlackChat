@@ -4,7 +4,11 @@ import { listReceiveMessage } from "@/api/list"
 import { ReadStatusEnum } from "@/enums/ReadStatusEnum"
 import MailMessageItem from "@/layout/components/ToolSide/components/components/MailMessageItem.vue"
 import type { ToolSide } from "@/layout/components/ToolSide/components/type.d.ts"
+import { updateByUidList } from "@/utils/userCache"
+import { useUserStore } from "@/stores/user"
 import LimitPage = GlobalTypes.LimitPage
+
+const userStore = useUserStore()
 
 /**
  * 是否展示收件箱
@@ -44,6 +48,25 @@ const tabs = ref<
 const listMessage = async () => {
     const result = await listReceiveMessage(pageInfo.value)
     if (result.data) {
+        const uidList: number[] = []
+        // 收集未缓存的数据
+        result.data.data.forEach((item) => {
+            if (!userStore.userInfoCache[item.uid + ""]) {
+                uidList.push(item.uid)
+            }
+        })
+        // 获取缓存数据
+        if (uidList.length > 0) {
+            await updateByUidList(uidList)
+            // 将缓存加载到内存中来
+            userStore.refreshCache()
+        }
+        // 缓存映射
+        messageInfo.value.messages = result.data.data.map((item) => {
+            item.avatar = userStore.userInfoCache[item.uid + ""]?.avatar ?? ""
+            item.name = userStore.userInfoCache[item.uid + ""]?.name ?? ""
+            return item
+        })
         messageInfo.value.messages = result.data.data
         messageInfo.value.totalCount = result.data.total
     }
@@ -105,7 +128,7 @@ watch(
                     :label="tab.label"
                     :name="tab.type"
                 >
-                    <div>
+                    <div v-if="messageInfo.messages.length">
                         <MailMessageItem
                             v-for="message in messageInfo.messages"
                             :key="message.id"
@@ -114,6 +137,17 @@ watch(
                             class="mt-[10px]"
                         />
                     </div>
+                    <el-empty
+                        v-else
+                        description="暂无消息"
+                        class="w-full h-full"
+                    >
+                        <template #image>
+                            <i
+                                class="iconfont icon-empty text-[80px] text-[#ccc]"
+                            ></i>
+                        </template>
+                    </el-empty>
                 </el-tab-pane>
             </el-tabs>
             <el-pagination

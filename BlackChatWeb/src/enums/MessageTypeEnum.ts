@@ -3,9 +3,10 @@
  */
 export enum MessageTypeEnum {
     TEXT = 1,
-    SYSTEM = 2,
+    REVOKE = 2,
     IMAGE = 3,
     FILE = 4,
     SOUND = 5,
-    VIDEO = 6
+    VIDEO = 6,
+    SYSTEM = 7
 }

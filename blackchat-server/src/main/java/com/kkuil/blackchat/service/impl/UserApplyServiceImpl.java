@@ -57,8 +57,10 @@ public class UserApplyServiceImpl implements UserApplyService {
         AssertUtil.isFalse(isOperated, ChatErrorEnum.REPEAT_OPERATED.getMsg());
 
         // 3. 操作消息
-        Boolean isOperatedSuccess = userApplyDao.operate(uid, id, messageOperationReq.getStatus());
+        Boolean isOperatedSuccess = userApplyDao.operate(id, messageOperationReq.getStatus());
         AssertUtil.isTrue(isOperatedSuccess, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+
+        // 4. TODO 创建房间和会话
 
         return true;
     }

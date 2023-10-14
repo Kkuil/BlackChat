@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.service;
 
+import com.kkuil.blackchat.core.chat.domain.vo.request.message.RevokeMessageReq;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
@@ -30,10 +31,11 @@ public interface MessageService {
     /**
      * 构建消息返回体
      *
-     * @param messageId 消息ID
+     * @param messageId    消息ID
+     * @param isCreateTime 是否使用创建时间作为消息时间
      * @return 消息返回体
      */
-    ChatMessageResp buildChatMessageResp(Long messageId);
+    ChatMessageResp buildChatMessageResp(Long messageId, Boolean isCreateTime);
 
     /**
      * 检查回复消息
@@ -49,4 +51,13 @@ public interface MessageService {
      * @return 回复消息对象
      */
     ChatMessageResp.ReplyMsg buildReplyMsg(Long messageId);
+
+    /**
+     * 撤回消息
+     *
+     * @param uid     用户ID
+     * @param request 请求信息
+     * @return 消息
+     */
+    Boolean revoke(Long uid, RevokeMessageReq request);
 }

@@ -5,7 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.constant.MessageConst;
+import com.kkuil.blackchat.core.chat.domain.enums.MessageTypeEnum;
+import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.Message;
+import com.kkuil.blackchat.domain.enums.RoleEnum;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.MessageMapper;
 import com.kkuil.blackchat.utils.CursorUtil;
@@ -23,6 +27,8 @@ import java.util.Date;
  */
 @Service
 public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
+
+    public static final String FIRST_MESSAGE_FOR_CREATE_GROUP = "欢迎来到%s，开始愉快的聊天吧~";
 
     /**
      * 通过用户ID和chatMessageReq保存消息
@@ -114,5 +120,64 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
         LambdaQueryChainWrapper<Message> wrapper = this.lambdaQuery()
                 .eq(Message::getRoomId, roomId);
         this.remove(wrapper);
+    }
+
+    /**
+     * 判断是否有权利撤回消息
+     *
+     * @param baseInfo 用户
+     * @param id       消息ID
+     * @return 是否有权利
+     */
+    public Boolean hasPower(UserBaseInfo baseInfo, Long id) {
+        Message message = this.lambdaQuery()
+                .eq(Message::getId, id)
+                .one();
+        if (baseInfo.getId().equals(message.getFromUid())) {
+            return true;
+        }
+        return ObjectUtil.isNotNull(RoleEnum.of(baseInfo.getRoleId()));
+    }
+
+    /**
+     * 撤回消息
+     *
+     * @param baseInfo 撤回消息的用户
+     * @param id       消息ID
+     */
+    public Message revoke(UserBaseInfo baseInfo, Long id) {
+
+        Message message = new Message();
+        message.setId(id);
+        message.setFromUid(baseInfo.getId());
+        message.setContent(String.format(MessageConst.REVOKE_TEXT, baseInfo.getName()));
+        message.setReplyMessageId(null);
+        message.setGapCount(null);
+        message.setType(MessageTypeEnum.REVOKE.getType());
+        message.setExtra(null);
+        message.setUpdateTime(new Date());
+
+        this.updateById(message);
+
+        return this.lambdaQuery().eq(Message::getId, id).one();
+    }
+
+    /**
+     * 创建首条建群消息
+     *
+     * @param uid       用户ID
+     * @param roomId    房间ID
+     * @param groupName 群名
+     * @return 消息对象
+     */
+    public Message createFristCreateGroupMessage(Long uid, Long roomId, String groupName) {
+        Message message = new Message();
+        message.setRoomId(roomId);
+        message.setFromUid(uid);
+        message.setContent(String.format(FIRST_MESSAGE_FOR_CREATE_GROUP, groupName));
+        message.setStatus(MessageStatusEnum.NORMAL.getStatus());
+        message.setType(MessageTypeEnum.TEXT.getType());
+        this.save(message);
+        return message;
     }
 }

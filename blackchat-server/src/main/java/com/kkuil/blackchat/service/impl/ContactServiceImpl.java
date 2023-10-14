@@ -68,8 +68,8 @@ public class ContactServiceImpl implements ContactService {
      * @return 会话列表
      */
     @Override
-    public CursorPageBaseResp<ChatContactCursorResp, String> listContact(Long uid, ChatContactCursorReq request) {
-        CursorPageBaseResp<ContactWithActiveMsg, String> cursorPage = contactDao.getCursorPage(uid, request);
+    public CursorPageBaseResp<ChatContactCursorResp, Date> listContact(Long uid, ChatContactCursorReq request) {
+        CursorPageBaseResp<ContactWithActiveMsg, Date> cursorPage = contactDao.getCursorPage(uid, request);
 
         List<ChatContactCursorResp> list = cursorPage.getList().stream().map(contact -> {
             ChatContactCursorResp chatContactCursorResp = new ChatContactCursorResp();

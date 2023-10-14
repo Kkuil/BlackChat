@@ -46,20 +46,6 @@ public class ChatController {
     }
 
     /**
-     * 获取消息列表接口
-     *
-     * @param request 消息请求
-     * @return 消息列表
-     */
-    @GetMapping("/message/list")
-    @Operation(summary = "消息列表", description = "消息列表")
-    public ResultUtil<CursorPageBaseResp<ChatMessageResp, String>> listMessage(@Valid ChatMessageCursorReq request) {
-        Long uid = RequestHolderDTO.get().getUid();
-        CursorPageBaseResp<ChatMessageResp, String> messageList = chatService.listMessage(uid, request);
-        return ResultUtil.success(messageList);
-    }
-
-    /**
      * 获取群成员信息
      *
      * @param chatMemberCursorReq 信息

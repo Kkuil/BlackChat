@@ -31,6 +31,11 @@ public class UserBaseInfo {
     private String avatar;
 
     /**
+     * 角色
+     */
+    private Long roleId;
+
+    /**
      * 用户ip信息
      */
     private IpInfo ipInfo;

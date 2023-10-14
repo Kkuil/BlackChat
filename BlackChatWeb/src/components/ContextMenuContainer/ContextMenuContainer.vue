@@ -11,6 +11,7 @@ import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import { ref } from "vue"
 import { addFriend } from "@/api/user"
 import { ElMessage } from "element-plus"
+import { revoke } from "@/api/message"
 
 const props = defineProps<{
     // 消息体
@@ -33,7 +34,7 @@ const applyComment = ref<string>("")
 const onAite = () => {
     messageStore.addAite({
         uid: Number(props.message.fromUser.uid),
-        name: props.message.fromUser.name
+        name: userStore.getBaseInfoInCache(props.message.fromUser.uid).name
     })
 }
 
@@ -52,11 +53,18 @@ const addFriendHandler = async () => {
     }
 }
 
-const onRecall = () => {}
+const onRevoke = async () => {
+    console.log(props.message.message.id)
+    const result = await revoke(props.message.message.id)
+    if (result.data) {
+        ElMessage.success("撤回成功")
+    }
+}
+
 const onReply = () => {
     messageStore.addReply({
         id: props.message.message.id,
-        name: props.message.fromUser.name,
+        name: userStore.getBaseInfoInCache(props.message.fromUser.uid).name,
         content: getMessageShowInReply(props.message.message)
     })
 }
@@ -138,7 +146,7 @@ const getMessageShowInReply = (message: ChatMessageResp.Message<any, any>) => {
         <ContextMenuItem
             v-if="isCurrentUser && items.indexOf('recall') >= 0"
             label="撤回消息"
-            @click="onRecall"
+            @click="onRevoke"
         >
             <template #icon>
                 <i class="iconfont icon-recall"></i>

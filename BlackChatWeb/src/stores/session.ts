@@ -192,7 +192,7 @@ export const useSessionStore = defineStore("session", () => {
      * @param list 会话
      */
     const updateSessionList = (list: Session<any, any>[]) => {
-        sessionInfo.value.sessions.unshift(...list)
+        sessionInfo.value.sessions.push(...list)
     }
 
     /**

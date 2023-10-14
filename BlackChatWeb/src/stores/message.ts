@@ -135,10 +135,20 @@ export const useMessageStore = defineStore("message", () => {
     /**
      * 添加消息
      */
-    const addMessage = (data: ChatMessageResp.ChatMessageBaseResp) => {
-        messageList.value.push(data)
-        cancelReply()
-        resetMessage()
+    const updateMessage = (data: ChatMessageResp.ChatMessageBaseResp) => {
+        if (data.message.type === MessageTypeEnum.REVOKE) {
+            const index = messageList.value.findIndex(
+                (item) => item.message.id == data.message.id
+            )
+            messageList.value[index].message.type = MessageTypeEnum.REVOKE
+            messageList.value[index].message.body.content = data.message.content
+        } else {
+            messageList.value.push(data)
+            if (userStore.userInfo.uid == data.fromUser.uid) {
+                cancelReply()
+                resetMessage()
+            }
+        }
     }
 
     /**
@@ -210,7 +220,7 @@ export const useMessageStore = defineStore("message", () => {
     )
 
     eventBus.on(WsEventEnum.SEND_MESSAGE, ({ message }) => {
-        addMessage(message)
+        updateMessage(message)
     })
 
     return {
@@ -225,7 +235,7 @@ export const useMessageStore = defineStore("message", () => {
         addAite,
         cancelReply,
         resetMessage,
-        addMessage,
+        addMessage: updateMessage,
         getMessageList
     }
 })

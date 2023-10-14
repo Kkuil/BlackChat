@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.kkuil.blackchat.core.chat.domain.enums.HotFlagEnum;
+import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.mapper.RoomMapper;
 import org.springframework.stereotype.Service;
@@ -27,7 +29,9 @@ public class RoomDAO extends ServiceImpl<RoomMapper, Room> {
      * @param lastMsgId  最新消息ID
      */
     public void updateRoomNewestMsg(Long roomId, Date activeTime, Long lastMsgId) {
-        LambdaUpdateWrapper<Room> updateWrapper = new UpdateWrapper<Room>().lambda().eq(Room::getId, roomId)
+        LambdaUpdateWrapper<Room> updateWrapper = new UpdateWrapper<Room>()
+                .lambda()
+                .eq(Room::getId, roomId)
                 .set(Room::getActiveTime, activeTime)
                 .set(Room::getLastMsgId, lastMsgId);
         this.update(updateWrapper);
@@ -35,11 +39,25 @@ public class RoomDAO extends ServiceImpl<RoomMapper, Room> {
 
     /**
      * 删除房间
+     *
      * @param id 房间ID
      */
     public void deleteById(Long id) {
-        LambdaQueryWrapper<Room> wrapper= new QueryWrapper<Room>().lambda()
+        LambdaQueryWrapper<Room> wrapper = new QueryWrapper<Room>().lambda()
                 .eq(Room::getId, id);
         this.remove(wrapper);
+    }
+
+    /**
+     * 创建房间
+     *
+     * @return room 房间
+     */
+    public Room createRoom() {
+        Room room = new Room();
+        room.setType(RoomTypeEnum.GROUP.getType());
+        room.setHotFlag(HotFlagEnum.NOT.getType());
+        this.save(room);
+        return room;
     }
 }

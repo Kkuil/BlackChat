@@ -14,6 +14,14 @@ export declare namespace ToolSide {
          */
         uid: number
         /**
+         * 消息的发送者头像
+         */
+        avatar: string
+        /**
+         * 消息的发送者名字
+         */
+        name: string
+        /**
          * 备注
          */
         msg: string

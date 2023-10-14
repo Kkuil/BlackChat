@@ -3,14 +3,21 @@ import ChatCommonMessageItem from "@/components/ChatMessageItem/components/ChatC
 import ChatSystemMessageItem from "@/components/ChatMessageItem/components/ChatSystemMessageItem.vue"
 import { useUserStore } from "@/stores/user"
 import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
+import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
 
 defineProps<{ message: ChatMessageResp.ChatMessageBaseResp<any, any> }>()
 
 const userStore = useUserStore()
+
+const SYS_MSG_TYPES = [MessageTypeEnum.SYSTEM, MessageTypeEnum.REVOKE]
 </script>
 
 <template>
-    <Transition v-if="message?.message?.type != MessageTypeEnum.SYSTEM">
+    <Transition
+        v-if="
+            !SYS_MSG_TYPES.includes(message?.message?.type as MessageTypeEnum)
+        "
+    >
         <ChatCommonMessageItem
             :direction="
                 userStore.userInfo.uid == message?.fromUser?.uid

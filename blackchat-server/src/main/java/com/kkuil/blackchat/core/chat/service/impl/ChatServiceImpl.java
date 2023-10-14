@@ -113,7 +113,7 @@ public class ChatServiceImpl implements ChatService {
         messageService.save(message, chatMessageReq);
 
         // 6. 构建消息响应体
-        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId);
+        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId, true);
 
         // 7. 发送消息事件
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, message));
@@ -165,8 +165,6 @@ public class ChatServiceImpl implements ChatService {
                 userCursorPageBaseResp.getList().addAll(cursorPage.getList());
                 userCursorPageBaseResp.setCursor(cursorPage.getCursor());
                 chatMemberExtraResp.setActiveStatus(ChatActiveStatusEnum.OFFLINE.getStatus());
-                // 3.1.1.2 只要走了这里面的逻辑，就告诉前端这不是最后一页数据
-                userCursorPageBaseResp.setIsLast(false);
             } else {
                 chatMemberExtraResp.setActiveStatus(ChatActiveStatusEnum.ONLINE.getStatus());
             }

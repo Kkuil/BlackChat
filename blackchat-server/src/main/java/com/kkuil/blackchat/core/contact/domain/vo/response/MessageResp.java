@@ -9,7 +9,6 @@ import lombok.Data;
  */
 @Data
 public class MessageResp {
-
     /**
      * 消息ID
      */

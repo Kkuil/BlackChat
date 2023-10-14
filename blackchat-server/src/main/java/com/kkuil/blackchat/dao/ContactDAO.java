@@ -35,13 +35,10 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
      *
      * @return 数据
      */
-    public CursorPageBaseResp<ContactWithActiveMsg, String> getCursorPage(Long uid, ChatContactCursorReq request) {
-        DateTime cursor = ObjectUtil.isNotNull(request.getCursor()) ? DateUtil.date(Long.parseLong(request.getCursor())) : null;
-        List<ContactWithActiveMsg> list = contactMapper.getCursorPage(uid, request, cursor);
-        CursorPageBaseResp<ContactWithActiveMsg, String> contactWithActiveMsgCursorPageBaseResp = new CursorPageBaseResp<>();
-        if (list.size() > 0) {
-            contactWithActiveMsgCursorPageBaseResp.setCursor(String.valueOf(list.get(list.size() - 1).getActiveTime().getTime()));
-        }
+    public CursorPageBaseResp<ContactWithActiveMsg, Date> getCursorPage(Long uid, ChatContactCursorReq request) {
+        List<ContactWithActiveMsg> list = contactMapper.getCursorPage(uid, request);
+        CursorPageBaseResp<ContactWithActiveMsg, Date> contactWithActiveMsgCursorPageBaseResp = new CursorPageBaseResp<>();
+        contactWithActiveMsgCursorPageBaseResp.setCursor(list.get(list.size() - 1).getActiveTime());
         contactWithActiveMsgCursorPageBaseResp.setList(list);
         contactWithActiveMsgCursorPageBaseResp.setIsLast(request.getPageSize() > list.size());
         return contactWithActiveMsgCursorPageBaseResp;
@@ -65,7 +62,9 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
      * @param createTime 最新时间
      */
     public void updateReadTime(Long roomId, Date createTime) {
-        LambdaUpdateWrapper<Contact> updateWrapper = new UpdateWrapper<Contact>().lambda().eq(Contact::getRoomId, roomId)
+        LambdaUpdateWrapper<Contact> updateWrapper = new UpdateWrapper<Contact>()
+                .lambda()
+                .eq(Contact::getRoomId, roomId)
                 .set(Contact::getReadTime, createTime);
         this.update(updateWrapper);
     }
@@ -93,5 +92,19 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
                 .lambda()
                 .eq(Contact::getRoomId, roomId);
         this.remove(wrapper);
+    }
+
+    /**
+     * 创建会话
+     *
+     * @param uid    用户ID
+     * @param roomId 房间ID
+     */
+    public void createContact(Long uid, Long roomId, Date readTime) {
+        Contact contact = new Contact();
+        contact.setUid(uid);
+        contact.setRoomId(roomId);
+        contact.setReadTime(readTime);
+        this.save(contact);
     }
 }

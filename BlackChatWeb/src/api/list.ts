@@ -54,7 +54,7 @@ export const listMessage = (
     ApiResult<CursorPageResp<ChatMessageResp.ChatMessageBaseResp<any, any>>>
 > => {
     return request({
-        url: "/chat/message/list",
+        url: "/message/list",
         method: "GET",
         params: {
             pageSize: params.pageSize,

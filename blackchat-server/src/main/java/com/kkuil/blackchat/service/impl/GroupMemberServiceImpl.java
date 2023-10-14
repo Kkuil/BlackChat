@@ -12,6 +12,7 @@ import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.UserErrorEnum;
 import com.kkuil.blackchat.service.GroupMemberService;
+import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,9 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
     @Resource
     private UserApplyDAO userApplyDao;
+
+    @Resource
+    private RoomService roomService;
 
     /**
      * 退出群组
@@ -85,14 +89,14 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     /**
      * 创建群聊
      *
-     * @param uid     申请人ID
-     * @param uidList 邀请人ID
+     * @param uid            申请人ID
+     * @param createGroupReq CreateGroupReq
      * @return 是否创建成功
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public String createGroup(Long uid, CreateGroupReq createGroupReq) {
         List<Long> uidList = createGroupReq.getUidList();
-        AssertUtil.isTrue(uidList.size() > 2, ChatErrorEnum.NOT_ALLOWED_COUNT_GROUP.getMsg());
 
         String msg = createGroupReq.getMsg();
 
@@ -106,13 +110,20 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             AssertUtil.isTrue(user.getIsFriend(), UserErrorEnum.NOT_FRIEND.getMsg());
         });
 
-        // 3. 判断是否已经达到建群上限
-        Integer count = groupMemberDao.getCreateGroupCountByUid(uid);
+        // 3. 检查人数是否达到上限
+        int uidCount = createGroupReq.getUidList().size();
+        AssertUtil.isTrue(uidCount + 1 < GroupConst.MAX_COUNT_PER_GROUP, ChatErrorEnum.MAX_COUNT_PER_GROUP_LIMIT.getMsg());
+
+        // 4. 判断是否已经达到建群上限
+        Long count = groupMemberDao.getCreateGroupCountByUid(uid);
         AssertUtil.isTrue(count < GroupConst.MAX_CREATE_GROUP_COUNT, ChatErrorEnum.CREATE_GROUP_MAX_COUNT.getMsg());
 
-        // 4. 创建群聊
-        Boolean isAddFriend = userApplyDao.createGroup(uid, uidList, msg);
+        // 5. 提交申请
+        Boolean isAddFriend = userApplyDao.applyCreateGroup(uid, uidList, msg);
         AssertUtil.isTrue(isAddFriend, UserErrorEnum.COMMIT_APPLY_FAIL.getMsg());
+
+        // 6. 创建群聊
+        roomService.createGroup(uid, createGroupReq.getGroupName());
 
         return UserMessageEnum.COMMIT_APPLY_SUCESS.getMsg();
     }

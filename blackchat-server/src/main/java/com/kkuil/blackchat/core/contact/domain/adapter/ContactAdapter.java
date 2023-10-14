@@ -5,6 +5,7 @@ import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,8 +21,8 @@ public class ContactAdapter {
      * @param cursorPage 游标对象
      * @return 返回响应
      */
-    public static CursorPageBaseResp<ChatContactCursorResp, String> buildContactCursorPage(List<ChatContactCursorResp> list, CursorPageBaseResp<ContactWithActiveMsg, String> cursorPage) {
-        CursorPageBaseResp<ChatContactCursorResp, String> chatMemberRespCursorPageBaseResp = new CursorPageBaseResp<>();
+    public static CursorPageBaseResp<ChatContactCursorResp, Date> buildContactCursorPage(List<ChatContactCursorResp> list, CursorPageBaseResp<ContactWithActiveMsg, Date> cursorPage) {
+        CursorPageBaseResp<ChatContactCursorResp, Date> chatMemberRespCursorPageBaseResp = new CursorPageBaseResp<>();
         chatMemberRespCursorPageBaseResp.setCursor(cursorPage.getCursor());
         chatMemberRespCursorPageBaseResp.setIsLast(cursorPage.getIsLast());
         chatMemberRespCursorPageBaseResp.setList(list);

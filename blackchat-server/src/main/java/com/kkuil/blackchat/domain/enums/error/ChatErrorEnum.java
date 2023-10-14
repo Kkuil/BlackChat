@@ -31,6 +31,8 @@ public enum ChatErrorEnum implements ErrorEnum {
     SENSITIVE_WORD(1015, "消息内容包含敏感词，请文明发言~"),
     CREATE_GROUP_MAX_COUNT(1016, "建群数量已达上限~"),
     REPEAT_OPERATED(1017, "消息已被操作过了，无法二次操作~"),
+    MAX_COUNT_PER_GROUP_LIMIT(1018, "群人数超过上限，请删除后再进行操作吧~"),
+    NOT_ALLOWED_REVOKE(1019, "您无权撤回该消息~"),
     ;
 
     private final Integer code;

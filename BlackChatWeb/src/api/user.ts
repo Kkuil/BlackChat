@@ -37,7 +37,6 @@ export const updateUsername = (
 export const listBatchCache = (
     uidList: number[]
 ): Promise<ApiResult<UserBaseInfo[]>> => {
-    console.log("uidList", uidList)
     return request({
         url: "/public/user/batch-cache",
         method: "GET",
@@ -71,7 +70,7 @@ export const delFriend = (friendId: number): Promise<ApiResult<boolean>> => {
  */
 export const search = (
     params: LimitPage<string>
-): Promise<ApiResult<PageResp<TSearchResp[]>>> => {
+): Promise<ApiResult<PageResp<TSearchResp>>> => {
     return request({
         url: "/public/user/search",
         method: "GET",
@@ -109,6 +108,7 @@ export const addFriend = (data: {
 export const createGroup = (data: {
     uidList: number[]
     msg: string
+    groupName: string
 }): Promise<ApiResult<boolean>> => {
     return request({
         url: "/group/create-group",

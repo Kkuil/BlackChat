@@ -2,6 +2,7 @@ package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.chat.domain.vo.request.message.RevokeMessageReq;
 import com.kkuil.blackchat.dao.MessageDAO;
 import com.kkuil.blackchat.dao.UserDAO;
 import com.kkuil.blackchat.domain.dto.IpDetail;
@@ -9,6 +10,7 @@ import com.kkuil.blackchat.domain.dto.IpInfo;
 import com.kkuil.blackchat.domain.dto.UserBaseInfo;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
+import com.kkuil.blackchat.event.MessageSendEvent;
 import com.kkuil.blackchat.service.MessageService;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.core.chat.domain.vo.message.handlers.AbstractMessageHandler;
@@ -16,7 +18,9 @@ import com.kkuil.blackchat.core.chat.domain.vo.message.handlers.factory.MessageH
 import com.kkuil.blackchat.core.websocket.domain.vo.request.ChatMessageReq;
 import com.kkuil.blackchat.core.chat.domain.vo.response.message.ChatMessageResp;
 import jakarta.annotation.Resource;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -36,6 +40,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Resource
     private UserCache userCache;
+
+    @Resource
+    private ApplicationEventPublisher applicationEventPublisher;
 
 
     /**
@@ -76,7 +83,7 @@ public class MessageServiceImpl implements MessageService {
      * @return 消息返回体
      */
     @Override
-    public ChatMessageResp buildChatMessageResp(Long messageId) {
+    public ChatMessageResp buildChatMessageResp(Long messageId, Boolean isCreatTime) {
         // 0. 构建回复消息
         ChatMessageResp.ReplyMsg replyMsg = this.buildReplyMsg(messageId);
         // 1. 根据消息类型获取相应的处理器，对不同消息进行处理
@@ -85,7 +92,7 @@ public class MessageServiceImpl implements MessageService {
         // 2. 返回构建消息
         ChatMessageResp.Message.MessageBuilder builder = ChatMessageResp.Message.builder()
                 .id(message.getId())
-                .sendTime(message.getCreateTime())
+                .sendTime(isCreatTime ? message.getCreateTime() : message.getUpdateTime())
                 .type(message.getType())
                 .reply(replyMsg);
         // 2.1 消息对象
@@ -152,5 +159,30 @@ public class MessageServiceImpl implements MessageService {
                     .build();
         }
         return replyMsg;
+    }
+
+    /**
+     * 撤回消息
+     *
+     * @param uid     用户ID
+     * @param request 请求信息
+     * @return 消息
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean revoke(Long uid, RevokeMessageReq request) {
+        Long id = request.getId();
+
+        // 1. 判断用户是否有权利撤回该消息
+        UserBaseInfo baseInfo = userCache.getBaseUserInfoByUid(uid);
+        Boolean isOwner = messageDao.hasPower(baseInfo, id);
+        AssertUtil.isTrue(isOwner, ChatErrorEnum.NOT_ALLOWED_REVOKE.getMsg());
+
+        // 2. 撤回消息
+        Message message = messageDao.revoke(baseInfo, id);
+
+        // 3. 推送消息
+        applicationEventPublisher.publishEvent(new MessageSendEvent(this, message));
+        return true;
     }
 }

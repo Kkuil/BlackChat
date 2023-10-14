@@ -19,8 +19,8 @@ public enum RoleEnum {
     /**
      *
      */
-    ADMIN(1L, "理超级管理员"),
-    CHAT_MANAGER(2L, "blackchat群聊管"),
+    ADMIN(1L, "超级管理员"),
+    CHAT_MANAGER(2L, "普通管理员"),
     ;
 
     private final Long id;

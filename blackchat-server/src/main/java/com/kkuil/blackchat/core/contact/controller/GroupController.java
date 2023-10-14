@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.core.contact.controller;
 
+import com.kkuil.blackchat.anotations.FrequencyControl;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.service.GroupMemberService;
@@ -7,6 +8,9 @@ import com.kkuil.blackchat.utils.ResultUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author Kkuil
@@ -41,7 +45,8 @@ public class GroupController {
      */
     @PostMapping("create-group")
     @Operation(summary = "创建群聊", description = "创建群聊")
-    public ResultUtil<Boolean> creatGroup(@RequestBody CreateGroupReq createGroupReq) {
+    // @FrequencyControl(prefixKey = "createGroup", time = 10, count = 5)
+    public ResultUtil<Boolean> creatGroup(@Valid @RequestBody CreateGroupReq createGroupReq) {
         Long uid = RequestHolderDTO.get().getUid();
         return ResultUtil.success(groupMemberService.createGroup(uid, createGroupReq), true);
     }

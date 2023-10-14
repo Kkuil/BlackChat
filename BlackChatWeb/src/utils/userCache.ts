@@ -1,5 +1,7 @@
 import UserInfo = GlobalTypes.UserInfo
 import UserInfoCache = GlobalTypes.UserInfoCache
+import UserBaseInfo = GlobalTypes.UserBaseInfo
+import ApiResult = GlobalTypes.ApiResult
 import {
     USER_CACHE_EXPIRE_TIME,
     USER_CACHE_LOC_KEY,
@@ -12,7 +14,6 @@ import { listBatchCache } from "@/api/user";
  * @param list 用户列表
  */
 export function updateUserInfoCache(list: UserInfo[]) {
-    console.log("list:", list)
     const localUserInfo: Record<string, UserInfoCache> = JSON.parse(
         localStorage.getItem(USER_CACHE_LOC_KEY) ?? "{}"
     )
@@ -44,7 +45,10 @@ export function updateUserInfoCache(list: UserInfo[]) {
  * 更新本地缓存
  * @param list 用户列表
  */
-export async function updateByUidList(list: number[]) {
+export async function updateByUidList(
+    list: number[]
+): Promise<ApiResult<UserBaseInfo[]>> {
     const result = await listBatchCache(list)
     updateUserInfoCache(result.data)
+    return result.data
 }

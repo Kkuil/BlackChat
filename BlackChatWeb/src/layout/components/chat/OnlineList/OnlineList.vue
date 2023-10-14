@@ -71,6 +71,7 @@ const userStore = useUserStore()
                 v-observe="sessionStore.getMemberList"
             >
                 <i class="iconfont icon-loading animate-spin"></i>
+                <span class="text-[12px] ml-[5px]">成员列表加载中</span>
             </li>
         </ul>
     </div>
