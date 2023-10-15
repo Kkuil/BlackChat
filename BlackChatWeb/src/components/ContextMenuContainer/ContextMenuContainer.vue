@@ -7,11 +7,12 @@ import {
 import { useUserStore } from "@/stores/user"
 import { useMessageStore } from "@/stores/message"
 import type { ChatMessageResp } from "@/layout/components/chat/ChatContent/ChatMessageResp.d.ts"
-import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
 import { ref } from "vue"
 import { addFriend } from "@/api/user"
 import { ElMessage } from "element-plus"
 import { revoke } from "@/api/message"
+import { useSessionStore } from "@/stores/session"
+import { SHOW_IN_REPLY_MAP } from "@/constant/global"
 
 const props = defineProps<{
     // 消息体
@@ -24,6 +25,7 @@ const props = defineProps<{
 
 const userStore = useUserStore()
 const messageStore = useMessageStore()
+const sessionStore = useSessionStore()
 const isCurrentUser = props?.message?.fromUser?.uid == userStore.userInfo.uid
 
 const applyComment = ref<string>("")
@@ -55,7 +57,10 @@ const addFriendHandler = async () => {
 
 const onRevoke = async () => {
     console.log(props.message.message.id)
-    const result = await revoke(props.message.message.id)
+    const result = await revoke({
+        msgId: props.message.message.id,
+        roomId: sessionStore.sessionInfo.chattingId
+    })
     if (result.data) {
         ElMessage.success("撤回成功")
     }
@@ -69,16 +74,8 @@ const onReply = () => {
     })
 }
 
-const showInReplyMap = {
-    [MessageTypeEnum.TEXT]: null,
-    [MessageTypeEnum.FILE]: "[文件]",
-    [MessageTypeEnum.IMAGE]: "[图片]",
-    [MessageTypeEnum.SOUND]: "[语音]",
-    [MessageTypeEnum.VIDEO]: "[视频]"
-}
-
 const getMessageShowInReply = (message: ChatMessageResp.Message<any, any>) => {
-    return showInReplyMap[message.type] ?? message.body.content
+    return SHOW_IN_REPLY_MAP[message.type] ?? message.body.content
 }
 </script>
 

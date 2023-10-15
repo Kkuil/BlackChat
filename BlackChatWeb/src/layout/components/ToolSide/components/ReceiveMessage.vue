@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue"
+import { ref, watch } from "vue"
 import { listReceiveMessage } from "@/api/list"
 import { ReadStatusEnum } from "@/enums/ReadStatusEnum"
 import MailMessageItem from "@/layout/components/ToolSide/components/components/MailMessageItem.vue"
@@ -85,17 +85,13 @@ const switchPage = (current) => {
     pageInfo.value.current = current
 }
 
-onMounted(async () => {
-    await listMessage()
-})
-
 watch(
     () => pageInfo.value,
     async () => {
-        console.log(123)
         await listMessage()
     },
     {
+        immediate: true,
         deep: true
     }
 )
@@ -107,12 +103,18 @@ watch(
         title="点击查看收件箱"
         @click="isShowReceiveDrawer = true"
     >
-        <i class="iconfont icon-email text-[35px] text-[#fff]"></i>
+        <i
+            class="iconfont icon-email sm:text-[35px] text-[#fff] text-[25px]"
+        ></i>
         <span class="desc text-[#fff] text-[12px] hidden sm:inline-block">
             收件箱
         </span>
     </div>
-    <el-drawer v-model="isShowReceiveDrawer" direction="ltr">
+    <el-drawer
+        v-model="isShowReceiveDrawer"
+        direction="ltr"
+        custom-class="w-full md:w-1/2 lg:w-[30%]"
+    >
         <template #header>
             <h4 class="text-[#f5f5f5]">收件箱</h4>
         </template>

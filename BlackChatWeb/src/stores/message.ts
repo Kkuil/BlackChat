@@ -144,7 +144,7 @@ export const useMessageStore = defineStore("message", () => {
                 )
                 messageList.value[index].message.type = MessageTypeEnum.REVOKE
                 messageList.value[index].message.body.content =
-                    data.message.content
+                    data.message.body.content
             } else {
                 messageList.value.push(data)
                 if (userStore.userInfo.uid == data.fromUser.uid) {

@@ -11,7 +11,7 @@ const sessionStore = useSessionStore()
 <template>
     <ChatList class="hidden md:block md:flex-[25%] xl:flex-[25%]" />
     <ChatContent
-        class="flex-[96%] sm:flex sm:flex-[85%] md:flex-[71%] xl:flex-[50%]"
+        class="h-[92%] sm:flex sm:flex-[85%] md:flex-[71%] xl:flex-[50%]"
         :class="
             sessionStore.getSessionInfo.type != RoomTypeEnum.GROUP
                 ? 'xl:flex-[69%]'

@@ -20,7 +20,7 @@ const checkUserInfo = async () => {
 </script>
 <template>
     <div class="cursor-pointer flex-center flex-col" @click="checkUserInfo">
-        <el-avatar :size="50" :src="userStore.userInfo.avatar">
+        <el-avatar class="sm:w-[40px]" :src="userStore.userInfo.avatar">
             <el-icon :size="25">
                 <Avatar />
             </el-icon>

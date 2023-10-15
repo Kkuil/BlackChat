@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.dao;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
@@ -133,7 +134,8 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
      * @param roomId 房间ID
      */
     public void deleteByRoomId(Long roomId) {
-        LambdaQueryChainWrapper<Message> wrapper = this.lambdaQuery()
+        LambdaQueryWrapper<Message> wrapper = new QueryWrapper<Message>()
+                .lambda()
                 .eq(Message::getRoomId, roomId);
         this.remove(wrapper);
     }

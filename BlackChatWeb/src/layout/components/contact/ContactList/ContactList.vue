@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import BlackSortedList from "@/components/BlackSortedList/BlackSortedList.vue"
-import { ref, watch } from "vue"
+import { onBeforeUnmount, onMounted, ref, watch } from "vue"
 import { useUserStore } from "@/stores/user"
 import { useFriendStore } from "@/stores/friend"
 import AddFriendDialog from "@/components/AddFriendDialog/AddFriendDialog.vue"
@@ -47,6 +47,27 @@ watch(
         immediate: true
     }
 )
+
+/**
+ * ctrl + k事件
+ * @param event
+ */
+const ctrlKEvent = function (event: KeyboardEvent) {
+    if (event.ctrlKey && event.key === "k") {
+        event.preventDefault()
+        showAddFriend.value = !showAddFriend.value
+    }
+}
+
+onMounted(() => {
+    // 监听事件
+    document.addEventListener("keydown", ctrlKEvent)
+})
+
+onBeforeUnmount(() => {
+    // 移除事件
+    document.removeEventListener("keydown", ctrlKEvent)
+})
 </script>
 
 <template>

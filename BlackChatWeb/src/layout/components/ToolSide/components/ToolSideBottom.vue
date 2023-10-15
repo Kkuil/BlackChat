@@ -9,11 +9,11 @@ import ReceiveMessage from "@/layout/components/ToolSide/components/ReceiveMessa
     >
         <ReceiveMessage />
         <a
-            class="item flex-center flex-col cursor-pointer"
+            class="item flex-center flex-col cursor-pointer ml-[10px] sm:ml-0"
             :href="PROJECT_URL"
             target="_blank"
         >
-            <i class="iconfont icon-github text-[35px]"></i>
+            <i class="iconfont icon-github text-[25px] sm:text-[35px]"></i>
             <span class="desc text-[#fff] text-[12px] hidden sm:inline-block">
                 Github源码
             </span>

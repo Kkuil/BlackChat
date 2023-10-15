@@ -34,7 +34,11 @@ onBeforeMount(() => {
         class="flex-[1/2] flex-center sm:flex sm:flex-[76%] md:flex-[71%] xl:flex-[69%]"
     >
         <ContactInfo v-if="checkingUserInfo.uid" :user="checkingUserInfo" />
-        <el-empty v-else description="<-- 找个人聊聊天吧~">
+        <el-empty
+            v-else
+            class="w-full h-full flex-center bg-primary"
+            description="<-- 找个人聊聊天吧~"
+        >
             <template #image>
                 <SvgIcon
                     icon-class="empty-contact"

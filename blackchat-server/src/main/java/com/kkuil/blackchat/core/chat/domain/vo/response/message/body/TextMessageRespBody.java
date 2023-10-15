@@ -1,5 +1,7 @@
 package com.kkuil.blackchat.core.chat.domain.vo.response.message.body;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kkuil.blackchat.utils.discover.domain.UrlInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +20,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class TextMessageRespBody {
     /**
      * 消息内容

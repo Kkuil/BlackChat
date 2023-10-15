@@ -10,6 +10,7 @@ import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
 import { exitGroup } from "@/api/group"
 import { ElMessage } from "element-plus"
 import { useUserStore } from "@/stores/user"
+import { SHOW_IN_SESSION_MAP } from "@/constant/global"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
@@ -313,10 +314,17 @@ export const useSessionStore = defineStore("session", () => {
             sessionInfo.value.sessions.splice(index, 1)
             // 更新会话最新消息
             session.activeTime = message.message.sendTime
+            console.log(
+                userStore.getBaseInfoInCache(message.fromUser.uid).name +
+                    ": " +
+                    SHOW_IN_SESSION_MAP[message.message.type] ??
+                    message.message.body.content
+            )
             session.text =
                 userStore.getBaseInfoInCache(message.fromUser.uid).name +
                 ": " +
-                message.message.body.content
+                (SHOW_IN_SESSION_MAP[message.message.type] ??
+                    message.message.body.content)
             session.unreadCount += 1
             sessionInfo.value.sessions.unshift(session)
         }

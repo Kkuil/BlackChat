@@ -7,7 +7,7 @@ import MessageContact from "@/layout/components/ToolSide/components/MessageConta
     <div
         class="w-full h-full flex flex-row sm:flex-col items-center text-[#fff]"
     >
-        <ToolSideAvatar avatar="123" name="Kkuil" />
+        <ToolSideAvatar />
         <MessageContact />
     </div>
 </template>

@@ -8,15 +8,16 @@ import ApiResult = GlobalTypes.ApiResult
 
 /**
  * 撤回消息
- * @param id 消息ID
+ * @param data
  */
-export const revoke = (id: number): Promise<ApiResult<boolean>> => {
+export const revoke = (data: {
+    msgId: number
+    roomId: number
+}): Promise<ApiResult<boolean>> => {
     return request({
         url: "/message/revoke",
         method: "PUT",
-        data: {
-            id
-        },
+        data,
         headers: {
             [TOKEN_KEY_IN_HEADER]:
                 TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""

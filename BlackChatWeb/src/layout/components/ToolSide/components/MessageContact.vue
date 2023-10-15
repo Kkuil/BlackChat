@@ -31,7 +31,7 @@ watch(
 
 <template>
     <RouterLink
-        class="w-[50px] h-[50px] py-[5px] rounded-[8px] cursor-pointer hover:bg-secondary flex-center mt-[10px] transition-[background-color]"
+        class="w-[40px] sm:w-[50px] h-[40px] sm:h-[50px] py-[5px] rounded-[8px] ml-[10px] sm:ml-0 cursor-pointer hover:bg-[#424656] flex-center sm:mt-[10px] transition-[background-color]"
         :class="selected === 'chat' ? 'selected' : ''"
         @click="switchTab('chat')"
         to="/chat"
@@ -41,17 +41,17 @@ watch(
             :hidden="!sessionStore.getUnreadTotalCount"
             :max="99"
         >
-            <i class="iconfont icon-message text-[28px]"></i>
+            <i class="iconfont icon-message text-[25px] sm:text-[28px]"></i>
         </el-badge>
     </RouterLink>
     <RouterLink
-        class="w-[50px] h-[50px] py-[5px] rounded-[8px] cursor-pointer hover:bg-secondary flex-center mt-[10px] transition-[background-color]"
+        class="w-[40px] sm:w-[50px] h-[40px] sm:h-[50px] py-[5px] rounded-[8px] ml-[10px] sm:ml-0 cursor-pointer hover:bg-[#424656] flex-center sm:mt-[10px] transition-[background-color]"
         :class="selected === 'contact' ? 'selected' : ''"
         @click="switchTab('contact')"
         to="/contact"
         v-if="userStore.userInfo.uid"
     >
-        <i class="iconfont icon-contact text-[28px]"></i>
+        <i class="iconfont icon-contact text-[25px] sm:text-[28px]"></i>
     </RouterLink>
 </template>
 
