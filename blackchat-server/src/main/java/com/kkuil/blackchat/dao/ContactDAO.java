@@ -14,6 +14,7 @@ import com.kkuil.blackchat.mapper.ContactMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -106,5 +107,24 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
         contact.setReadTime(readTime);
         this.save(contact);
         return contact;
+    }
+
+    /**
+     * 创建多个会话
+     *
+     * @param roomId  房间ID
+     * @param uidList 用户ID列表
+     * @param date    读取时间
+     */
+    public void createContactBatch(Long groupId, List<Long> uidList, Date date) {
+        List<Contact> contactList = new ArrayList<>();
+        uidList.forEach(uid -> {
+            Contact contact = new Contact();
+            contact.setUid(uid);
+            contact.setRoomId(groupId);
+            contact.setReadTime(date);
+            contactList.add(contact);
+        });
+        this.saveBatch(contactList);
     }
 }

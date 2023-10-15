@@ -26,7 +26,6 @@ import javax.validation.Valid;
 @Slf4j
 @RequestMapping("chat")
 public class ChatController {
-
     @Resource
     private ChatService chatService;
 

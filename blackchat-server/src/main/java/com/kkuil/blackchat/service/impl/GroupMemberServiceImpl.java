@@ -1,10 +1,15 @@
 package com.kkuil.blackchat.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
+import com.kkuil.blackchat.cache.GroupCache;
+import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.constant.GroupConst;
+import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
 import com.kkuil.blackchat.dao.*;
+import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.entity.UserApply;
 import com.kkuil.blackchat.domain.enums.ChatMessageEnum;
@@ -19,7 +24,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
 
 /**
  * @Author Kkuil
@@ -53,6 +58,9 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     @Resource
     private RoomService roomService;
 
+    @Resource
+    private RoomGroupCache roomGroupCache;
+
     /**
      * 退出群组
      *
@@ -67,7 +75,6 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         AssertUtil.isTrue(isGroupShip, ChatErrorEnum.NOT_IN_GROUP.getMsg());
 
         Room room = roomDao.getById(groupId);
-
         if (room.isHotRoom()) {
             return ChatErrorEnum.NOT_ALLOWED_TO_EXIT_ALL_GROUP.getErrorMsg();
         }
@@ -136,7 +143,74 @@ public class GroupMemberServiceImpl implements GroupMemberService {
      */
     @Override
     public void agreeAddGroup(UserApply userApply) {
+        // 0. 判断群是否存在
+        Long groupId = userApply.getExtraInfo().getGroupId();
+        Room room = roomDao.getById(groupId);
+        AssertUtil.isFalse(ObjectUtil.isNull(room), ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
 
+        // 1. 判断是否已经是群成员
+        Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, userApply.getTargetId());
+        AssertUtil.isFalse(isGroupShip, ChatErrorEnum.EXIST_GROUP_MEMBER.getMsg());
+
+        // 2. 判断是否达到群人数上限
+        List<Long> uidList = groupMemberDao.getUidListByRoomId(groupId);
+        AssertUtil.isTrue(uidList.size() <= GroupConst.MAX_COUNT_PER_GROUP - 1, ChatErrorEnum.MAX_COUNT_PER_GROUP_LIMIT.getMsg());
+
+        // 3. 加群
+        this.addGroup(groupId, Collections.singletonList(userApply.getTargetId()));
     }
 
+    /**
+     * 邀请加群
+     *
+     * @param uid              邀请人ID
+     * @param invitAddGroupReq 邀请加群的请求信息
+     * @return 是否邀请成功
+     */
+    @Override
+    public Boolean inviteGroup(Long uid, InvitAddGroupReq invitAddGroupReq) {
+        // -1. 判断邀请好友列表是否为空
+        AssertUtil.isFalse(invitAddGroupReq.getUidList().size() <= 0, ChatErrorEnum.EMPTY_LIST.getMsg());
+
+        // 0. 判断群是否存在
+        Long groupId = invitAddGroupReq.getGroupId();
+        GroupBaseInfo baseInfo = roomGroupCache.getBaseInfoById(groupId);
+        AssertUtil.isFalse(ObjectUtil.isNull(baseInfo), ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
+
+        // 1. 判断该用户是否有权限邀请人加群
+        Boolean hasPower = groupMemberDao.hasPowerForInviteGroup(groupId, uid);
+        AssertUtil.isTrue(hasPower, ChatErrorEnum.EXIST_GROUP_MEMBER.getMsg());
+
+        // 2. 判断是否达到群人数上限  TODO 在这里我们不用现群人数+传过来的uidList数量进行判断，是因为可能uidList中有已入群的uid
+        List<Long> uidList = roomGroupCache.getGroupUidByRoomId(groupId);
+        uidList.addAll(invitAddGroupReq.getUidList());
+        Set<Long> uidListDistinct = new HashSet<>(uidList);
+        AssertUtil.isTrue(uidListDistinct.size() <= GroupConst.MAX_COUNT_PER_GROUP, ChatErrorEnum.MAX_COUNT_PER_GROUP_LIMIT.getMsg());
+
+        // 3. 发出加群邀请
+        Boolean isInvited = userApplyDao.inviteGroup(uid, groupId, invitAddGroupReq.getUidList(), invitAddGroupReq.getMsg());
+        AssertUtil.isTrue(isInvited, ChatErrorEnum.EXIST_GROUP_MEMBER.getMsg());
+        return true;
+    }
+
+    /**
+     * 加群
+     * @param groupId 群ID
+     * @param uidList 需要入群的ID列表
+     */
+    private void addGroup(Long groupId, List<Long> uidList) {
+        // 1. 加群
+        groupMemberDao.addGroupMember(groupId, uidList);
+
+        // 2. 更新缓存
+        GroupBaseInfo baseInfo = roomGroupCache.getBaseInfoById(groupId);
+        baseInfo.getMemberList().addAll(uidList);
+        Set<Long> uidSet = new HashSet<>();
+        uidSet.addAll(baseInfo.getMemberList());
+        baseInfo.setMemberList(uidSet.stream().toList());
+        roomGroupCache.updateGroupInfoCache(groupId, baseInfo);
+
+        // 3. 创建会话
+        contactDao.createContactBatch(groupId, uidList, new Date());
+    }
 }

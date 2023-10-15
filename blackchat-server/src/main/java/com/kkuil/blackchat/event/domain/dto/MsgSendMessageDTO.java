@@ -15,5 +15,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MsgSendMessageDTO implements Serializable {
+    /**
+     * 消息ID
+     */
     private Long msgId;
 }

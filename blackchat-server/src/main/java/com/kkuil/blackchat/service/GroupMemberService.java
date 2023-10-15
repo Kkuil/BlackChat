@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.service;
 
+import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.domain.entity.UserApply;
 
@@ -34,4 +35,13 @@ public interface GroupMemberService {
      * @param userApply 用户申请记录
      */
     void agreeAddGroup(UserApply userApply);
+
+    /**
+     * 邀请加群
+     *
+     * @param uid              邀请人ID
+     * @param invitAddGroupReq 邀请加群的请求信息
+     * @return 是否邀请成功
+     */
+    Boolean inviteGroup(Long uid, InvitAddGroupReq invitAddGroupReq);
 }

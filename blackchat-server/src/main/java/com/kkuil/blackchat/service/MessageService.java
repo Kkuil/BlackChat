@@ -33,9 +33,10 @@ public interface MessageService {
      *
      * @param messageId    消息ID
      * @param isCreateTime 是否使用创建时间作为消息时间
+     * @param isRoomId     是否需要房间ID
      * @return 消息返回体
      */
-    ChatMessageResp buildChatMessageResp(Long messageId, Boolean isCreateTime);
+    ChatMessageResp buildChatMessageResp(Long messageId, Boolean isCreateTime, Boolean isRoomId);
 
     /**
      * 检查回复消息

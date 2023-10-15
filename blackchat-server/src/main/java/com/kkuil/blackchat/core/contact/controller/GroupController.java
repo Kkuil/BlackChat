@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.core.contact.controller;
 
 import com.kkuil.blackchat.anotations.FrequencyControl;
+import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
 import com.kkuil.blackchat.service.GroupMemberService;
@@ -43,12 +44,23 @@ public class GroupController {
      * @param createGroupReq 请求信息
      * @return 是否创建成功
      */
-    @PostMapping("create-group")
+    @PostMapping("create")
     @Operation(summary = "创建群聊", description = "创建群聊")
-    // @FrequencyControl(prefixKey = "createGroup", time = 10, count = 5)
     public ResultUtil<Boolean> creatGroup(@Valid @RequestBody CreateGroupReq createGroupReq) {
         Long uid = RequestHolderDTO.get().getUid();
         return ResultUtil.success(groupMemberService.createGroup(uid, createGroupReq), true);
     }
 
+    /**
+     * 邀请加群
+     *
+     * @param invitAddGroupReq 邀请加群的请求信息
+     * @return 是否邀请成功
+     */
+    @PostMapping("invite")
+    @Operation(summary = "邀请加群", description = "邀请加群")
+    public ResultUtil<Boolean> inviteGroup(@Valid @RequestBody InvitAddGroupReq invitAddGroupReq) {
+        Long uid = RequestHolderDTO.get().getUid();
+        return ResultUtil.success(groupMemberService.inviteGroup(uid, invitAddGroupReq));
+    }
 }

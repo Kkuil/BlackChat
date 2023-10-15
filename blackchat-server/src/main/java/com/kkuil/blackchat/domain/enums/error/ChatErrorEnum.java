@@ -33,6 +33,10 @@ public enum ChatErrorEnum implements ErrorEnum {
     REPEAT_OPERATED(1017, "消息已被操作过了，无法二次操作~"),
     MAX_COUNT_PER_GROUP_LIMIT(1018, "群人数超过上限，请删除后再进行操作吧~"),
     NOT_ALLOWED_REVOKE(1019, "您无权撤回该消息~"),
+    NO_POWER_FOR_INVITE(1020, "您暂时还无权邀请朋友加群，请联系管理员后再试吧~"),
+    INVITE_GROUP_FAILED(1021, "发出邀请失败，请稍后再试~"),
+    EXIST_GROUP_MEMBER(1022, "您已是该群成员，操作失败~"),
+    EMPTY_LIST(1023, "空列表"),
     ;
 
     private final Integer code;

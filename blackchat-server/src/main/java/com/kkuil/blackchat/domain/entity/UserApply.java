@@ -4,16 +4,25 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
+
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.kkuil.blackchat.core.contact.domain.bo.UserApplyExtraInfo;
+import lombok.*;
 
 /**
- * 用户申请表
- * @TableName user_apply
+ * @Author Kkuil
+ * @Date 2023/10/15 15:50
+ * @Description 用户申请表
  */
-@TableName(value ="user_apply")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+@TableName(value = "user_apply", autoResultMap = true)
 public class UserApply implements Serializable {
     /**
      * id
@@ -28,7 +37,7 @@ public class UserApply implements Serializable {
     private Long uid;
 
     /**
-     * 申请类型 1加好友
+     * 申请类型 1加好友 2加群
      */
     @TableField(value = "type")
     private Integer type;
@@ -44,6 +53,12 @@ public class UserApply implements Serializable {
      */
     @TableField(value = "msg")
     private String msg;
+
+    /**
+     * 额外信息  例如"{ groupId: xxx }"
+     */
+    @TableField(value = "extra_info", typeHandler = JacksonTypeHandler.class)
+    private UserApplyExtraInfo extraInfo;
 
     /**
      * 申请状态 1待审批 2同意 3拒绝

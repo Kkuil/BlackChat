@@ -83,7 +83,7 @@ public class MessageServiceImpl implements MessageService {
      * @return 消息返回体
      */
     @Override
-    public ChatMessageResp buildChatMessageResp(Long messageId, Boolean isCreatTime) {
+    public ChatMessageResp buildChatMessageResp(Long messageId, Boolean isCreatTime, Boolean isRoomId) {
         // 0. 构建回复消息
         ChatMessageResp.ReplyMsg replyMsg = this.buildReplyMsg(messageId);
         // 1. 根据消息类型获取相应的处理器，对不同消息进行处理
@@ -95,6 +95,9 @@ public class MessageServiceImpl implements MessageService {
                 .sendTime(isCreatTime ? message.getCreateTime() : message.getUpdateTime())
                 .type(message.getType())
                 .reply(replyMsg);
+        if (isRoomId) {
+            builder.roomId(message.getRoomId());
+        }
         // 2.1 消息对象
         ChatMessageResp.Message msg = handler.buildChatMessageResp(message, builder);
         // 2.2 用户对象
@@ -171,7 +174,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean revoke(Long uid, RevokeMessageReq request) {
-        Long id = request.getId();
+        Long id = request.getMsgId();
 
         // 1. 判断用户是否有权利撤回该消息
         UserBaseInfo baseInfo = userCache.getBaseUserInfoByUid(uid);

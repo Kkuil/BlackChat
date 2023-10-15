@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddFriendDialog: typeof import('./src/components/AddFriendDialog/AddFriendDialog.vue')['default']
+    AddGroupDialog: typeof import("src/components/InviteGroupDialog/InviteGroupDialog.vue")["default"]
     BlackCollapse: typeof import("./src/components/BlackCollapse/BlackCollapse.vue")["default"]
     BlackCollapseItem: typeof import("./src/components/BlackCollapse/BlackCollapseItem.vue")["default"]
     BlackEmojis: typeof import("./src/components/EmojiList/BlackEmojis.vue")["default"]
@@ -52,6 +53,7 @@ declare module 'vue' {
     IconSupport: typeof import("./src/components/icons/IconSupport.vue")["default"]
     IconTooling: typeof import("./src/components/icons/IconTooling.vue")["default"]
     ImageContent: typeof import('./src/components/ChatMessageItem/components/ImageContent/ImageContent.vue')['default']
+    InviteGroupDialog: typeof import('./src/components/InviteGroupDialog/InviteGroupDialog.vue')['default']
     LoginDialog: typeof import('./src/components/LoginDialog/LoginDialog.vue')['default']
     MessageItem: typeof import("./src/components/ChatMessageItem/MessageItem.vue")["default"]
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -66,7 +68,7 @@ declare module 'vue' {
     WelcomeItem: typeof import("./src/components/WelcomeItem.vue")["default"]
   }
   export interface ComponentCustomProperties {
-    vInfiniteScroll: typeof import('element-plus/es')['ElInfiniteScroll']
+    vInfiniteScroll: typeof import("element-plus/es")["ElInfiniteScroll"]
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']
   }
 }

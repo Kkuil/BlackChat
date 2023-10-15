@@ -15,7 +15,13 @@ public class RevokeMessageReq {
     /**
      * 消息ID
      */
+    @NotNull(message = "房间ID不能为空")
+    private Long roomId;
+
+    /**
+     * 消息ID
+     */
     @NotNull(message = "消息ID不能为空")
-    private Long id;
+    private Long msgId;
 
 }

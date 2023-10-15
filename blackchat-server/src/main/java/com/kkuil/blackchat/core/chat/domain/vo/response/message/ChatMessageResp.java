@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.core.chat.domain.vo.response.message;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kkuil.blackchat.domain.dto.IpInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,11 +54,17 @@ public class ChatMessageResp {
      */
     @Data
     @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Message {
         /**
          * 消息ID
          */
         private Long id;
+
+        /**
+         * 房间ID
+         */
+        private Long roomId;
 
         /**
          * 发送时间

@@ -2,7 +2,7 @@ package com.kkuil.blackchat.dao;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.contact.domain.bo.UserApplyExtraInfo;
 import com.kkuil.blackchat.core.contact.domain.fatory.mail.MailContentReadStatusFactory;
 import com.kkuil.blackchat.core.contact.domain.fatory.mail.handlers.AbstractReadStatusContentHandler;
 import com.kkuil.blackchat.core.contact.domain.vo.response.MessageResp;
@@ -13,7 +13,6 @@ import com.kkuil.blackchat.domain.enums.ReadStatusEnum;
 import com.kkuil.blackchat.domain.enums.UserApplyEnum;
 import com.kkuil.blackchat.domain.enums.UserApplyStatusEnum;
 import com.kkuil.blackchat.mapper.UserApplyMapper;
-import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,9 +26,6 @@ import java.util.Optional;
  */
 @Service
 public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
-
-    @Resource
-    private UserCache userCache;
 
     /**
      * 添加好友申请
@@ -194,5 +190,32 @@ public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
         userApply.setStatus(status);
         userApply.setReadStatus(ReadStatusEnum.READ.getStatus());
         return this.updateById(userApply);
+    }
+
+    /**
+     * 发出加群邀请
+     *
+     * @param uid     邀请人ID
+     * @param groupId 群ID
+     * @param uidList 用户列表ID
+     * @return 是否发出邀请成功
+     */
+    public Boolean inviteGroup(Long uid, Long groupId, List<Long> uidList, String msg) {
+        List<UserApply> applyList = new ArrayList<>();
+        uidList.forEach(targetId -> {
+            UserApply userApply = new UserApply();
+            userApply.setUid(uid);
+            userApply.setType(UserApplyEnum.GROUP.getType());
+            userApply.setTargetId(targetId);
+            userApply.setMsg(msg);
+            // * 注意：加群申请必须带上这个群ID，不然后续须发找到群
+            UserApplyExtraInfo userApplyExtraInfo = new UserApplyExtraInfo();
+            userApplyExtraInfo.setGroupId(groupId);
+            userApply.setExtraInfo(userApplyExtraInfo);
+            userApply.setStatus(UserApplyStatusEnum.APPLYING.getStatus());
+            userApply.setReadStatus(ReadStatusEnum.UNREAD.getStatus());
+            applyList.add(userApply);
+        });
+        return this.saveBatch(applyList);
     }
 }

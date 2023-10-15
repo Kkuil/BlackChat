@@ -20,40 +20,9 @@ export declare namespace ChatMessageResp {
         uid: string
         place?: string
     }
-    type IpInfo = {
-        /**
-         * 注册时的ip
-         */
-        createIp: string
-
-        /**
-         * 注册时的ip详情
-         */
-        createIpDetail: IpDetail
-
-        /**
-         * 最新登录的ip
-         */
-        updateIp: string
-
-        /**
-         * 最新登录的ip详情
-         */
-        updateIpDetail: IpDetail
-    }
-    type IpDetail = {
-        ip: string
-        isp: string
-        isp_id: string
-        city: string
-        city_id: string
-        country: string
-        country_id: string
-        region: string
-        region_id: string
-    }
     type Message<T, R> = {
         id: number
+        roomId: number
         sendTime: string
         type: MessageTypeEnum
         body: T

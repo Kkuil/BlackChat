@@ -6,7 +6,6 @@ import com.kkuil.blackchat.dao.UserApplyDAO;
 import com.kkuil.blackchat.domain.common.page.PageReq;
 import com.kkuil.blackchat.domain.common.page.PageRes;
 import com.kkuil.blackchat.domain.entity.UserApply;
-import com.kkuil.blackchat.domain.enums.UserApplyEnum;
 import com.kkuil.blackchat.domain.enums.UserApplyStatusEnum;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;

@@ -19,6 +19,10 @@ const sessionStore = useSessionStore()
 
 const editorRef = ref<HTMLElement | null>()
 
+const mode = ref<string>("text")
+
+const activeMoreFunction = ref<boolean>(false)
+
 /**
  * 打字中
  * @param e
@@ -53,7 +57,45 @@ const onCancelReply = () => {
     messageStore.cancelReply()
 }
 
-const activeMoreFunction = ref<boolean>(false)
+const mediaRecorder = ref<MediaRecorder>()
+
+/**
+ * 开始录制
+ */
+const startRecording = () => {
+    console.log("start record")
+    const constraints = { audio: true }
+    navigator.mediaDevices
+        .getUserMedia(constraints)
+        .then(function (stream) {
+            console.log(stream)
+            mediaRecorder.value = new MediaRecorder(stream)
+            mediaRecorder.value?.start()
+        })
+        .catch(function (err) {
+            console.log("无法获取用户媒体设备:", err)
+        })
+}
+
+/**
+ * 停止录制
+ */
+function stopRecording() {
+    console.log("stop record")
+    mediaRecorder.value?.stop()
+    console.log(mediaRecorder)
+}
+
+/**
+ * 录制声音
+ */
+const voiceHandler = () => {
+    if (mediaRecorder.value && mediaRecorder.value?.state === "recording") {
+        stopRecording()
+    } else {
+        startRecording()
+    }
+}
 
 eventBus.on(WsEventEnum.AITE, ({ people }) => {
     console.log(people)
@@ -94,22 +136,43 @@ eventBus.on(WsEventEnum.AITE, ({ people }) => {
             后再进行发言吧
         </div>
         <SvgIcon
+            v-if="mode === 'text'"
             class="flex-[1%] md:flex-[15%] lg:flex-[2%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
             icon-class="voice"
-            title="点击切换语音"
+            @click="mode = 'voice'"
         />
-        <input
-            ref="editorRef"
-            class="editor flex-[89%] flex items-center md:flex-[87%] lg:flex-[75%] h-[75%] outline-0 px-[5px] bg-[transparent] rounded-[6px] transition-[border] border-[1px] border-[transparent] focus:border-[#0094ff] hover:border-[#0094ff]"
-            :class="
-                messageStore.messageInfo.body.content ? 'border-[#0094ff]' : ''
-            "
-            placeholder="我们期待您的发言，请文明发言"
-            :value="messageStore.messageInfo.body.content"
-            @input="typing"
-            @keyup.enter="send"
-            contenteditable="true"
+        <SvgIcon
+            v-else
+            class="flex-[1%] md:flex-[15%] lg:flex-[2%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
+            icon-class="keyboard"
+            @click="mode = 'text'"
         />
+        <div
+            class="editor flex-[89%] flex items-center md:flex-[87%] lg:flex-[75%] h-[75%] px-[5px] rounded-[6px] transition-[border] border-[1px] border-[transparent]"
+        >
+            <input
+                v-if="mode === 'text'"
+                class="w-full outline-0 bg-[transparent] focus:border-[#0094ff] hover:border-[#0094ff]"
+                ref="editorRef"
+                :class="
+                    messageStore.messageInfo.body.content
+                        ? 'border-[#0094ff]'
+                        : ''
+                "
+                placeholder="我们期待您的发言，请文明发言"
+                :value="messageStore.messageInfo.body.content"
+                @input="typing"
+                @keyup.enter="send"
+                contenteditable="true"
+            />
+            <div
+                v-else
+                class="w-full flex-center cursor-pointer"
+                @click="voiceHandler"
+            >
+                点击录制
+            </div>
+        </div>
         <div class="flex-center flex-[6%] ml-[10px]">
             <i
                 title="更多功能"

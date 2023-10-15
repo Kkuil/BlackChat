@@ -136,17 +136,21 @@ export const useMessageStore = defineStore("message", () => {
      * 添加消息
      */
     const updateMessage = (data: ChatMessageResp.ChatMessageBaseResp) => {
-        if (data.message.type === MessageTypeEnum.REVOKE) {
-            const index = messageList.value.findIndex(
-                (item) => item.message.id == data.message.id
-            )
-            messageList.value[index].message.type = MessageTypeEnum.REVOKE
-            messageList.value[index].message.body.content = data.message.content
-        } else {
-            messageList.value.push(data)
-            if (userStore.userInfo.uid == data.fromUser.uid) {
-                cancelReply()
-                resetMessage()
+        // 如果是当前会话收到了消息就更新消息列表
+        if (data.message.roomId === sessionStore.sessionInfo.chattingId) {
+            if (data.message.type === MessageTypeEnum.REVOKE) {
+                const index = messageList.value.findIndex(
+                    (item) => item.message.id == data.message.id
+                )
+                messageList.value[index].message.type = MessageTypeEnum.REVOKE
+                messageList.value[index].message.body.content =
+                    data.message.content
+            } else {
+                messageList.value.push(data)
+                if (userStore.userInfo.uid == data.fromUser.uid) {
+                    cancelReply()
+                    resetMessage()
+                }
             }
         }
     }

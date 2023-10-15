@@ -113,7 +113,7 @@ public class ChatServiceImpl implements ChatService {
         messageService.save(message, chatMessageReq);
 
         // 6. 构建消息响应体
-        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId, true);
+        ChatMessageResp chatMessageResp = messageService.buildChatMessageResp(messageId, true, true);
 
         // 7. 发送消息事件
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, message));

@@ -4,10 +4,21 @@ import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useUserStore } from "@/stores/user"
 import { HOT_GROUP_ID } from "@/constant/global"
 import { Avatar } from "@element-plus/icons-vue"
+import { ref } from "vue"
+import AddGroupDialog from "@/components/InviteGroupDialog/InviteGroupDialog.vue"
 
 const sessionStore = useSessionStore()
 
 const userStore = useUserStore()
+// 展示创建群聊弹框
+const showAddGroup = ref<boolean>(false)
+
+/**
+ * 创建群聊
+ */
+const inviteFriendToAddGroup = () => {
+    showAddGroup.value = true
+}
 </script>
 
 <template>
@@ -31,8 +42,16 @@ const userStore = useUserStore()
             </a>
             后再进行查看吧
         </div>
-        <h1 class="online-count flex items-center h-[30px] text-[14px]">
-            总人数：{{ sessionStore.sessionInfo.totalCount }}
+        <h1
+            class="online-count flex justify-between items-center h-[30px] text-[14px]"
+        >
+            <span>总人数：{{ sessionStore.sessionInfo.totalCount }}</span>
+            <i
+                v-if="!sessionStore.isHotFlag"
+                class="iconfont icon-plus w-[20px] h-[20px] text-[12px] bg-[#0094ff] rounded-full flex-center cursor-pointer"
+                title="点击邀请好友"
+                @click="inviteFriendToAddGroup"
+            ></i>
         </h1>
         <ul class="list flex-1 overflow-y-auto overflow-x-hidden">
             <TransitionGroup
@@ -74,6 +93,13 @@ const userStore = useUserStore()
                 <span class="text-[12px] ml-[5px]">成员列表加载中</span>
             </li>
         </ul>
+        <el-dialog
+            v-model="showAddGroup"
+            :show-close="false"
+            class="bg-third flex-center"
+        >
+            <AddGroupDialog />
+        </el-dialog>
     </div>
 </template>
 

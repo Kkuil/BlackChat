@@ -73,20 +73,6 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
     }
 
     /**
-     * 群聊中是否有该用户
-     *
-     * @param roomId 房间ID
-     * @param uid    用户ID
-     * @return 群聊中是否存在该用户
-     */
-    public Boolean hasUser(Long roomId, Long uid) {
-        LambdaQueryChainWrapper<GroupMember> wrapper = lambdaQuery().eq(GroupMember::getRoomId, roomId).eq(GroupMember::getUid, uid);
-        GroupMember groupMember = this.getOne(wrapper);
-        return groupMember != null;
-    }
-
-
-    /**
      * 判断是否是群友
      *
      * @param roomId 房间ID
@@ -98,8 +84,10 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
         List<Long> uidList = roomGroupCache.getGroupUidByRoomId(roomId);
         // 2. 判断每个成员是否在这个集合中
         for (Long uid : uids) {
-            boolean contains = uidList.contains(uid);
-            AssertUtil.isTrue(contains, ChatErrorEnum.NOT_IN_GROUP.getMsg());
+            boolean isContains = uidList.contains(uid);
+            if (!isContains) {
+                return false;
+            }
         }
         return true;
     }
@@ -126,31 +114,13 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
     }
 
     /**
-     * 通过房间ID获取群成员ID
-     *
-     * @param roomId 房间ID
-     * @return 群成员ID
-     */
-    public List<Long> listUidByRoomId(Long roomId) {
-        LambdaQueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>().lambda().eq(GroupMember::getRoomId, roomId);
-        List<GroupMember> list = this.list(wrapper);
-        return list.stream().map(GroupMember::getUid).toList();
-    }
-
-    /**
      * 通过房间号获取房间成员uid列表
      *
      * @param roomId 房间ID
      * @return 成员列表
      */
     public List<Long> getUidListByRoomId(Long roomId) {
-        return this.lambdaQuery()
-                .eq(GroupMember::getRoomId, roomId)
-                .select(GroupMember::getUid)
-                .list()
-                .stream()
-                .map(GroupMember::getUid)
-                .toList();
+        return roomGroupCache.getGroupUidByRoomId(roomId);
     }
 
     /**
@@ -202,6 +172,43 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
             groupMember.setRoomId(roomId);
             groupMember.setUid(groupMemberBaseInfo.getUid());
             groupMember.setRole(groupMemberBaseInfo.getRole());
+            saveBatchList.add(groupMember);
+        });
+        this.saveBatch(saveBatchList);
+    }
+
+    /**
+     * 该用户是否有邀请人加群的权限
+     *
+     * @param groupId 群ID
+     * @param uid     邀请人ID
+     * @return 是否有权限
+     */
+    public Boolean hasPowerForInviteGroup(Long groupId, Long uid) {
+        return this.lambdaQuery()
+                .eq(GroupMember::getRoomId, groupId)
+                .eq(GroupMember::getUid, uid)
+                .eq(GroupMember::getRole, GroupRoleEnum.MASTER.getId())
+                .or()
+                .eq(GroupMember::getRoomId, groupId)
+                .eq(GroupMember::getUid, uid)
+                .eq(GroupMember::getRole, GroupRoleEnum.ADMIN.getId())
+                .exists();
+    }
+
+    /**
+     * 加群
+     *
+     * @param groupId 群ID
+     * @param uidList 用户列表ID
+     */
+    public void addGroupMember(Long groupId, List<Long> uidList) {
+        List<GroupMember> saveBatchList = new ArrayList<>();
+        uidList.forEach(uid -> {
+            GroupMember groupMember = new GroupMember();
+            groupMember.setRoomId(groupId);
+            groupMember.setUid(uid);
+            groupMember.setRole(GroupRoleEnum.MEMBER.getId());
             saveBatchList.add(groupMember);
         });
         this.saveBatch(saveBatchList);

@@ -72,14 +72,12 @@ export const useSessionStore = defineStore("session", () => {
             (session) => session.roomId == id
         )
         if (index === -1) {
-            // 获取会话信息
-            const result = await getSessionByRoomId(id)
-            if (result.data) {
-                sessionInfo.value.chattingId = result.data.roomId
-                sessionInfo.value.sessions.unshift(result.data)
-            }
+            const session = await getSessionInfoAsync(id)
+            sessionInfo.value.chattingId = session.roomId
+            sessionInfo.value.sessions.unshift(session)
         } else {
-            sessionInfo.value.chattingId = parseInt(id)
+            sessionInfo.value.chattingId =
+                sessionInfo.value.sessions[index].roomId
         }
         resetMemberList()
         // 获取群成员列表信息
@@ -90,6 +88,18 @@ export const useSessionStore = defineStore("session", () => {
         // 用户阅读信息上报
         if (getSessionInfo.value.unreadCount > 0) {
             await readMessage(sessionInfo.value.chattingId)
+        }
+    }
+
+    /**
+     * 异步获取会话信息
+     * @param id 会话ID
+     */
+    const getSessionInfoAsync = async (id: string) => {
+        // 获取会话信息
+        const result = await getSessionByRoomId(id)
+        if (result.data) {
+            return result.data
         }
     }
 
@@ -282,15 +292,34 @@ export const useSessionStore = defineStore("session", () => {
         return getSessionInfo.value.type === RoomTypeEnum.GROUP
     })
 
-    eventBus.on(WsEventEnum.SEND_MESSAGE, ({ message }) => {
+    /**
+     * 是否是热点群聊
+     */
+    const isHotFlag = computed(() => {
+        return getSessionInfo.value.hotFlag === 1
+    })
+
+    eventBus.on(WsEventEnum.SEND_MESSAGE, async ({ message }) => {
         // 更新当前会话的最新消息信息
+        // 先判断当前列表中是否有该会话
         const index = sessionInfo.value.sessions.findIndex(
-            (session) => session.roomId === sessionInfo.value.chattingId
+            (session) => session.roomId == message.message.roomId
         )
-        const session = sessionInfo.value.sessions[index]
-        session.activeTime = message.message.sendTime
-        sessionInfo.value.sessions.splice(index, 1)
-        sessionInfo.value.sessions.unshift(session)
+        if (index === -1) {
+            const session = getSessionInfoAsync(message.message.roomId)
+            sessionInfo.value.sessions.unshift(session)
+        } else {
+            const session = sessionInfo.value.sessions[index]
+            sessionInfo.value.sessions.splice(index, 1)
+            // 更新会话最新消息
+            session.activeTime = message.message.sendTime
+            session.text =
+                userStore.getBaseInfoInCache(message.fromUser.uid).name +
+                ": " +
+                message.message.body.content
+            session.unreadCount += 1
+            sessionInfo.value.sessions.unshift(session)
+        }
     })
 
     eventBus.on(WsEventEnum.CONN_SUCCESS, () => {
@@ -309,6 +338,7 @@ export const useSessionStore = defineStore("session", () => {
         exitGroupRoom,
         getSessionList,
         isGroup,
+        isHotFlag,
         readMessage,
         switchSession,
         getMemberList

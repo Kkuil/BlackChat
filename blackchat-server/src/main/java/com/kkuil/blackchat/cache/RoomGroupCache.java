@@ -45,9 +45,7 @@ public class RoomGroupCache {
         // 查询数据库
         RoomGroup roomGroup = roomGroupDao.getByRoomId(roomId);
         GroupBaseInfo groupBaseInfo = BeanUtil.toBean(roomGroup, GroupBaseInfo.class);
-        groupBaseInfo.setMemberList(groupMemberDao.getUidListByRoomId(roomId));
-        // 更新缓存
-        RedisUtil.set(key, groupBaseInfo);
+        this.updateGroupInfoCache(roomId, groupBaseInfo);
         return groupBaseInfo;
     }
 
@@ -67,4 +65,15 @@ public class RoomGroupCache {
         return this.getBaseInfoById(roomId).getMemberList();
     }
 
+    /**
+     * 更新缓存
+     *
+     * @param groupId       群ID
+     * @param groupBaseInfo 群信息
+     */
+    public void updateGroupInfoCache(Long groupId, GroupBaseInfo groupBaseInfo) {
+        // 更新缓存
+        String key = RedisKeyConst.getKey(RedisKeyConst.GROUP_INFO_STRING, groupId);
+        RedisUtil.set(key, groupBaseInfo);
+    }
 }

@@ -5,6 +5,7 @@ import {
     TOKEN_PREFIX
 } from "@/constant/auth"
 import type { TSearchResp } from "@/components/AddFriendDialog/AddFriendDialog.vue"
+import type { TInviteGroup } from "@/components/InviteGroupDialog/InviteGroupDialog.vue"
 import ApiResult = GlobalTypes.ApiResult
 import UserBaseInfo = GlobalTypes.UserBaseInfo;
 import LimitPage = GlobalTypes.LimitPage;
@@ -111,7 +112,25 @@ export const createGroup = (data: {
     groupName: string
 }): Promise<ApiResult<boolean>> => {
     return request({
-        url: "/group/create-group",
+        url: "/group/create",
+        method: "POST",
+        data,
+        headers: {
+            [TOKEN_KEY_IN_HEADER]:
+                TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""
+        }
+    })
+}
+
+/**
+ * 邀请加入群聊
+ * @param data 参数
+ */
+export const inviteGroup = (
+    data: TInviteGroup
+): Promise<ApiResult<boolean>> => {
+    return request({
+        url: "/group/invite",
         method: "POST",
         data,
         headers: {
