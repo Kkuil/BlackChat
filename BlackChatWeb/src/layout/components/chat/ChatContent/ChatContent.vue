@@ -3,8 +3,11 @@ import ChatInput from "@/layout/components/chat/ChatContent/components/ChatInput
 import ChatBody from "@/layout/components/chat/ChatContent/components/ChatBody.vue"
 import { useSessionStore } from "@/stores/session"
 import { ElMessage, ElMessageBox } from "element-plus"
+import { ref } from "vue"
+import OnlineList from "@/layout/components/chat/OnlineList/OnlineList.vue"
 
 const sessionStore = useSessionStore()
+const isShowOnlineList = ref<boolean>(false)
 
 /**
  * 退出群聊
@@ -29,7 +32,7 @@ const exitGroup = () => {
 
 <template>
     <div
-        class="w-full h-full flex flex-col bg-secondary rounded-[10px] overflow-hidden"
+        class="relative w-full h-full flex flex-col bg-secondary rounded-[10px] overflow-hidden"
     >
         <div
             class="w-full h-[8%] bg-third flex items-center justify-between px-[10px] text-[#f5f5f5] font-extrabold"
@@ -51,5 +54,22 @@ const exitGroup = () => {
             <ChatBody class="flex-1 overflow-y-scroll mb-[10px]" />
             <ChatInput />
         </div>
+        <i
+            v-if="sessionStore.isGroup"
+            class="xl:hidden iconfont icon-arrow-left flex-center hover:justify-center justify-start text-[20px] cursor-pointer absolute top-[120px] right-[-20px] w-[35px] h-[35px] rounded-full bg-[#fff] text-[#000] transition-all transition- hover:translate-x-[-20px]"
+            @click="isShowOnlineList = true"
+        ></i>
+        <el-drawer
+            v-model="isShowOnlineList"
+            direction="rtl"
+            custom-class="w-full overflow-y-scroll md:w-1/2 lg:w-[30%]"
+        >
+            <template #header>
+                <h4 class="text-[#f5f5f5]">成员列表</h4>
+            </template>
+            <template #default>
+                <online-list class="h-full" />
+            </template>
+        </el-drawer>
     </div>
 </template>

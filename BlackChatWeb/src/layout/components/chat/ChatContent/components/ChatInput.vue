@@ -137,13 +137,13 @@ eventBus.on(WsEventEnum.AITE, ({ people }) => {
         </div>
         <SvgIcon
             v-if="mode === 'text'"
-            class="flex-[1%] md:flex-[15%] lg:flex-[2%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
+            class="hidden md:flex md:flex-[15%] lg:flex-[2%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
             icon-class="voice"
             @click="mode = 'voice'"
         />
         <SvgIcon
             v-else
-            class="flex-[1%] md:flex-[15%] lg:flex-[2%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
+            class="hidden md:flex md:flex-[15%] lg:flex-[2%] cursor-pointer hover:bg-secondary rounded-[5px] transition-[background-color] mr-[3px]"
             icon-class="keyboard"
             @click="mode = 'text'"
         />

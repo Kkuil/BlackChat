@@ -51,7 +51,7 @@ const returnSendMsg = () => {
                     <Avatar />
                 </el-icon>
             </el-avatar>
-            <div class="h-full info ml-[10px] font-sans">
+            <div class="h-full info ml-[10px] font-sans hidden sm:block">
                 <h1 class="text-[17px] text-[#f5f5f5] mb-[5px]">
                     用户名：{{ user.name }}
                 </h1>

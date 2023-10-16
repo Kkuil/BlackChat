@@ -22,7 +22,7 @@ export declare namespace ChatMessageResp {
     }
     type Message<T, R> = {
         id: number
-        roomId: number
+        roomId?: number
         sendTime: string
         type: MessageTypeEnum
         body: T

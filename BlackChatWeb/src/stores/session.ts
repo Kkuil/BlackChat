@@ -1,4 +1,4 @@
-import { computed, ref, watch } from "vue"
+import { computed, ref } from "vue"
 import { defineStore } from "pinia"
 import { listMember, listSession } from "@/api/list"
 import { ChatActiveEnums } from "@/enums/ChatActiveEnum"
@@ -238,18 +238,6 @@ export const useSessionStore = defineStore("session", () => {
         }
     }
 
-    watch(
-        () => userStore.userInfo,
-        async (newState, oldState) => {
-            console.log("newState: ", newState)
-            console.log("oldState: ", oldState)
-            if (!oldState.uid) {
-                resetSessionPage()
-                await getSessionList()
-            }
-        }
-    )
-
     /**
      * 退出群聊
      */
@@ -330,10 +318,10 @@ export const useSessionStore = defineStore("session", () => {
         }
     })
 
-    eventBus.on(WsEventEnum.CONN_SUCCESS, () => {
-        if (!sessionStore.sessionInfo.sessions.length) {
-            sessionStore.getSessionList()
-        }
+    eventBus.on(WsEventEnum.LOGIN_SUCCESS, async () => {
+        resetSessionPage()
+        sessionInfo.value.sessions = []
+        await getSessionList()
     })
 
     return {

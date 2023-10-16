@@ -29,23 +29,25 @@ onBeforeMount(() => {
 </script>
 
 <template>
-    <ContactList class="hidden xl:block xl:flex-[25%]" @change="onChange" />
-    <div
-        class="flex-[1/2] flex-center sm:flex sm:flex-[76%] md:flex-[71%] xl:flex-[69%]"
-    >
-        <ContactInfo v-if="checkingUserInfo.uid" :user="checkingUserInfo" />
-        <el-empty
-            v-else
-            class="w-full h-full flex-center bg-primary"
-            description="<-- 找个人聊聊天吧~"
+    <div class="w-full h-full flex justify-between">
+        <ContactList class="w-[50%] xl:w-[25%] bg-primary" @change="onChange" />
+        <div
+            class="w-[50%] flex-center sm:flex sm:w-[76%] md:w-[71%] xl:w-[69%]"
         >
-            <template #image>
-                <SvgIcon
-                    icon-class="empty-contact"
-                    class="w-full h-full flex-center"
-                />
-            </template>
-        </el-empty>
+            <ContactInfo v-if="checkingUserInfo.uid" :user="checkingUserInfo" />
+            <el-empty
+                v-else
+                class="w-full h-full flex-center bg-primary"
+                description="<-- 找个人聊聊天吧~"
+            >
+                <template #image>
+                    <SvgIcon
+                        icon-class="empty-contact"
+                        class="w-full h-full flex-center"
+                    />
+                </template>
+            </el-empty>
+        </div>
     </div>
 </template>
 
