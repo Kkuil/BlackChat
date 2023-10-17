@@ -37,6 +37,10 @@ public enum ChatErrorEnum implements ErrorEnum {
     INVITE_GROUP_FAILED(1021, "发出邀请失败，请稍后再试~"),
     EXIST_GROUP_MEMBER(1022, "您已是该群成员，操作失败~"),
     EMPTY_LIST(1023, "空列表"),
+    NOT_ALLOWED_TO_REVOKE_MESSAGE_OVER_THREE_MINUTES(1024, "消息已发送超过三分钟，不允许撤回~"),
+    NO_POWER_FOR_ADD_ADMIN(1025, "您不是群主，无法进行添加管理员操作~"),
+    MAX_ADMIN_COUNT_LIMIT(1026, "最多添加三名管理员~"),
+    NOT_ALLOWED_ADD_ADMIN_WITH_NOT_MEMBER(1027, "不允许添加非本群成员的人作为管理员"),
     ;
 
     private final Integer code;

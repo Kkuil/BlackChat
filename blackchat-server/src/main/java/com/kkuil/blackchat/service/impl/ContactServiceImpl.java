@@ -72,9 +72,7 @@ public class ContactServiceImpl implements ContactService {
     public CursorPageBaseResp<ChatContactCursorResp, Date> listContact(Long uid, ChatContactCursorReq request) {
         CursorPageBaseResp<ContactWithActiveMsg, Date> cursorPage = contactDao.getCursorPage(uid, request);
 
-        List<ChatContactCursorResp> list = cursorPage.getList().stream().map(contact -> {
-            return this.buildChatContactResp(uid, contact);
-        }).toList();
+        List<ChatContactCursorResp> list = cursorPage.getList().stream().map(contact -> this.buildChatContactResp(uid, contact)).toList();
 
         return ContactAdapter.buildContactCursorPage(list, cursorPage);
     }

@@ -11,6 +11,7 @@ import { exitGroup } from "@/api/group"
 import { ElMessage } from "element-plus"
 import { useUserStore } from "@/stores/user"
 import { SHOW_IN_SESSION_MAP } from "@/constant/global"
+import { GroupRoleEnum } from "@/enums/GroupRoleEnum"
 import UserInfo = GlobalTypes.UserInfo
 
 type TSessionInfo = {
@@ -68,6 +69,7 @@ export const useSessionStore = defineStore("session", () => {
      * @param id 会话ID
      */
     const switchSession = async (id: string) => {
+        const tempId = sessionInfo.value.chattingId
         // 先判断当前列表中是否有该会话
         const index = sessionInfo.value.sessions.findIndex(
             (session) => session.roomId == id
@@ -288,6 +290,36 @@ export const useSessionStore = defineStore("session", () => {
         return getSessionInfo.value.hotFlag === 1
     })
 
+    /**
+     * 当前角色
+     */
+    const currentRoleId = computed(() => {
+        return sessionInfo.value.memberList.find(
+            (member) => member.uid == userStore.userInfo.uid
+        )?.roleId
+    })
+
+    /**
+     * 当前管理员数量
+     */
+    const countAdmin = computed(() => {
+        return sessionInfo.value.memberList.filter(
+            (member) => member.roleId == GroupRoleEnum.ADMIN
+        ).length
+    })
+
+    /**
+     * 设置管理员
+     * @param uidList
+     */
+    const setAdmins = (uidList: number[]) => {
+        sessionInfo.value.memberList.forEach((member) => {
+            if (uidList.includes(member.uid)) {
+                member.roleId = GroupRoleEnum.ADMIN
+            }
+        })
+    }
+
     eventBus.on(WsEventEnum.SEND_MESSAGE, async ({ message }) => {
         // 更新当前会话的最新消息信息
         // 先判断当前列表中是否有该会话
@@ -335,8 +367,11 @@ export const useSessionStore = defineStore("session", () => {
         getSessionList,
         isGroup,
         isHotFlag,
+        currentRoleId,
+        countAdmin,
         readMessage,
         switchSession,
+        setAdmins,
         getMemberList
     }
 })

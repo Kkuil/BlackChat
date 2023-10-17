@@ -17,4 +17,8 @@ public class GroupConst {
      */
     public static final Integer MAX_COUNT_PER_GROUP = 50;
 
+    /**
+     * 群管理人数上限
+     */
+    public static final int MAX_ADMIN_COUNT_PER_GROUP = 3;
 }

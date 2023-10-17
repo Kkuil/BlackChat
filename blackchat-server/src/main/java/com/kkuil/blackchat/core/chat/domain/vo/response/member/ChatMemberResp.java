@@ -1,5 +1,7 @@
 package com.kkuil.blackchat.core.chat.domain.vo.response.member;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kkuil.blackchat.core.websocket.domain.enums.ChatActiveStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatMemberResp {
     /**
      * 用户ID
@@ -34,7 +37,7 @@ public class ChatMemberResp {
     /**
      * 角色
      */
-    private Integer role;
+    private Integer roleId;
 
     /**
      * @see ChatActiveStatusEnum

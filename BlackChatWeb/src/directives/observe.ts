@@ -7,7 +7,7 @@ const ob: IntersectionObserver = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             const cb = elMapCb.get(entry.target)
             if (cb instanceof Function) {
-                cb()
+                setTimeout(cb, 100)
             }
         }
     }

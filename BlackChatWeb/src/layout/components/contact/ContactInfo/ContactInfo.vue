@@ -5,6 +5,7 @@ import { useFriendStore } from "@/stores/friend"
 import { ElMessageBox } from "element-plus"
 import { useRouter } from "vue-router"
 import { useSessionStore } from "@/stores/session"
+import SvgIcon from "@/components/SvgIcon/SvgIcon.vue"
 
 const friendStore = useFriendStore()
 
@@ -13,7 +14,6 @@ const props = defineProps<{
 }>()
 
 const $router = useRouter()
-
 const sessionStore = useSessionStore()
 
 /**
@@ -44,7 +44,10 @@ const returnSendMsg = () => {
 </script>
 
 <template>
-    <div class="contact-info w-full h-full px-[30px] bg-primary">
+    <div
+        class="contact-info w-full h-full px-[30px] bg-primary"
+        v-if="user.uid"
+    >
         <div class="flex user-info">
             <el-avatar :src="user.avatar" :size="85">
                 <el-icon :size="60">
@@ -83,6 +86,18 @@ const returnSendMsg = () => {
         </div>
         <el-divider content-position="center" />
     </div>
+    <el-empty
+        v-else
+        class="w-full h-full flex-center bg-primary"
+        description="<-- 找个人聊聊天吧~"
+    >
+        <template #image>
+            <SvgIcon
+                icon-class="empty-contact"
+                class="w-full h-full flex-center"
+            />
+        </template>
+    </el-empty>
 </template>
 
 <style scoped lang="scss"></style>

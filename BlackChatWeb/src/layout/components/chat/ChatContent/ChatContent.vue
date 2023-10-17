@@ -2,32 +2,15 @@
 import ChatInput from "@/layout/components/chat/ChatContent/components/ChatInput.vue"
 import ChatBody from "@/layout/components/chat/ChatContent/components/ChatBody.vue"
 import { useSessionStore } from "@/stores/session"
-import { ElMessage, ElMessageBox } from "element-plus"
 import { ref } from "vue"
 import OnlineList from "@/layout/components/chat/OnlineList/OnlineList.vue"
+import SettingBox from "@/layout/components/chat/ChatContent/components/SettingBox.vue"
 
 const sessionStore = useSessionStore()
+// 响应式布局控制在线列表的显示和隐藏
 const isShowOnlineList = ref<boolean>(false)
-
-/**
- * 退出群聊
- */
-const exitGroup = () => {
-    ElMessageBox.confirm(
-        "是否退出该群聊？退出后，聊天相关记录也将会被同步删除",
-        "退出群聊",
-        {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消"
-        }
-    )
-        .then(() => {
-            sessionStore.exitGroupRoom()
-        })
-        .catch(() => {
-            ElMessage.error("退出群聊失败")
-        })
-}
+// 设置
+const isShowSetting = ref<boolean>(false)
 </script>
 
 <template>
@@ -38,17 +21,16 @@ const exitGroup = () => {
             class="w-full h-[8%] bg-third flex items-center justify-between px-[10px] text-[#f5f5f5] font-extrabold"
         >
             <h1>{{ sessionStore.getSessionInfo.name }}</h1>
-            <el-button
-                type="danger"
-                size="small"
+            <i
+                class="iconfont icon-setting cursor-pointer text-[20px] text-[#fff]"
+                title="设置"
                 v-if="
                     sessionStore.isGroup &&
                     sessionStore.getSessionInfo.hotFlag !== 1
                 "
-                @click="exitGroup"
+                @click="isShowSetting = true"
             >
-                退出群聊
-            </el-button>
+            </i>
         </div>
         <div class="px-[15px] py-[10px] h-[92%] flex flex-col">
             <ChatBody class="flex-1 overflow-y-scroll mb-[10px]" />
@@ -69,6 +51,18 @@ const exitGroup = () => {
             </template>
             <template #default>
                 <online-list class="h-full" />
+            </template>
+        </el-drawer>
+        <el-drawer
+            v-model="isShowSetting"
+            direction="rtl"
+            custom-class="w-full overflow-y-scroll md:w-1/2 lg:w-[30%]"
+        >
+            <template #header>
+                <h4 class="text-[#f5f5f5]">设置</h4>
+            </template>
+            <template #default>
+                <SettingBox />
             </template>
         </el-drawer>
     </div>

@@ -1,5 +1,7 @@
 package com.kkuil.blackchat.service.impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.core.chat.domain.vo.request.message.RevokeMessageReq;
@@ -22,6 +24,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -181,10 +184,16 @@ public class MessageServiceImpl implements MessageService {
         Boolean isOwner = messageDao.hasPower(baseInfo, id);
         AssertUtil.isTrue(isOwner, ChatErrorEnum.NOT_ALLOWED_REVOKE.getMsg());
 
-        // 2. 撤回消息
+        // 2. 判断发消息时间是否大于三分钟
+        Message msg = messageDao.getById(request.getMsgId());
+        AssertUtil.isNotEmpty(msg, ChatErrorEnum.MESSAGE_NOT_EXIST.getMsg());
+        Date sendTime = msg.getCreateTime();
+        AssertUtil.isFalse(DateUtil.between(sendTime, new Date(), DateUnit.MINUTE) > 3, ChatErrorEnum.NOT_ALLOWED_TO_REVOKE_MESSAGE_OVER_THREE_MINUTES.getMsg());
+
+        // 3. 撤回消息
         Message message = messageDao.revoke(baseInfo, id);
 
-        // 3. 推送消息
+        // 4. 推送消息
         applicationEventPublisher.publishEvent(new MessageSendEvent(this, message));
         return true;
     }

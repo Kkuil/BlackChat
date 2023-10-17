@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.core.contact.domain.vo.request.ChatContactCursorReq;
-import com.kkuil.blackchat.core.contact.domain.vo.response.ChatContactCursorResp;
 import com.kkuil.blackchat.domain.bo.contact.ContactWithActiveMsg;
 import com.kkuil.blackchat.domain.entity.Contact;
 import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
@@ -37,7 +36,9 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
     public CursorPageBaseResp<ContactWithActiveMsg, Date> getCursorPage(Long uid, ChatContactCursorReq request) {
         List<ContactWithActiveMsg> list = contactMapper.getCursorPage(uid, request);
         CursorPageBaseResp<ContactWithActiveMsg, Date> contactWithActiveMsgCursorPageBaseResp = new CursorPageBaseResp<>();
-        contactWithActiveMsgCursorPageBaseResp.setCursor(list.get(list.size() - 1).getActiveTime());
+        if (list.size() > 0) {
+            contactWithActiveMsgCursorPageBaseResp.setCursor(list.get(list.size() - 1).getActiveTime());
+        }
         contactWithActiveMsgCursorPageBaseResp.setList(list);
         contactWithActiveMsgCursorPageBaseResp.setIsLast(request.getPageSize() > list.size());
         return contactWithActiveMsgCursorPageBaseResp;

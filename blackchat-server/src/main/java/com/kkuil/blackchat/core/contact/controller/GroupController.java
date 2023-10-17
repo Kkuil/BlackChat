@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.core.contact.controller;
 
 import com.kkuil.blackchat.anotations.FrequencyControl;
+import com.kkuil.blackchat.core.contact.domain.vo.request.AddAdminReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.domain.dto.RequestHolderDTO;
@@ -54,13 +55,26 @@ public class GroupController {
     /**
      * 邀请加群
      *
-     * @param invitAddGroupReq 邀请加群的请求信息
+     * @param inviteAddGroupReq 邀请加群的请求信息
      * @return 是否邀请成功
      */
     @PostMapping("invite")
     @Operation(summary = "邀请加群", description = "邀请加群")
-    public ResultUtil<Boolean> inviteGroup(@Valid @RequestBody InvitAddGroupReq invitAddGroupReq) {
+    public ResultUtil<Boolean> inviteGroup(@Valid @RequestBody InvitAddGroupReq inviteAddGroupReq) {
         Long uid = RequestHolderDTO.get().getUid();
-        return ResultUtil.success(groupMemberService.inviteGroup(uid, invitAddGroupReq));
+        return ResultUtil.success(groupMemberService.inviteGroup(uid, inviteAddGroupReq));
+    }
+
+    /**
+     * 添加管理
+     *
+     * @param addAdminReq 添加管理请求信息
+     * @return 是否添加成功
+     */
+    @PutMapping("admin/add")
+    @Operation(summary = "添加管理", description = "添加管理")
+    public ResultUtil<Boolean> addAdmin(@Valid @RequestBody AddAdminReq addAdminReq) {
+        Long uid = RequestHolderDTO.get().getUid();
+        return ResultUtil.success(groupMemberService.addAdmin(uid, addAdminReq));
     }
 }

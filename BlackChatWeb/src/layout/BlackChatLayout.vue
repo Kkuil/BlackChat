@@ -15,7 +15,7 @@ const isShowContactList = ref<boolean>(false)
         ></i>
         <el-drawer
             v-model="isShowContactList"
-            direction="rtl"
+            direction="ltr"
             custom-class="w-full overflow-y-scroll md:w-1/2 lg:w-[30%]"
         >
             <template #header>

@@ -38,7 +38,7 @@ const scrollBottom = () => {
             console.log("height: ", bodyRef.value?.scrollHeight)
             bodyRef.value.scrollTop = bodyRef.value?.scrollHeight
         }
-    }, 100)
+    }, 300)
 }
 
 watch(

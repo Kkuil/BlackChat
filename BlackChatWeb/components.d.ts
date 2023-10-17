@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    AddAdminDialog: typeof import('./src/components/AddAdminDialog/AddAdminDialog.vue')['default']
     AddFriendDialog: typeof import('./src/components/AddFriendDialog/AddFriendDialog.vue')['default']
     AddGroupDialog: typeof import("src/components/InviteGroupDialog/InviteGroupDialog.vue")["default"]
     BlackCollapse: typeof import("./src/components/BlackCollapse/BlackCollapse.vue")["default"]

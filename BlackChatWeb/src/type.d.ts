@@ -34,6 +34,7 @@ declare namespace GlobalTypes {
     type UserInfo = Partial<{
         uid: number
         name: string
+        roleId: number
         avatar: string
         activeStatus: number
     }>

@@ -152,12 +152,12 @@ eventBus.on(WsEventEnum.AITE, ({ people }) => {
         >
             <input
                 v-if="mode === 'text'"
-                class="w-full outline-0 bg-[transparent] focus:border-[#0094ff] hover:border-[#0094ff]"
+                class="w-full h-full outline-0 bg-[transparent] border-[1px] focus:border-[#0094ff] hover:border-[#0094ff] rounded-[5px] px-[5px]"
                 ref="editorRef"
                 :class="
                     messageStore.messageInfo.body.content
                         ? 'border-[#0094ff]'
-                        : ''
+                        : 'border-transparent'
                 "
                 placeholder="我们期待您的发言，请文明发言"
                 :value="messageStore.messageInfo.body.content"
@@ -197,8 +197,8 @@ eventBus.on(WsEventEnum.AITE, ({ people }) => {
                     messageStore.messageInfo.body &&
                     messageStore.messageInfo.body?.content &&
                     messageStore.messageInfo.messageType == MessageTypeEnum.TEXT
-                        ? 'rotate-[45deg]'
-                        : ''
+                        ? 'rotate-[45deg] text-[#fff]'
+                        : 'text-[#ccc] pointer-events-none'
                 "
                 @click="send"
             ></i>

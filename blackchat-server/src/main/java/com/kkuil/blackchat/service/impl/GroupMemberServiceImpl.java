@@ -1,10 +1,10 @@
 package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.kkuil.blackchat.cache.GroupCache;
 import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.constant.GroupConst;
+import com.kkuil.blackchat.core.contact.domain.vo.request.AddAdminReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
@@ -71,7 +71,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public String exitGroup(Long uid, Long groupId) {
-        Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, uid);
+        Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, Collections.singletonList(uid));
         AssertUtil.isTrue(isGroupShip, ChatErrorEnum.NOT_IN_GROUP.getMsg());
 
         Room room = roomDao.getById(groupId);
@@ -79,19 +79,34 @@ public class GroupMemberServiceImpl implements GroupMemberService {
             return ChatErrorEnum.NOT_ALLOWED_TO_EXIT_ALL_GROUP.getErrorMsg();
         }
 
-        // 删除成员
-        Boolean isExitGroup = groupMemberDao.exitGroup(groupId, uid);
-        AssertUtil.isTrue(isExitGroup, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+        // 判断当前退出的人是否是群主
+        Boolean isMaster = groupMemberDao.isMaster(groupId, uid);
+        if (isMaster) {
+            // 删房间
+            roomDao.deleteById(groupId);
+            // 删会话
+            contactDao.deleteByRoomId(groupId);
+            // 删消息
+            messageDao.deleteByRoomId(groupId);
+            // 删成员
+            groupMemberDao.deleteByRoomId(groupId);
+            return ChatMessageEnum.DEL_GROUP_SUCCESS.getMsg();
+        } else {
+            // 删除成员
+            Boolean isExitGroup = groupMemberDao.exitGroup(groupId, uid);
+            AssertUtil.isTrue(isExitGroup, CommonErrorEnum.SYSTEM_ERROR.getMsg());
 
-        // 删除会话记录
-        Boolean isDelContact = contactDao.delContact(groupId, uid);
-        AssertUtil.isTrue(isDelContact, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+            // 删除会话记录
+            Boolean isDelContact = contactDao.delContact(groupId, uid);
+            AssertUtil.isTrue(isDelContact, CommonErrorEnum.SYSTEM_ERROR.getMsg());
 
-        // 删除消息记录
-        Boolean isDelMsg = messageDao.delRecordBatch(groupId, uid);
-        AssertUtil.isTrue(isDelMsg, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+            // 删除消息记录
+            // TODO 这个地方想实现就打开注释
+            // Boolean isDelMsg = messageDao.delRecordBatch(groupId, uid);
+            // AssertUtil.isTrue(isDelMsg, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+            return ChatMessageEnum.EXIT_GROUP_SUCCESS.getMsg();
+        }
 
-        return ChatMessageEnum.EXIT_GROUP_SUCCESS.getMsg();
     }
 
     /**
@@ -149,7 +164,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         AssertUtil.isFalse(ObjectUtil.isNull(room), ChatErrorEnum.ROOM_NOT_EXIST.getMsg());
 
         // 1. 判断是否已经是群成员
-        Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, userApply.getTargetId());
+        Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, Collections.singletonList(userApply.getTargetId()));
         AssertUtil.isFalse(isGroupShip, ChatErrorEnum.EXIST_GROUP_MEMBER.getMsg());
 
         // 2. 判断是否达到群人数上限
@@ -194,7 +209,43 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     }
 
     /**
+     * 添加管理
+     *
+     * @param uid         用户ID
+     * @param addAdminReq 请求信息
+     * @return 是否添加成功
+     */
+    @Override
+    public Boolean addAdmin(Long uid, AddAdminReq addAdminReq) {
+        Long groupId = addAdminReq.getGroupId();
+
+        // 1. 判断权限身份
+        Boolean isMaster = groupMemberDao.isMaster(groupId, uid);
+        AssertUtil.isTrue(isMaster, ChatErrorEnum.NO_POWER_FOR_ADD_ADMIN.getMsg());
+
+        // 2. 判断成员列表是否是群中成员
+        List<Long> uidList = addAdminReq.getUidList();
+        Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, uidList);
+        AssertUtil.isTrue(isGroupShip, ChatErrorEnum.NOT_ALLOWED_ADD_ADMIN_WITH_NOT_MEMBER.getMsg());
+
+        // 3. 判断管理员uidList
+        List<Long> adminUidList = groupMemberDao.getAdminCount(groupId);
+        // TODO 这里是为了防止adminUidList为空，报不支持异常
+        List<Long> newAdminUidList = new ArrayList<>(adminUidList);
+        newAdminUidList.addAll(uidList);
+        adminUidList = newAdminUidList;
+        Set<Long> uidSet = new HashSet<>(adminUidList);
+        AssertUtil.isTrue(uidSet.size() <= GroupConst.MAX_ADMIN_COUNT_PER_GROUP, ChatErrorEnum.MAX_ADMIN_COUNT_LIMIT.getMsg());
+
+        // 4. 添加管理员
+        groupMemberDao.setAdmin(groupId, uidList);
+
+        return true;
+    }
+
+    /**
      * 加群
+     *
      * @param groupId 群ID
      * @param uidList 需要入群的ID列表
      */
@@ -202,15 +253,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         // 1. 加群
         groupMemberDao.addGroupMember(groupId, uidList);
 
-        // 2. 更新缓存
-        GroupBaseInfo baseInfo = roomGroupCache.getBaseInfoById(groupId);
-        baseInfo.getMemberList().addAll(uidList);
-        Set<Long> uidSet = new HashSet<>();
-        uidSet.addAll(baseInfo.getMemberList());
-        baseInfo.setMemberList(uidSet.stream().toList());
-        roomGroupCache.updateGroupInfoCache(groupId, baseInfo);
-
-        // 3. 创建会话
+        // 2. 创建会话
         contactDao.createContactBatch(groupId, uidList, new Date());
     }
 }

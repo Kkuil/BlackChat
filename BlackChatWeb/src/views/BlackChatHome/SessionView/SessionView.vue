@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from "vue"
 import ContactList from "@/layout/components/contact/ContactList/ContactList.vue"
-import SvgIcon from "@/components/SvgIcon/SvgIcon.vue"
 import ContactInfo from "@/layout/components/contact/ContactInfo/ContactInfo.vue"
 import { useUserStore } from "@/stores/user"
 import { useRouter } from "vue-router"
@@ -34,19 +33,7 @@ onBeforeMount(() => {
         <div
             class="w-[50%] flex-center sm:flex sm:w-[76%] md:w-[71%] xl:w-[69%]"
         >
-            <ContactInfo v-if="checkingUserInfo.uid" :user="checkingUserInfo" />
-            <el-empty
-                v-else
-                class="w-full h-full flex-center bg-primary"
-                description="<-- 找个人聊聊天吧~"
-            >
-                <template #image>
-                    <SvgIcon
-                        icon-class="empty-contact"
-                        class="w-full h-full flex-center"
-                    />
-                </template>
-            </el-empty>
+            <ContactInfo :user="checkingUserInfo" />
         </div>
     </div>
 </template>

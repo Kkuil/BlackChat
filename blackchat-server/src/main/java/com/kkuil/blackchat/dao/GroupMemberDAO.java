@@ -2,9 +2,14 @@ package com.kkuil.blackchat.dao;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.BooleanUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.constant.RedisKeyConst;
@@ -14,6 +19,7 @@ import com.kkuil.blackchat.domain.bo.room.GroupBaseInfo;
 import com.kkuil.blackchat.domain.entity.GroupMember;
 import com.kkuil.blackchat.domain.entity.Room;
 import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
+import com.kkuil.blackchat.domain.enums.error.CommonErrorEnum;
 import com.kkuil.blackchat.mapper.GroupMemberMapper;
 import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.utils.AssertUtil;
@@ -24,7 +30,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author Kkuil
@@ -79,7 +87,7 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @param uids   一群用户
      * @return 是否是群友
      */
-    public Boolean isGroupShip(Long roomId, Long... uids) {
+    public Boolean isGroupShip(Long roomId, List<Long> uids) {
         // 1. 通过ID查询房间内的所有成员ID
         List<Long> uidList = roomGroupCache.getGroupUidByRoomId(roomId);
         // 2. 判断每个成员是否在这个集合中
@@ -174,6 +182,8 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
             groupMember.setRole(groupMemberBaseInfo.getRole());
             saveBatchList.add(groupMember);
         });
+        // 注意：这里得去更新缓存中的成员列表
+        this.addGroupMember(roomId, saveBatchList.stream().map(GroupMember::getUid).toList());
         this.saveBatch(saveBatchList);
     }
 
@@ -211,6 +221,89 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
             groupMember.setRole(GroupRoleEnum.MEMBER.getId());
             saveBatchList.add(groupMember);
         });
+        // 更新缓存
+        String roomKey = String.format(RedisKeyConst.GROUP_INFO_STRING, groupId);
+        String key = RedisKeyConst.getKey(roomKey);
+        GroupBaseInfo groupBaseInfo = RedisUtil.get(key, GroupBaseInfo.class);
+        AssertUtil.isNotEmpty(groupBaseInfo, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+        // 合并群成员并去重
+        groupBaseInfo.getMemberList().addAll(uidList);
+        Set<Long> uidSet = new HashSet<>(groupBaseInfo.getMemberList());
+        RedisUtil.set(key, uidSet.stream().toList());
         this.saveBatch(saveBatchList);
+    }
+
+    /**
+     * 判断该用户是否是群主
+     *
+     * @param groupId 房间ID
+     * @param uid     用户ID
+     * @return 是否是群主
+     */
+    public Boolean isMaster(Long groupId, Long uid) {
+        return this.lambdaQuery()
+                .eq(GroupMember::getRoomId, groupId)
+                .eq(GroupMember::getUid, uid)
+                .eq(GroupMember::getRole, GroupRoleEnum.MASTER.getId())
+                .exists();
+    }
+
+    /**
+     * 通过房间ID删除群成员
+     *
+     * @param roomId 房间ID
+     */
+    public void deleteByRoomId(Long roomId) {
+        LambdaQueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>()
+                .lambda()
+                .eq(GroupMember::getRoomId, roomId);
+        this.remove(wrapper);
+    }
+
+    /**
+     * 获取用户在群中的角色ID
+     *
+     * @param roomId 房间ID
+     * @param uid    用户ID
+     * @return 角色ID
+     */
+    public Integer getRoleId(Long roomId, Long uid) {
+        return this.lambdaQuery()
+                .eq(GroupMember::getRoomId, roomId)
+                .eq(GroupMember::getUid, uid)
+                .select(GroupMember::getRole)
+                .one()
+                .getRole();
+    }
+
+    /**
+     * 获取管理员数量
+     *
+     * @param groupId 群ID
+     * @return 数量
+     */
+    public List<Long> getAdminCount(Long groupId) {
+        return this.lambdaQuery()
+                .eq(GroupMember::getRoomId, groupId)
+                .eq(GroupMember::getRole, GroupRoleEnum.ADMIN.getId())
+                .list()
+                .stream()
+                .map(GroupMember::getUid)
+                .toList();
+    }
+
+    /**
+     * 添加管理员
+     *
+     * @param groupId 群ID
+     * @param uidList 需要添加用户的ID列表
+     */
+    public void setAdmin(Long groupId, List<Long> uidList) {
+        Wrapper<GroupMember> wrapper = new UpdateWrapper<GroupMember>()
+                .lambda()
+                .eq(GroupMember::getRoomId, groupId)
+                .in(GroupMember::getUid, uidList)
+                .set(GroupMember::getRole, GroupRoleEnum.ADMIN.getId());
+        this.update(wrapper);
     }
 }

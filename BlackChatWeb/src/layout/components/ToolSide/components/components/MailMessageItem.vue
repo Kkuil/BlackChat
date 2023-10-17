@@ -50,7 +50,7 @@ const operation = async (status: MailOperationStatusEnum) => {
                 </h4>
             </div>
             <div
-                class="w-[20%] line-clamp-1 overflow-x-hidden overflow-ellipsis right text-[12px] whitespace-nowrap"
+                class="w-full flex justify-end overflow-hidden overflow-ellipsis right text-[12px] whitespace-nowrap"
             >
                 {{ message.content }}
             </div>

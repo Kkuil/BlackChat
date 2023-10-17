@@ -140,7 +140,7 @@ public class WebSocketServiceImpl implements WebSocketService {
         // 记录当前连接信息
         UID_CHANNEL_MAP.putIfAbsent(uid, new CopyOnWriteArrayList<>());
         // 这里必须使用add，不然不支持单账户多端登录
-        // 这里可以限制登录限制
+        // 这里可以限制登录设备台数
         CopyOnWriteArrayList<Channel> channels = UID_CHANNEL_MAP.get(uid);
         if (TEMP_USER_UID.equals(uid) || channels.size() < MAX_CONCURRENT_LONGIN) {
             channels.add(channel);

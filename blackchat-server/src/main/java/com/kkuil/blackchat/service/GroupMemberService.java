@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.service;
 
+import com.kkuil.blackchat.core.contact.domain.vo.request.AddAdminReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.domain.entity.UserApply;
@@ -44,4 +45,13 @@ public interface GroupMemberService {
      * @return 是否邀请成功
      */
     Boolean inviteGroup(Long uid, InvitAddGroupReq invitAddGroupReq);
+
+    /**
+     * 添加管理
+     *
+     * @param uid         用户ID
+     * @param addAdminReq 请求信息
+     * @return 是否添加成功
+     */
+    Boolean addAdmin(Long uid, AddAdminReq addAdminReq);
 }

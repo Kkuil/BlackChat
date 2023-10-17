@@ -3,6 +3,7 @@ package com.kkuil.blackchat.core.chat.service.impl;
 import com.kkuil.blackchat.cache.GroupCache;
 import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.dto.IpDetail;
 import com.kkuil.blackchat.domain.dto.IpInfo;
@@ -70,6 +71,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Resource
     private ApplicationEventPublisher applicationEventPublisher;
+
+    @Resource
+    private GroupMemberDAO groupMemberDao;
 
     /**
      * 检查是否是临时用户
@@ -182,14 +186,21 @@ public class ChatServiceImpl implements ChatService {
         userCursorPageBaseResp.setExtraInfo(chatMemberExtraResp);
 
         // 4. 组装数据
-        List<ChatMemberResp> list = userCursorPageBaseResp.getList().stream().map(user -> {
-            UserBaseInfo baseUserInfo = userCache.getBaseUserInfoByUid(user.getId());
-            return ChatMemberResp.builder()
-                    .uid(user.getId())
+        List<ChatMemberResp> list = userCursorPageBaseResp.getList().stream().map(User::getId).map(id -> {
+            UserBaseInfo baseUserInfo = userCache.getBaseUserInfoByUid(id);
+            ChatMemberResp chatMemberResp = ChatMemberResp.builder()
+                    .uid(id)
                     .name(baseUserInfo.getName())
                     .avatar(baseUserInfo.getAvatar())
                     .activeStatus(baseUserInfo.getActiveStatus())
                     .build();
+            if (!room.isHotRoom()) {
+                Integer roleId = groupMemberDao.getRoleId(chatMemberCursorReq.getRoomId(), id);
+                if (!GroupRoleEnum.MEMBER.getType().equals(roleId)) {
+                    chatMemberResp.setRoleId(roleId);
+                }
+            }
+            return chatMemberResp;
         }).toList();
         return GroupMemberAdapter.buildChatMemberCursorPage(list, userCursorPageBaseResp);
     }

@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.contact.domain.bo.GroupMemberBaseInfo;
@@ -105,7 +106,7 @@ public class RoomServiceImpl implements RoomService {
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_FRIEND.getMsg());
         } else {
             // 2.2 群聊检查
-            Boolean hasUser = groupMemberDao.isGroupShip(roomId, uids);
+            Boolean hasUser = groupMemberDao.isGroupShip(roomId, CollectionUtil.toList(uids));
             AssertUtil.isTrue(hasUser, ChatErrorEnum.NOT_IN_GROUP.getMsg());
         }
         return true;

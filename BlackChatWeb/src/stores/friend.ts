@@ -47,6 +47,7 @@ export const useFriendStore = defineStore("friend", {
             if (result.data) {
                 ElMessage.success("删除成功")
                 this.friends = this.friends.filter((item) => item.uid !== uid)
+                return true
             }
         }
     }

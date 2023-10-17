@@ -162,15 +162,19 @@ public class RoomFriendDAO extends ServiceImpl<RoomFriendMapper, RoomFriend> {
      * @return 是否删除成功
      */
     public Long delFriend(Long uid, Long friendId) {
-        String roomKey = this.getRoomKey(uid, friendId);
+        String roomFriendKey = this.getRoomKey(uid, friendId);
         LambdaQueryWrapper<RoomFriend> wrapper = new QueryWrapper<RoomFriend>().lambda()
-                .eq(RoomFriend::getRoomKey, roomKey);
+                .eq(RoomFriend::getRoomKey, roomFriendKey);
         // 删除房间
         RoomFriend roomFriend = this.getOne(wrapper);
         Long roomId = roomFriend.getRoomId();
         roomDao.deleteById(roomId);
+        this.remove(wrapper);
 
-        // TODO 同步删除缓存
+        // 同步删除缓存
+        String friendKey = String.format(RedisKeyConst.FRIEND_INFO_STRING, roomId);
+        String roomKey = String.format(RedisKeyConst.ROOM_INFO_STRING, roomId);
+        RedisUtil.del(friendKey, roomKey);
 
         return roomId;
     }

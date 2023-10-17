@@ -6,6 +6,7 @@ import { HOT_GROUP_ID } from "@/constant/global"
 import { Avatar } from "@element-plus/icons-vue"
 import { ref } from "vue"
 import AddGroupDialog from "@/components/InviteGroupDialog/InviteGroupDialog.vue"
+import { GROUP_ROLE_MAP } from "@/enums/GroupRoleEnum"
 
 const sessionStore = useSessionStore()
 
@@ -78,9 +79,18 @@ const inviteFriendToAddGroup = () => {
                         </el-avatar>
                     </el-badge>
                     <div
-                        class="w-full line-clamp-1 overflow-hidden overflow-ellipsis text-[14px] ml-[5px]"
+                        class="line-clamp-1 overflow-hidden overflow-ellipsis text-[14px] ml-[5px]"
                     >
                         {{ member.name }}
+                    </div>
+                    <div
+                        v-if="GROUP_ROLE_MAP[member.roleId]"
+                        class="ml-[10px] text-[10px] border-[1px] border-[#fff] w-auto h-full rounded-[5px] flex-center px-[5px]"
+                        :class="`bg-[${
+                            GROUP_ROLE_MAP[member.roleId].bgClr
+                        }] text-[${GROUP_ROLE_MAP[member.roleId].txtClr}]`"
+                    >
+                        {{ GROUP_ROLE_MAP[member.roleId].text }}
                     </div>
                 </li>
             </TransitionGroup>
