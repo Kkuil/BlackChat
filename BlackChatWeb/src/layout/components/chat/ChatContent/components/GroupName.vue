@@ -25,7 +25,9 @@ const updateGroupName = () => {
         confirmButtonText: "确定",
         cancelButtonText: "取消"
     }).then(() => {
-        sessionStore.updateGroupNameHandler(inputGroupName.value)
+        sessionStore.updateGroupInfoHandler({
+            groupName: inputGroupName.value
+        })
         isUpdatingGroupName.value = false
     })
 }

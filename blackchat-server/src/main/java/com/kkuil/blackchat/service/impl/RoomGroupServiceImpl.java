@@ -1,5 +1,6 @@
 package com.kkuil.blackchat.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.RoomCache;
 import com.kkuil.blackchat.core.contact.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.core.contact.domain.vo.request.UpdateGroupInfoReq;
@@ -42,8 +43,10 @@ public class RoomGroupServiceImpl implements RoomGroupService {
     public Boolean updateGroupInfo(Long uid, UpdateGroupInfoReq updateGroupInfoReq) {
         Long groupId = updateGroupInfoReq.getGroupId();
         String groupName = updateGroupInfoReq.getGroupName();
-        AssertUtil.isTrue(groupName.length() >= 3, ChatErrorEnum.NOT_ALLOWED_LT_THREE_CHAR_FOR_GROUP_NAME.getMsg());
-        AssertUtil.isTrue(groupName.length() <= 10, ChatErrorEnum.NOT_ALLOWED_GT_TEN_CHAR_FOR_GROUP_NAME.getMsg());
+        if (ObjectUtil.isNotEmpty(updateGroupInfoReq.getGroupName())) {
+            AssertUtil.isTrue(groupName.length() >= 3, ChatErrorEnum.NOT_ALLOWED_LT_THREE_CHAR_FOR_GROUP_NAME.getMsg());
+            AssertUtil.isTrue(groupName.length() <= 10, ChatErrorEnum.NOT_ALLOWED_GT_TEN_CHAR_FOR_GROUP_NAME.getMsg());
+        }
 
         // 0. 判断是否是大群聊
         RoomBaseInfo roomBaseInfo = roomCache.getRoomBaseInfoById(updateGroupInfoReq.getGroupId());

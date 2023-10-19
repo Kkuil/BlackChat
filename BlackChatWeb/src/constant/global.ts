@@ -1,6 +1,7 @@
 // 源码地址
-import { MessageTypeEnum } from "@/enums/MessageTypeEnum"
+import { MessageTypeEnum } from "@/enums/MessageTypeEnum";
 
+// 本项目源码地址
 export const PROJECT_URL = "https://github.com/Kkuil/BlackChat"
 
 // 全员群ID
@@ -21,3 +22,6 @@ export const SHOW_IN_SESSION_MAP = {
     [MessageTypeEnum.SOUND]: "[语音]",
     [MessageTypeEnum.VIDEO]: "[视频]"
 }
+
+// 最大群头像上传大小
+export const MAX_GROUP_AVATAR_SIZE = 1024 * 1024 * 2

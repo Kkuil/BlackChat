@@ -68,8 +68,12 @@ public class RoomGroupDAO extends ServiceImpl<RoomGroupMapper, RoomGroup> {
         AssertUtil.isNotEmpty(groupBaseInfo, CommonErrorEnum.SYSTEM_ERROR.getMsg());
 
         // 更改信息
-        groupBaseInfo.setName(groupInfo.getGroupName());
-        groupBaseInfo.setAvatar(groupInfo.getGroupAvatar());
+        if (ObjectUtil.isNotNull(groupInfo.getGroupName())) {
+            groupBaseInfo.setName(groupInfo.getGroupName());
+        }
+        if (ObjectUtil.isNotNull(groupInfo.getGroupAvatar())) {
+            groupBaseInfo.setAvatar(groupInfo.getGroupAvatar());
+        }
         RedisUtil.set(key, groupBaseInfo);
     }
 }

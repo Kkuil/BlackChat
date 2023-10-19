@@ -2,9 +2,11 @@
 import { ref } from "vue"
 import { useSessionStore } from "@/stores/session"
 import { Plus } from "@element-plus/icons-vue"
-import type { UploadUserFile } from "element-plus"
+import type { UploadRawFile, UploadUserFile } from "element-plus"
+import { ElMessage } from "element-plus"
 import { convertImageToBase64 } from "@/utils/ImageUtil"
-import { updateGroupInfo } from "@/api/group"
+import { MAX_GROUP_AVATAR_SIZE } from "@/constant/global"
+import { uploadGroupAvatar } from "@/api/upload"
 
 const sessionStore = useSessionStore()
 
@@ -16,11 +18,47 @@ const groupInfo = ref<{
     groupAvatar: sessionStore.getSessionInfo.avatar
 })
 
+const groupAvatarFile = ref<UploadUserFile[]>([])
+
+const isUploadingGroupAvatar = ref<boolean>(false)
+
 const previewGroupUpload = async (file: UploadUserFile) => {
-    console.log(file)
+    // 判断图片大小
+    if (file.size > MAX_GROUP_AVATAR_SIZE) {
+        return ElMessage.error(
+            "图片大小不能超过" + MAX_GROUP_AVATAR_SIZE / 1024 + "KB"
+        )
+    }
     groupInfo.value.groupAvatar = (await convertImageToBase64(
         file.raw
     )) as string
+}
+
+const updateGroupInfoHandler = async () => {
+    // 判断图片大小
+    if (groupAvatarFile.value.length) {
+        isUploadingGroupAvatar.value = true
+        if (groupAvatarFile.value[0].size > MAX_GROUP_AVATAR_SIZE) {
+            return ElMessage.error(
+                "图片大小不能超过" + MAX_GROUP_AVATAR_SIZE / 1024 + "KB"
+            )
+        }
+        // 上传头像
+        const result = await uploadGroupAvatar(
+            groupAvatarFile.value[0].raw as UploadRawFile
+        )
+        isUploadingGroupAvatar.value = false
+        if (result.data) {
+            groupInfo.value.groupAvatar = result.data
+        } else {
+            return ElMessage.error("上传头像失败，请稍后重试")
+        }
+    }
+    const isSuccess = sessionStore.updateGroupInfoHandler(groupInfo.value)
+    if (isSuccess) {
+        ElMessage.success("修改成功")
+        resetGroupInfo()
+    }
 }
 
 const resetGroupInfo = () => {
@@ -28,13 +66,6 @@ const resetGroupInfo = () => {
         groupName: "",
         groupAvatar: sessionStore.getSessionInfo.avatar
     }
-}
-
-const updateGroupInfoHandler = async () => {
-    const result = await updateGroupInfo({
-        groupId: sessionStore.getSessionInfo.roomId,
-        ...groupInfo.value
-    })
 }
 </script>
 
@@ -51,11 +82,14 @@ const updateGroupInfoHandler = async () => {
                 :placeholder="sessionStore.getSessionInfo.name"
             />
         </el-form-item>
-        <el-form-item label="群头像">
+        <el-form-item label="群头像" v-loading="isUploadingGroupAvatar">
             <el-upload
+                v-model:file-list="groupAvatarFile"
                 class="group-avatar"
                 :auto-upload="false"
                 :show-file-list="false"
+                accept="image"
+                :limit="1"
                 @change="previewGroupUpload"
             >
                 <img
@@ -74,7 +108,7 @@ const updateGroupInfoHandler = async () => {
             size="small"
             type="primary"
             native-type="submit"
-            @submit="updateGroupInfoHandler"
+            @click.prevent="updateGroupInfoHandler"
         >
             提交
         </el-button>

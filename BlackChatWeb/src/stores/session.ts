@@ -256,14 +256,24 @@ export const useSessionStore = defineStore("session", () => {
     /**
      * 更新群名
      */
-    const updateGroupNameHandler = async (groupName: string) => {
+    const updateGroupInfoHandler = async (info: {
+        groupName?: string
+        groupAvatar?: string
+    }) => {
         const result = await updateGroupInfo({
             groupId: sessionInfo.value.chattingId,
-            groupName
+            groupName: info.groupName,
+            groupAvatar: info.groupAvatar
         })
         if (result.data) {
-            ElMessage.success("更名成功")
-            getSession(sessionInfo.value.chattingId).name = groupName
+            ElMessage.success("更改信息成功")
+            if (info.groupName) {
+                getSession(sessionInfo.value.chattingId).name = info.groupName
+            }
+            if (info.groupAvatar) {
+                getSession(sessionInfo.value.chattingId).avatar =
+                    info.groupAvatar
+            }
             return true
         }
     }
@@ -411,7 +421,7 @@ export const useSessionStore = defineStore("session", () => {
         readMessage,
         switchSession,
         delAdminHandler,
-        updateGroupNameHandler,
+        updateGroupInfoHandler,
         listAdmin,
         setAdmins,
         getMemberList

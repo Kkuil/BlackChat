@@ -30,7 +30,7 @@ defineProps<{
             </div>
         </div>
         <div
-            class="last-opt-time xl:flex justify-end hidden w-[20%] flex-center text-[8px] text-[#777] whitespace-nowrap"
+            class="last-opt-time xl:flex justify-end hidden w-[20%] flex-center text-[11px] text-[#777] whitespace-nowrap"
         >
             {{
                 session.activeTime
