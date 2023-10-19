@@ -3,6 +3,7 @@ package com.kkuil.blackchat.core.chat.domain.vo.message.handlers;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ArrayUtil;
+import com.kkuil.blackchat.core.contact.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.entity.Room;
@@ -11,9 +12,7 @@ import com.kkuil.blackchat.service.RoomService;
 import com.kkuil.blackchat.service.impl.ChatGroupSpecialMemberEnum;
 import com.kkuil.blackchat.utils.AssertUtil;
 import com.kkuil.blackchat.utils.discover.CommonUrlDiscover;
-import com.kkuil.blackchat.utils.discover.PrioritizedUrlDiscover;
 import com.kkuil.blackchat.utils.discover.domain.UrlInfo;
-import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.core.chat.domain.enums.MessageTypeEnum;
 import com.kkuil.blackchat.core.chat.domain.vo.request.message.MessageExtra;
 import com.kkuil.blackchat.core.chat.domain.vo.request.message.body.TextMessageReqBody;
@@ -97,10 +96,10 @@ public class TextMessageHandler extends AbstractMessageHandler<TextMessageRespBo
             Room room = roomDao.getById(roomId);
             if (isContainAll && room.isRoomGroup()) {
                 // 2.4.1 有且是群聊，则判断是否有权限
-                List<Integer> authorities = new ArrayList<>();
+                List<GroupRoleEnum> authorities = new ArrayList<>();
                 // 这是群中的两个可以艾特全体人员的权限
-                authorities.add(GroupRoleEnum.LEADER.getType());
-                authorities.add(GroupRoleEnum.MANAGER.getType());
+                authorities.add(GroupRoleEnum.MASTER);
+                authorities.add(GroupRoleEnum.ADMIN);
                 Boolean isAuth = groupMemberDao.hasAuthority(roomId, uid, authorities);
                 AssertUtil.isTrue(isAuth, ChatErrorEnum.NO_AUTH.getMsg());
             }

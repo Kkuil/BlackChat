@@ -128,9 +128,6 @@ const UPLOAD_CONFIG = {
                         })
                     }
                 })
-                .catch(() => {
-                    console.log("close")
-                })
                 .finally(() => {
                     messageStore.resetMessage()
                 })
@@ -198,9 +195,6 @@ const UPLOAD_CONFIG = {
                         })
                     }
                 })
-                .catch(() => {
-                    console.log("close")
-                })
                 .finally(() => {
                     messageStore.resetMessage()
                 })
@@ -231,7 +225,7 @@ const UPLOAD_CONFIG = {
                 :auto-upload="false"
                 ref="imageUploadRef"
                 accept="image"
-                name="file"
+                name="image"
                 :on-change="UPLOAD_CONFIG.IMAGE.handleImageChange"
                 :show-file-list="false"
             >

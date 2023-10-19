@@ -31,6 +31,7 @@ public interface RoomService {
      *
      * @param uid       用户ID
      * @param groupName 群名
+     * @return 房间ID
      */
-    void createGroup(Long uid, String groupName);
+    Long createGroup(Long uid, String groupName, String groupAvatar);
 }

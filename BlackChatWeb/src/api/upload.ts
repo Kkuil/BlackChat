@@ -65,3 +65,24 @@ export const uploadVideo = (
         }
     })
 }
+
+/**
+ * 上传群头像
+ * @param groupAvatar
+ */
+export const uploadGroupAvatar = (
+    groupAvatar: UploadRawFile
+): Promise<ApiResult<string>> => {
+    return request({
+        url: "/upload/group-avatar",
+        method: "POST",
+        data: {
+            groupAvatar
+        },
+        headers: {
+            "Content-Type": "multipart/form-data",
+            [TOKEN_KEY_IN_HEADER]:
+                TOKEN_PREFIX + localStorage.getItem(TOKEN_KEY_IN_LOC) || ""
+        }
+    })
+}

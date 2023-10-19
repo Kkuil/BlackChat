@@ -2,9 +2,8 @@
 import { useSessionStore } from "@/stores/session"
 import { popUpLoginDialog } from "@/utils/popDialog/popLoginDialog"
 import { useUserStore } from "@/stores/user"
-import { HOT_GROUP_ID } from "@/constant/global"
 import { Avatar } from "@element-plus/icons-vue"
-import { ref } from "vue"
+import { onMounted, ref } from "vue"
 import AddGroupDialog from "@/components/InviteGroupDialog/InviteGroupDialog.vue"
 import { GROUP_ROLE_MAP } from "@/enums/GroupRoleEnum"
 
@@ -20,6 +19,10 @@ const showAddGroup = ref<boolean>(false)
 const inviteFriendToAddGroup = () => {
     showAddGroup.value = true
 }
+
+onMounted(() => {
+    sessionStore.switchSession(sessionStore.sessionInfo.chattingId)
+})
 </script>
 
 <template>
@@ -27,10 +30,7 @@ const inviteFriendToAddGroup = () => {
         class="online-list flex flex-col ml-[10px] bg-secondary rounded-[10px] text-[#fff] p-[10px] relative"
     >
         <div
-            v-if="
-                !userStore.userInfo.uid &&
-                sessionStore.sessionInfo.chattingId !== HOT_GROUP_ID
-            "
+            v-if="!userStore.userInfo.uid && !sessionStore.isHotFlag"
             :class="!userStore.userInfo.name ? 'backdrop-blur-md' : ''"
             class="w-full h-full absolute top-0 left-0 flex-center text-[12px] font-serif rounded-[10px]"
         >
@@ -55,12 +55,7 @@ const inviteFriendToAddGroup = () => {
             ></i>
         </h1>
         <ul class="list flex-1 overflow-y-auto overflow-x-hidden">
-            <TransitionGroup
-                v-show="sessionStore.sessionInfo.memberList.length"
-                tag="ul"
-                name="fade"
-                class="user-list"
-            >
+            <TransitionGroup tag="ul" name="fade" class="user-list">
                 <li
                     class="item flex items-center py-[7px] cursor-pointer mb-[5px] hover:bg-[#263242] rounded-[5px] px-[7px]"
                     v-for="member in sessionStore.sessionInfo.memberList"

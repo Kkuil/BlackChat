@@ -27,6 +27,11 @@ public class CreateGroupReq {
     private String groupName;
 
     /**
+     * 群头像
+     */
+    private String groupAvatar;
+
+    /**
      * 申请备注
      */
     @NotEmpty(message = "备注不能为空")

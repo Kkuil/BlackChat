@@ -41,7 +41,6 @@ public class UploadController {
     @Parameters(
             value = {
                     @Parameter(name = "image", description = "图片", required = true, example = "image"),
-                    @Parameter(name = "request", description = "请求对象", required = true, example = "request")
             }
     )
     @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
@@ -56,7 +55,7 @@ public class UploadController {
     /**
      * 上传文件
      *
-     * @param image 对象
+     * @param file 对象
      * @return 访问地址
      */
     @PostMapping("file")
@@ -64,7 +63,6 @@ public class UploadController {
     @Parameters(
             value = {
                     @Parameter(name = "file", description = "图片", required = true, example = "file"),
-                    @Parameter(name = "request", description = "请求对象", required = true, example = "request")
             }
     )
     @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
@@ -87,7 +85,6 @@ public class UploadController {
     @Parameters(
             value = {
                     @Parameter(name = "video", description = "视频", required = true, example = "video"),
-                    @Parameter(name = "request", description = "请求对象", required = true, example = "request")
             }
     )
     @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
@@ -96,6 +93,26 @@ public class UploadController {
         String filename = uid + "_" + System.currentTimeMillis() + "." + Objects.requireNonNull(video.getOriginalFilename()).split("\\.")[1];
         String path = DEFAULT_VIDEO_PATH + filename;
         String url = aliyunOssService.upload(path, video, DEFAULT_VIDEO_MAX_SIZE);
+        return ResultUtil.success(url);
+    }
+
+    /**
+     * 上传群头像
+     *
+     * @param groupAvatar 对象
+     * @return 访问地址
+     */
+    @PostMapping("group-avatar")
+    @Operation(summary = "上传群头像", description = "上传群头像")
+    @Parameters(
+            value = {
+                    @Parameter(name = "groupAvatar", description = "群头像", required = true, example = "groupAvatar"),
+            }
+    )
+    @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
+    public ResultUtil<String> uploadGroupAvatar(@RequestBody MultipartFile groupAvatar) {
+        String path = DEFAULT_GROUP_AVATAR_PATH + groupAvatar.getOriginalFilename();
+        String url = aliyunOssService.upload(path, groupAvatar, DEFAULT_GROUP_AVATAR_MAX_SIZE);
         return ResultUtil.success(url);
     }
 }

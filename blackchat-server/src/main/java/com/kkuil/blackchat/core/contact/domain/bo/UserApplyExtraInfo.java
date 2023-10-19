@@ -1,6 +1,8 @@
 package com.kkuil.blackchat.core.contact.domain.bo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @Author Kkuil
@@ -8,6 +10,8 @@ import lombok.Data;
  * @Description 用户申请额外信息
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserApplyExtraInfo {
 
     /**

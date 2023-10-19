@@ -5,6 +5,7 @@ import { useSessionStore } from "@/stores/session"
 import { ref } from "vue"
 import OnlineList from "@/layout/components/chat/OnlineList/OnlineList.vue"
 import SettingBox from "@/layout/components/chat/ChatContent/components/SettingBox.vue"
+import GroupName from "@/layout/components/chat/ChatContent/components/GroupName.vue"
 
 const sessionStore = useSessionStore()
 // 响应式布局控制在线列表的显示和隐藏
@@ -20,7 +21,7 @@ const isShowSetting = ref<boolean>(false)
         <div
             class="w-full h-[8%] bg-third flex items-center justify-between px-[10px] text-[#f5f5f5] font-extrabold"
         >
-            <h1>{{ sessionStore.getSessionInfo.name }}</h1>
+            <GroupName />
             <i
                 class="iconfont icon-setting cursor-pointer text-[20px] text-[#fff]"
                 title="设置"

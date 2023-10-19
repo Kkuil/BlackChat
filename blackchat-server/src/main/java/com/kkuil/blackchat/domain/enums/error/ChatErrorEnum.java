@@ -41,6 +41,12 @@ public enum ChatErrorEnum implements ErrorEnum {
     NO_POWER_FOR_ADD_ADMIN(1025, "您不是群主，无法进行添加管理员操作~"),
     MAX_ADMIN_COUNT_LIMIT(1026, "最多添加三名管理员~"),
     NOT_ALLOWED_ADD_ADMIN_WITH_NOT_MEMBER(1027, "不允许添加非本群成员的人作为管理员"),
+    ADMIN_NOT_EXIST(1028, "还没有管理员，无法删除~"),
+    NO_POWER_FOR_DEL_ADMIN(1025, "您不是群主，无法进行删除管理员操作~"),
+    NO_POWER_FOR_UPDATE_GROUP_NAME_ADMIN(1026, "您不是群主或管理员，无法进行更新群名的操作~"),
+    NOT_ALLOWED_LT_THREE_CHAR_FOR_GROUP_NAME(1027, "群名不允许小于3个字符"),
+    NOT_ALLOWED_GT_TEN_CHAR_FOR_GROUP_NAME(1028, "群名不允许大于10个字符"),
+    NOT_ALLOWED_UPDATE_GROUP_NAME_FOR_HOT_GROUP(1029, "不允许更改热点群聊的名称哦~"),
     ;
 
     private final Integer code;

@@ -14,6 +14,7 @@ import com.kkuil.blackchat.domain.enums.UserApplyEnum;
 import com.kkuil.blackchat.domain.enums.UserApplyStatusEnum;
 import com.kkuil.blackchat.mapper.UserApplyMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,11 +48,13 @@ public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
     /**
      * 创建群聊申请
      *
+     * @param groupId 房间ID
      * @param uid     申请人ID
      * @param uidList 被邀请人
      * @return 是否创建成功
      */
-    public Boolean applyCreateGroup(Long uid, List<Long> uidList, String msg) {
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean applyCreateGroup(Long groupId, Long uid, List<Long> uidList, String msg) {
         List<UserApply> applyList = new ArrayList<>();
         for (Long invitedId : uidList) {
             UserApply userApply = new UserApply();
@@ -59,6 +62,7 @@ public class UserApplyDAO extends ServiceImpl<UserApplyMapper, UserApply> {
             userApply.setType(UserApplyEnum.GROUP.getType());
             userApply.setTargetId(invitedId);
             userApply.setMsg(msg);
+            userApply.setExtraInfo(new UserApplyExtraInfo(groupId));
             userApply.setStatus(UserApplyStatusEnum.APPLYING.getStatus());
             userApply.setReadStatus(ReadStatusEnum.UNREAD.getStatus());
             applyList.add(userApply);

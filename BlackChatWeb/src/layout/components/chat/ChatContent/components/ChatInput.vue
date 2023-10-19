@@ -154,6 +154,7 @@ eventBus.on(WsEventEnum.AITE, ({ people }) => {
                 v-if="mode === 'text'"
                 class="w-full h-full outline-0 bg-[transparent] border-[1px] focus:border-[#0094ff] hover:border-[#0094ff] rounded-[5px] px-[5px]"
                 ref="editorRef"
+                autofocus
                 :class="
                     messageStore.messageInfo.body.content
                         ? 'border-[#0094ff]'

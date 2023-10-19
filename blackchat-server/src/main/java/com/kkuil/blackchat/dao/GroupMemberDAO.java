@@ -64,7 +64,7 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @param authorities 权限列表
      * @return 是否权限
      */
-    public Boolean hasAuthority(Long roomId, Long uid, List<Integer> authorities) {
+    public Boolean hasAuthority(Long roomId, Long uid, List<GroupRoleEnum> authorities) {
         // 1. 判断是否在房间内
         Boolean isSameRoom = roomService.checkRoomMembership(roomId, uid);
         AssertUtil.isTrue(isSameRoom, ChatErrorEnum.NOT_IN_GROUP.getMsg());
@@ -108,17 +108,21 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @param authorities 权限列表
      * @return 是否有权限
      */
-    public Boolean hasAuthorities(Long roomId, Long uid, List<Integer> authorities) {
+    public Boolean hasAuthorities(Long roomId, Long uid, List<GroupRoleEnum> authorities) {
         // 1. 判断权限列表是否为空
         boolean empty = CollectionUtil.isEmpty(authorities);
         if (empty) {
             return true;
         }
         // 2. 判断用户是否拥有权限
-        LambdaQueryChainWrapper<GroupMember> wrapper = this.lambdaQuery().eq(GroupMember::getRoomId, roomId).eq(GroupMember::getUid, uid).select(GroupMember::getRole);
+        LambdaQueryWrapper<GroupMember> wrapper = new QueryWrapper<GroupMember>()
+                .lambda()
+                .eq(GroupMember::getRoomId, roomId)
+                .eq(GroupMember::getUid, uid)
+                .select(GroupMember::getRole);
         GroupMember groupMember = this.getOne(wrapper);
         Integer role = groupMember.getRole();
-        return authorities.contains(role);
+        return authorities.contains(GroupRoleEnum.of(role));
     }
 
     /**
@@ -173,7 +177,7 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @param list   成员列表
      */
     @Transactional(rollbackFor = Exception.class)
-    public void createGroup(Long roomId, List<GroupMemberBaseInfo> list) {
+    public void createGroup(Long roomId, String groupName, List<GroupMemberBaseInfo> list) {
         List<GroupMember> saveBatchList = new ArrayList<>();
         list.forEach(groupMemberBaseInfo -> {
             GroupMember groupMember = new GroupMember();
@@ -182,8 +186,16 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
             groupMember.setRole(groupMemberBaseInfo.getRole());
             saveBatchList.add(groupMember);
         });
+        List<Long> uidList = saveBatchList.stream().map(GroupMember::getUid).toList();
+        // 设置缓存
+        GroupBaseInfo groupBaseInfo = new GroupBaseInfo();
+        groupBaseInfo.setRoomId(roomId);
+        groupBaseInfo.setName(groupName);
+        groupBaseInfo.setMemberList(uidList);
+        roomGroupCache.updateGroupInfoCache(roomId, groupBaseInfo);
+
         // 注意：这里得去更新缓存中的成员列表
-        this.addGroupMember(roomId, saveBatchList.stream().map(GroupMember::getUid).toList());
+        this.addGroupMember(roomId, uidList);
         this.saveBatch(saveBatchList);
     }
 
@@ -212,6 +224,7 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
      * @param groupId 群ID
      * @param uidList 用户列表ID
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addGroupMember(Long groupId, List<Long> uidList) {
         List<GroupMember> saveBatchList = new ArrayList<>();
         uidList.forEach(uid -> {
@@ -222,30 +235,15 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
             saveBatchList.add(groupMember);
         });
         // 更新缓存
-        String roomKey = String.format(RedisKeyConst.GROUP_INFO_STRING, groupId);
-        String key = RedisKeyConst.getKey(roomKey);
+        String key = RedisKeyConst.getKey(RedisKeyConst.GROUP_INFO_STRING, groupId);
         GroupBaseInfo groupBaseInfo = RedisUtil.get(key, GroupBaseInfo.class);
         AssertUtil.isNotEmpty(groupBaseInfo, CommonErrorEnum.SYSTEM_ERROR.getMsg());
         // 合并群成员并去重
         groupBaseInfo.getMemberList().addAll(uidList);
         Set<Long> uidSet = new HashSet<>(groupBaseInfo.getMemberList());
-        RedisUtil.set(key, uidSet.stream().toList());
+        groupBaseInfo.setMemberList(new ArrayList<>(uidSet));
+        RedisUtil.set(key, groupBaseInfo);
         this.saveBatch(saveBatchList);
-    }
-
-    /**
-     * 判断该用户是否是群主
-     *
-     * @param groupId 房间ID
-     * @param uid     用户ID
-     * @return 是否是群主
-     */
-    public Boolean isMaster(Long groupId, Long uid) {
-        return this.lambdaQuery()
-                .eq(GroupMember::getRoomId, groupId)
-                .eq(GroupMember::getUid, uid)
-                .eq(GroupMember::getRole, GroupRoleEnum.MASTER.getId())
-                .exists();
     }
 
     /**
@@ -304,6 +302,21 @@ public class GroupMemberDAO extends ServiceImpl<GroupMemberMapper, GroupMember> 
                 .eq(GroupMember::getRoomId, groupId)
                 .in(GroupMember::getUid, uidList)
                 .set(GroupMember::getRole, GroupRoleEnum.ADMIN.getId());
+        this.update(wrapper);
+    }
+
+    /**
+     * 删除管理员
+     *
+     * @param groupId 群ID
+     * @param uidList 需要删除管理的ID列表
+     */
+    public void delAdmin(Long groupId, List<Long> uidList) {
+        Wrapper<GroupMember> wrapper = new UpdateWrapper<GroupMember>()
+                .lambda()
+                .eq(GroupMember::getRoomId, groupId)
+                .in(GroupMember::getUid, uidList)
+                .set(GroupMember::getRole, GroupRoleEnum.MEMBER.getId());
         this.update(wrapper);
     }
 }

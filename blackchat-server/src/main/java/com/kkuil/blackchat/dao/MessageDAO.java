@@ -195,6 +195,8 @@ public class MessageDAO extends ServiceImpl<MessageMapper, Message> {
         message.setContent(String.format(FIRST_MESSAGE_FOR_CREATE_GROUP, groupName));
         message.setStatus(MessageStatusEnum.NORMAL.getStatus());
         message.setType(MessageTypeEnum.TEXT.getType());
+        message.setCreateTime(new Date());
+        message.setUpdateTime(new Date());
         this.save(message);
         return message;
     }

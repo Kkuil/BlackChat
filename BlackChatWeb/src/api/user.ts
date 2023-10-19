@@ -110,6 +110,7 @@ export const createGroup = (data: {
     uidList: number[]
     msg: string
     groupName: string
+    groupAvatar: string
 }): Promise<ApiResult<boolean>> => {
     return request({
         url: "/group/create",

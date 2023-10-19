@@ -4,6 +4,8 @@ export const GroupRoleEnum = {
     MEMBER: 3
 }
 
+export const GROUP_ADMIN_ROLE_LIST = [GroupRoleEnum.MASTER, GroupRoleEnum.ADMIN]
+
 export const GROUP_ROLE_MAP: Record<
     string,
     { text: string; bgClr: string; txtClr: string }

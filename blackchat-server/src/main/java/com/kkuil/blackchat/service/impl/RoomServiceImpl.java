@@ -1,9 +1,9 @@
 package com.kkuil.blackchat.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.core.chat.domain.enums.RoomTypeEnum;
 import com.kkuil.blackchat.core.contact.domain.bo.GroupMemberBaseInfo;
+import com.kkuil.blackchat.core.contact.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.entity.Message;
 import com.kkuil.blackchat.domain.entity.Room;
@@ -120,7 +120,7 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void createGroup(Long uid, String groupName) {
+    public Long createGroup(Long uid, String groupName, String groupAvatar) {
         // 1. 创建房间（room）
         Room room = roomDao.createRoom(RoomTypeEnum.GROUP);
         Long roomId = room.getId();
@@ -132,14 +132,16 @@ public class RoomServiceImpl implements RoomService {
         roomDao.updateRoomNewestMsg(roomId, message.getCreateTime(), message.getId());
 
         // 3. 将群主加入房间，并设置为群主（group_member）
-        List<GroupMemberBaseInfo> list = Collections.singletonList(new GroupMemberBaseInfo(uid, GroupRoleEnum.LEADER.getType()));
-        groupMemberDao.createGroup(roomId, list);
+        List<GroupMemberBaseInfo> list = Collections.singletonList(new GroupMemberBaseInfo(uid, GroupRoleEnum.MASTER.getId()));
+        groupMemberDao.createGroup(roomId, groupName, list);
 
         // 4. 设置群名等信息（room_group）
-        roomGroupDao.createGroup(roomId, groupName);
+        roomGroupDao.createGroup(roomId, groupName, groupAvatar);
 
         // 5. 给群主创建会话（contact）
         contactDao.createContact(uid, roomId, message.getCreateTime());
+
+        return roomId;
     }
 
 }

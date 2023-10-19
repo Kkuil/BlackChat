@@ -4,7 +4,9 @@ import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.cache.UserCache;
 import com.kkuil.blackchat.constant.GroupConst;
+import com.kkuil.blackchat.core.contact.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.core.contact.domain.vo.request.AddAdminReq;
+import com.kkuil.blackchat.core.contact.domain.vo.request.DelAdminReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.response.UserSearchRespVO;
@@ -80,7 +82,7 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         }
 
         // 判断当前退出的人是否是群主
-        Boolean isMaster = groupMemberDao.isMaster(groupId, uid);
+        Boolean isMaster = groupMemberDao.hasAuthority(groupId, uid, Collections.singletonList(GroupRoleEnum.MASTER));
         if (isMaster) {
             // 删房间
             roomDao.deleteById(groupId);
@@ -123,6 +125,9 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
         String msg = createGroupReq.getMsg();
 
+        // 0. 判断uidList是否为空
+        AssertUtil.isFalse(uidList.size() ==0, ChatErrorEnum.EMPTY_LIST.getMsg());
+
         // 1. 判断用户是否存在
         Boolean isExistUsers = userCache.isExistUsers(uidList);
         AssertUtil.isTrue(isExistUsers, UserErrorEnum.USER_NOT_EXIST.getMsg());
@@ -141,12 +146,12 @@ public class GroupMemberServiceImpl implements GroupMemberService {
         Long count = groupMemberDao.getCreateGroupCountByUid(uid);
         AssertUtil.isTrue(count < GroupConst.MAX_CREATE_GROUP_COUNT, ChatErrorEnum.CREATE_GROUP_MAX_COUNT.getMsg());
 
-        // 5. 提交申请
-        Boolean isAddFriend = userApplyDao.applyCreateGroup(uid, uidList, msg);
-        AssertUtil.isTrue(isAddFriend, UserErrorEnum.COMMIT_APPLY_FAIL.getMsg());
+        // 5. 创建群聊
+        Long groupId = roomService.createGroup(uid, createGroupReq.getGroupName(), createGroupReq.getGroupAvatar());
 
-        // 6. 创建群聊
-        roomService.createGroup(uid, createGroupReq.getGroupName());
+        // 6. 提交申请
+        Boolean isAddFriend = userApplyDao.applyCreateGroup(groupId, uid, uidList, msg);
+        AssertUtil.isTrue(isAddFriend, UserErrorEnum.COMMIT_APPLY_FAIL.getMsg());
 
         return UserMessageEnum.COMMIT_APPLY_SUCESS.getMsg();
     }
@@ -218,13 +223,13 @@ public class GroupMemberServiceImpl implements GroupMemberService {
     @Override
     public Boolean addAdmin(Long uid, AddAdminReq addAdminReq) {
         Long groupId = addAdminReq.getGroupId();
+        List<Long> uidList = addAdminReq.getUidList();
 
         // 1. 判断权限身份
-        Boolean isMaster = groupMemberDao.isMaster(groupId, uid);
+        Boolean isMaster = groupMemberDao.hasAuthority(groupId, uid, Collections.singletonList(GroupRoleEnum.MASTER));
         AssertUtil.isTrue(isMaster, ChatErrorEnum.NO_POWER_FOR_ADD_ADMIN.getMsg());
 
         // 2. 判断成员列表是否是群中成员
-        List<Long> uidList = addAdminReq.getUidList();
         Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, uidList);
         AssertUtil.isTrue(isGroupShip, ChatErrorEnum.NOT_ALLOWED_ADD_ADMIN_WITH_NOT_MEMBER.getMsg());
 
@@ -239,6 +244,36 @@ public class GroupMemberServiceImpl implements GroupMemberService {
 
         // 4. 添加管理员
         groupMemberDao.setAdmin(groupId, uidList);
+
+        return true;
+    }
+
+    /**
+     * 删除管理
+     *
+     * @param uid         用户ID
+     * @param delAdminReq 请求信息
+     * @return 是否删除成功
+     */
+    @Override
+    public Boolean delAdmin(Long uid, DelAdminReq delAdminReq) {
+        Long groupId = delAdminReq.getGroupId();
+        List<Long> uidList = delAdminReq.getUidList();
+
+        // 1. 判断权限身份
+        Boolean isMaster = groupMemberDao.hasAuthority(groupId, uid, Collections.singletonList(GroupRoleEnum.MASTER));
+        AssertUtil.isTrue(isMaster, ChatErrorEnum.NO_POWER_FOR_DEL_ADMIN.getMsg());
+
+        // 2. 判断成员列表是否是群中成员
+        Boolean isGroupShip = groupMemberDao.isGroupShip(groupId, uidList);
+        AssertUtil.isTrue(isGroupShip, CommonErrorEnum.SYSTEM_ERROR.getMsg());
+
+        // 3. 判断管理员uidList
+        List<Long> adminUidList = groupMemberDao.getAdminCount(groupId);
+        AssertUtil.isFalse(adminUidList.size() == 0, ChatErrorEnum.ADMIN_NOT_EXIST.getMsg());
+
+        // 4. 移除管理员
+        groupMemberDao.delAdmin(groupId, uidList);
 
         return true;
     }

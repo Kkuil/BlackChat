@@ -1,9 +1,8 @@
 package com.kkuil.blackchat.core.chat.service.impl;
 
-import com.kkuil.blackchat.cache.GroupCache;
 import com.kkuil.blackchat.cache.RoomGroupCache;
 import com.kkuil.blackchat.cache.UserCache;
-import com.kkuil.blackchat.core.chat.domain.enums.GroupRoleEnum;
+import com.kkuil.blackchat.core.contact.domain.enums.GroupRoleEnum;
 import com.kkuil.blackchat.dao.*;
 import com.kkuil.blackchat.domain.dto.IpDetail;
 import com.kkuil.blackchat.domain.dto.IpInfo;
@@ -196,7 +195,7 @@ public class ChatServiceImpl implements ChatService {
                     .build();
             if (!room.isHotRoom()) {
                 Integer roleId = groupMemberDao.getRoleId(chatMemberCursorReq.getRoomId(), id);
-                if (!GroupRoleEnum.MEMBER.getType().equals(roleId)) {
+                if (!GroupRoleEnum.MEMBER.getId().equals(roleId)) {
                     chatMemberResp.setRoleId(roleId);
                 }
             }

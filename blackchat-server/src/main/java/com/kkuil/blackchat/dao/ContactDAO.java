@@ -12,6 +12,7 @@ import com.kkuil.blackchat.domain.vo.response.CursorPageBaseResp;
 import com.kkuil.blackchat.mapper.ContactMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -117,12 +118,13 @@ public class ContactDAO extends ServiceImpl<ContactMapper, Contact> {
      * @param uidList 用户ID列表
      * @param date    读取时间
      */
-    public void createContactBatch(Long groupId, List<Long> uidList, Date date) {
+    @Transactional(rollbackFor = Exception.class)
+    public void createContactBatch(Long roomId, List<Long> uidList, Date date) {
         List<Contact> contactList = new ArrayList<>();
         uidList.forEach(uid -> {
             Contact contact = new Contact();
             contact.setUid(uid);
-            contact.setRoomId(groupId);
+            contact.setRoomId(roomId);
             contact.setReadTime(date);
             contactList.add(contact);
         });

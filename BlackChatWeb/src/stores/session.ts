@@ -7,7 +7,7 @@ import { updateUserInfoCache } from "@/utils/userCache"
 import { getSessionByRoomId, pushReadMessage } from "@/api/session"
 import eventBus from "@/utils/eventBus"
 import { WsEventEnum } from "@/enums/websocket/WsEventEnum"
-import { exitGroup } from "@/api/group"
+import { delAdmin, exitGroup, updateGroupInfo } from "@/api/group"
 import { ElMessage } from "element-plus"
 import { useUserStore } from "@/stores/user"
 import { SHOW_IN_SESSION_MAP } from "@/constant/global"
@@ -50,7 +50,7 @@ export const useSessionStore = defineStore("session", () => {
     >({
         pageSize: 20,
         cursor: null,
-        isLast: false,
+        isLast: true,
         activeStatus: ChatActiveEnums.ONLINE
     })
 
@@ -69,7 +69,6 @@ export const useSessionStore = defineStore("session", () => {
      * @param id 会话ID
      */
     const switchSession = async (id: string) => {
-        const tempId = sessionInfo.value.chattingId
         // 先判断当前列表中是否有该会话
         const index = sessionInfo.value.sessions.findIndex(
             (session) => session.roomId == id
@@ -114,7 +113,7 @@ export const useSessionStore = defineStore("session", () => {
         listMemberPage.value = {
             pageSize: 20,
             cursor: null,
-            isLast: false,
+            isLast: true,
             activeStatus: ChatActiveEnums.ONLINE
         }
     }
@@ -123,7 +122,6 @@ export const useSessionStore = defineStore("session", () => {
      * 初始化成员列表信息
      */
     const initSessionMemberList = (memberList: UserInfo[]) => {
-        console.log("initSessionMemberList: ", memberList)
         sessionInfo.value.memberList = memberList
     }
 
@@ -132,7 +130,6 @@ export const useSessionStore = defineStore("session", () => {
      * @param memberList 成员信息
      */
     const updateAddSessionMemberList = (memberList: UserInfo[]) => {
-        console.log("updateAddSessionMemberList: ", memberList)
         sessionInfo.value.memberList.push(...memberList)
     }
 
@@ -257,20 +254,35 @@ export const useSessionStore = defineStore("session", () => {
     }
 
     /**
+     * 更新群名
+     */
+    const updateGroupNameHandler = async (groupName: string) => {
+        const result = await updateGroupInfo({
+            groupId: sessionInfo.value.chattingId,
+            groupName
+        })
+        if (result.data) {
+            ElMessage.success("更名成功")
+            getSession(sessionInfo.value.chattingId).name = groupName
+            return true
+        }
+    }
+
+    /**
      *  获取当前会话信息
      */
     const getSessionInfo: Session = computed(() => {
         return (
-            sessionInfo.value.sessions.filter(
+            sessionInfo.value.sessions.find(
                 (session) => session.roomId == sessionInfo.value.chattingId
-            )[0] ?? {}
+            ) ?? {}
         )
     })
 
     /**
      * 获取当前未读总数
      */
-    const getUnreadTotalCount = computed(() => {
+    const getUnreadTotalCount: number = computed(() => {
         return sessionInfo.value.sessions.reduce((total, session) => {
             return total + session.unreadCount
         }, 0)
@@ -309,6 +321,15 @@ export const useSessionStore = defineStore("session", () => {
     })
 
     /**
+     * 当前管理员
+     */
+    const listAdmin = computed(() => {
+        return sessionInfo.value.memberList.filter(
+            (member) => member.roleId == GroupRoleEnum.ADMIN
+        )
+    })
+
+    /**
      * 设置管理员
      * @param uidList
      */
@@ -318,6 +339,24 @@ export const useSessionStore = defineStore("session", () => {
                 member.roleId = GroupRoleEnum.ADMIN
             }
         })
+    }
+
+    const delAdminHandler = async (uidList: number[]) => {
+        if (uidList == null) {
+            return
+        }
+        const result = await delAdmin({
+            groupId: sessionInfo.value.chattingId,
+            uidList
+        })
+        if (result.data) {
+            sessionInfo.value.memberList.forEach((member) => {
+                if (uidList.includes(member.uid)) {
+                    member.roleId = GroupRoleEnum.MEMBER
+                }
+            })
+            return true
+        }
     }
 
     eventBus.on(WsEventEnum.SEND_MESSAGE, async ({ message }) => {
@@ -371,6 +410,9 @@ export const useSessionStore = defineStore("session", () => {
         countAdmin,
         readMessage,
         switchSession,
+        delAdminHandler,
+        updateGroupNameHandler,
+        listAdmin,
         setAdmins,
         getMemberList
     }

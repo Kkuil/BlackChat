@@ -1,6 +1,7 @@
 package com.kkuil.blackchat.service;
 
 import com.kkuil.blackchat.core.contact.domain.vo.request.AddAdminReq;
+import com.kkuil.blackchat.core.contact.domain.vo.request.DelAdminReq;
 import com.kkuil.blackchat.core.contact.domain.vo.request.InvitAddGroupReq;
 import com.kkuil.blackchat.core.user.domain.vo.request.CreateGroupReq;
 import com.kkuil.blackchat.domain.entity.UserApply;
@@ -13,7 +14,7 @@ import com.kkuil.blackchat.domain.entity.UserApply;
 public interface GroupMemberService {
 
     /**
-     * t退出群组
+     * 退出群组
      *
      * @param uid     用户ID
      * @param groupId 群组ID
@@ -54,4 +55,13 @@ public interface GroupMemberService {
      * @return 是否添加成功
      */
     Boolean addAdmin(Long uid, AddAdminReq addAdminReq);
+
+    /**
+     * 删除管理
+     *
+     * @param uid         用户ID
+     * @param delAdminReq 请求信息
+     * @return 是否删除成功
+     */
+    Boolean delAdmin(Long uid, DelAdminReq delAdminReq);
 }
