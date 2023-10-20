@@ -111,7 +111,9 @@ public class UploadController {
     )
     @FrequencyControl(time = 5, count = 3, target = FrequencyControl.Target.UID)
     public ResultUtil<String> uploadGroupAvatar(@RequestBody MultipartFile groupAvatar) {
-        String path = DEFAULT_GROUP_AVATAR_PATH + groupAvatar.getOriginalFilename();
+        Long uid = RequestHolderDTO.get().getUid();
+        String filename = uid + "_" + System.currentTimeMillis() + "." + Objects.requireNonNull(groupAvatar.getOriginalFilename()).split("\\.")[1];
+        String path = DEFAULT_GROUP_AVATAR_PATH + filename;
         String url = aliyunOssService.upload(path, groupAvatar, DEFAULT_GROUP_AVATAR_MAX_SIZE);
         return ResultUtil.success(url);
     }

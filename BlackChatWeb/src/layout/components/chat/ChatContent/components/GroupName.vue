@@ -34,7 +34,7 @@ const updateGroupName = () => {
 </script>
 
 <template>
-    <div class="group-name flex-center text-[18px] cursor-pointer">
+    <div class="group-name flex-center text-[18px]">
         <h1 v-if="!isUpdatingGroupName">
             {{ sessionStore.getSessionInfo.name }}
         </h1>
@@ -58,6 +58,15 @@ const updateGroupName = () => {
                 GROUP_ADMIN_ROLE_LIST.includes(
                     sessionStore.currentRoleId as number
                 )
+            "
+            :class="
+                !isUpdatingGroupName &&
+                !sessionStore.isHotFlag &&
+                GROUP_ADMIN_ROLE_LIST.includes(
+                    sessionStore.currentRoleId as number
+                )
+                    ? 'cursor-pointer'
+                    : ''
             "
             class="iconfont icon-editor text-[20px] ml-[5px] text-[#0094ff]"
         ></i>

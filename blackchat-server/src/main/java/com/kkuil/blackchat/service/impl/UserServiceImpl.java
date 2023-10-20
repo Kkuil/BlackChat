@@ -12,11 +12,13 @@ import com.kkuil.blackchat.domain.common.page.PageReq;
 import com.kkuil.blackchat.domain.common.page.PageRes;
 import com.kkuil.blackchat.domain.entity.User;
 import com.kkuil.blackchat.domain.entity.UserBackpack;
+import com.kkuil.blackchat.domain.enums.error.ChatErrorEnum;
 import com.kkuil.blackchat.domain.enums.error.UserErrorEnum;
 import com.kkuil.blackchat.domain.enums.user.ItemTypeEnum;
 import com.kkuil.blackchat.event.UserRegisterEvent;
 import com.kkuil.blackchat.service.UserService;
 import com.kkuil.blackchat.utils.AssertUtil;
+import com.kkuil.blackchat.utils.sensitive.SensitiveWordBs;
 import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -47,6 +49,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RoomFriendDAO roomFriendDao;
+
+    @Resource
+    private SensitiveWordBs sensitiveWordBs;
 
     /**
      * 注册
@@ -80,7 +85,11 @@ public class UserServiceImpl implements UserService {
         User user = userDao.getByUsername(username);
         AssertUtil.isEmpty(user, UserErrorEnum.USERNAME_IS_USED.getMsg());
 
-        // 3. 更改用户名
+        // 3. 判断是否有敏感词，限制改名
+        boolean isHasSensitiveWord = sensitiveWordBs.hasSensitiveWord(username);
+        AssertUtil.isFalse(isHasSensitiveWord, ChatErrorEnum.SENSITIVE_NAME.getMsg());
+
+        // 4. 更改用户名
         return userDao.updateUsername(uid, username);
     }
 

@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.kkuil.blackchat.cache.UserCache;
+import com.kkuil.blackchat.core.chat.domain.enums.MessageTypeEnum;
 import com.kkuil.blackchat.core.chat.domain.vo.request.message.RevokeMessageReq;
 import com.kkuil.blackchat.dao.MessageDAO;
 import com.kkuil.blackchat.dao.UserDAO;
@@ -153,13 +154,22 @@ public class MessageServiceImpl implements MessageService {
             Message replyMessage = messageDao.getById(replyMessageId);
             String name = userDao.getById(replyMessage.getFromUid()).getName();
 
+            Object body;
+
+            // 判断回复消息是否是撤回消息
+            if(MessageTypeEnum.REVOKE.getType().equals(replyMessage.getType())) {
+                body = "原消息已撤回";
+            } else {
+                body = MessageHandlerFactory.getStrategyNoNull(replyMessage.getType()).showInReplyMessage(replyMessage);
+            }
+
             replyMsg = ChatMessageResp.ReplyMsg
                     .builder()
                     .id(replyMessage.getId())
                     .uid(replyMessage.getFromUid())
                     .name(name)
                     .type(replyMessage.getType())
-                    .body(MessageHandlerFactory.getStrategyNoNull(replyMessage.getType()).showInReplyMessage(replyMessage))
+                    .body(body)
                     .canCallback(0)
                     .gapCount(replyMessage.getGapCount())
                     .build();

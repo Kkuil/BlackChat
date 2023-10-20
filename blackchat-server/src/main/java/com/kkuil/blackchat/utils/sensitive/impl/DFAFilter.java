@@ -23,14 +23,29 @@ public final class DFAFilter implements SensitiveWordFilter {
     private DFAFilter() {
     }
 
-    private static Word root = new Word(' '); // 敏感词字典的根节点
-    private final static char replace = '*'; // 替代字符
-    private final static String skipChars = " !*-+_=,，.@;:；：。、？?（）()【】[]《》<>“”\"‘’"; // 遇到这些字符就会跳过
-    private final static Set<Character> skipSet = new HashSet<>(); // 遇到这些字符就会跳过
+    /**
+     * 敏感词字典的根节点
+     */
+    private static Word ROOT = new Word(' ');
+
+    /**
+     * 替代字符
+     */
+    private final static char REPLACE_CHAR = '*';
+
+    /**
+     * 遇到这些字符就会跳过
+     */
+    private final static String SKIP_CHARS = " |!*-+_=,，.@;:；：。、？?（）()【】[]《》<>“”\"‘’";
+
+    /**
+     * 遇到这些字符就会跳过
+     */
+    private final static Set<Character> SKIP_SET = new HashSet<>();
 
     static {
-        for (char c : skipChars.toCharArray()) {
-            skipSet.add(c);
+        for (char c : SKIP_CHARS.toCharArray()) {
+            SKIP_SET.add(c);
         }
     }
 
@@ -65,7 +80,7 @@ public final class DFAFilter implements SensitiveWordFilter {
                 index++;
                 continue;
             }
-            Word word = root;
+            Word word = ROOT;
             int start = index;
             boolean found = false;
             for (int i = index; i < result.length(); i++) {
@@ -83,7 +98,7 @@ public final class DFAFilter implements SensitiveWordFilter {
                 if (word.end) {
                     found = true;
                     for (int j = start; j <= i; j++) {
-                        result.setCharAt(j, replace);
+                        result.setCharAt(j, REPLACE_CHAR);
                     }
                     index = i;
                 }
@@ -105,7 +120,7 @@ public final class DFAFilter implements SensitiveWordFilter {
         if (!CollectionUtils.isEmpty(words)) {
             Word newRoot = new Word(' ');
             words.forEach(word -> loadWord(word, newRoot));
-            root = newRoot;
+            ROOT = newRoot;
         }
     }
 
@@ -176,7 +191,7 @@ public final class DFAFilter implements SensitiveWordFilter {
      * @return true: 需要跳过, false: 不需要跳过
      */
     private boolean skip(char c) {
-        return skipSet.contains(c);
+        return SKIP_SET.contains(c);
     }
 
     /**

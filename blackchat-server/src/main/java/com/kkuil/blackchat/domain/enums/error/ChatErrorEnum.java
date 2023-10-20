@@ -47,6 +47,7 @@ public enum ChatErrorEnum implements ErrorEnum {
     NOT_ALLOWED_LT_THREE_CHAR_FOR_GROUP_NAME(1027, "群名不允许小于3个字符"),
     NOT_ALLOWED_GT_TEN_CHAR_FOR_GROUP_NAME(1028, "群名不允许大于10个字符"),
     NOT_ALLOWED_UPDATE_GROUP_NAME_FOR_HOT_GROUP(1029, "不允许更改热点群聊的名称哦~"),
+    SENSITIVE_NAME(1030, "名字中包含敏感词，请换个名字吧~"),
     ;
 
     private final Integer code;
