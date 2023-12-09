@@ -146,7 +146,7 @@ class Websocket {
      */
     #sendHeartBeat() {
         this.#heartBeatTimer && clearInterval(this.#heartBeatTimer)
-        const self = this
+        const that = this
         this.#heartBeatTimer = setInterval(() => {
             const heartPack = {
                 type: WorkerTypeEnum.MESSAGE,
@@ -154,7 +154,7 @@ class Websocket {
                     type: WsRequestTypeEnum.HEARTBEAT
                 }
             }
-            self.send(heartPack)
+            that.send(heartPack)
         }, 1000)
     }
 }

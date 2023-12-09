@@ -13,7 +13,7 @@ export const GROUP_ROLE_MAP: Record<
     [GroupRoleEnum.MASTER]: {
         text: "群主",
         bgClr: "#f2c55c",
-        txtClr: "#777"
+        txtClr: "#fff"
     },
     [GroupRoleEnum.ADMIN]: {
         text: "管理员",

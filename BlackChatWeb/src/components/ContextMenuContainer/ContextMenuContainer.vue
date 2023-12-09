@@ -23,6 +23,8 @@ const props = defineProps<{
     items: string[]
 }>()
 
+const $emit = defineEmits(["multi-select"])
+
 const userStore = useUserStore()
 const messageStore = useMessageStore()
 const sessionStore = useSessionStore()
@@ -40,7 +42,9 @@ const onAite = () => {
     })
 }
 
-// 添加朋友操作
+/**
+ * 添加朋友操作
+ */
 const addFriendHandler = async () => {
     if (applyComment.value.trim().length <= 0) {
         return ElMessage.error("申请备注不能为空")
@@ -55,6 +59,9 @@ const addFriendHandler = async () => {
     }
 }
 
+/**
+ * 撤回消息
+ */
 const onRevoke = async () => {
     console.log(props.message.message.id)
     const result = await revoke({
@@ -66,6 +73,9 @@ const onRevoke = async () => {
     }
 }
 
+/**
+ * 回复消息
+ */
 const onReply = () => {
     messageStore.addReply({
         id: props.message.message.id,
@@ -76,6 +86,13 @@ const onReply = () => {
 
 const getMessageShowInReply = (message: ChatMessageResp.Message<any, any>) => {
     return SHOW_IN_REPLY_MAP[message.type] ?? message.body.content
+}
+
+/**
+ * 多选消息
+ */
+const onMultiSelect = () => {
+    $emit("multiSelect", props.message)
 }
 </script>
 
@@ -156,6 +173,11 @@ const getMessageShowInReply = (message: ChatMessageResp.Message<any, any>) => {
         >
             <template #icon>
                 <i class="iconfont icon-reply"></i>
+            </template>
+        </ContextMenuItem>
+        <ContextMenuItem label="多选" @click="onMultiSelect">
+            <template #icon>
+                <i class="iconfont icon-multiple"></i>
             </template>
         </ContextMenuItem>
     </ContextMenu>
